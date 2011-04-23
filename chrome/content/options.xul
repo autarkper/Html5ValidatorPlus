@@ -15,10 +15,29 @@
 			<preference id="pref-useTrigger" name="extensions.html5validator.useTrigger" type="bool"/>
 			<preference id="pref-ignoreXHTMLErrors" name="extensions.html5validator.ignoreXHTMLErrors" type="bool"/>
 			<preference id="pref-allowAccessibilityFeatures" name="extensions.html5validator.allowAccessibilityFeatures" type="bool"/>
+            <preference id="pref-maxAutoSize" name="extensions.html5validator.maxAutoSize" type="int"/>
+            <preference id="pref-autoValidateWaitSeconds" name="extensions.html5validator.autoValidateWaitSeconds" type="int"/>
+            <preference id="pref-parser" name="extensions.html5validator.parser" type="string"/>
 		</preferences>
 		
-		<groupbox>
-			<caption label="Settings"/>
+        <grid>
+            <columns>
+                <column flex="1"/>
+                <column flex="2"/>
+            </columns>
+            <rows>
+                <row>
+                    <label accesskey="U" control="validatorURL">Validator URL</label>
+                    <textbox id="validatorURL" preference="pref-validatorURL"/>
+                </row>
+            </rows>
+        </grid>
+        <groupbox>
+            <caption label="Interface"/>
+            <checkbox label="Validate only on request (on left-click), disable automatic validation" id="useTrigger" preference="pref-useTrigger"/>
+        </groupbox>
+        <groupbox id="autoValidation">
+            <caption label="Automatic validation"/>
 			<grid>
 				<columns>
 					<column flex="1"/>
@@ -26,12 +45,8 @@
 				</columns>
 				<rows>
 					<row>
-						<label accesskey="U" control="validatorURL">Validator URL</label>
-						<textbox id="validatorURL" preference="pref-validatorURL"/>
-					</row>
-					<row>
 						<vbox>
-							<label accesskey="D" control="domainsWhitelist">Domains whitelist</label>
+							<label accesskey="D" control="domainsWhitelist">Domains to auto-validate</label>
 							<spacer flex="1"/>
 							<vbox>
 								<description>Enter one domain per line</description>
@@ -42,16 +57,31 @@
 						</vbox>
 						<textbox id="domainsWhitelist" preference="pref-domainsWhitelist" multiline="true" cols="30" rows="10" newlines="stripsurroundingwhitespace" wrap="off"/>
 					</row>
-					<description>If no domains are whilelisted, then all URLs will be validated</description>
+                    <row>
+                        <label accesskey="M" control="maxAutoSize">Max size (kB) to auto-validate</label>
+                        <textbox id="maxAutoSize" preference="pref-maxAutoSize"/>
+                    </row>
+                    <row>
+                        <label control="autoValidateWaitSeconds">Seconds to wait before auto-validation</label>
+                        <textbox id="autoValidateWaitSeconds" preference="pref-autoValidateWaitSeconds"/>
+                    </row>
 				</rows>
 			</grid>
 		</groupbox>
-
-		<groupbox>
-			<caption label="Interface"/>
-			<checkbox label="Validate only on request (on left-click)" id="useTrigger" preference="pref-useTrigger"/>
-		</groupbox>
-
+        <groupbox>
+            <caption label="Parser"/>
+            <menulist id="parser" preference="pref-parser">
+                <menupopup>
+                    <menuitem value="" selected="selected" label="Infer from Content-Type" />
+                    <menuitem value="xml" label="XML; don’t load external entities" />
+                    <menuitem value="xmldtd" label="XML; load external entities" />
+                    <menuitem value="html" label="HTML; flavor from doctype" />
+                    <menuitem value="html5" label="HTML5" />
+                    <menuitem value="html4" label="HTML 4.01 Strict" />
+                    <menuitem value="html4tr" label="HTML 4.01 Transitional" />
+                </menupopup>
+            </menulist>
+        </groupbox>
 		<groupbox>
 			<caption label="Error Filtering"/>
 			<checkbox label="Ignore XHTML errors" id="ignoreXHTMLErrors" preference="pref-ignoreXHTMLErrors"/>
