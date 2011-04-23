@@ -178,6 +178,7 @@ com.four56bereastreet.html5validator = (function()
 	validateDocHTML = function(frame, triggered)
 	{
 		if (g_cleanup) {g_cleanup();}
+		if (isLoading()) {return;}
 
 		var doc = frame.document;
 		activeDocument = doc;
@@ -281,12 +282,16 @@ com.four56bereastreet.html5validator = (function()
 	{
 		return window.content.document;
 	},
-	
+
+	isLoading = function()
+	{
+		return document.getElementById("content").mCurrentBrowser.webProgress.isLoadingDocument;
+	},
+
 	// Adapted from the "HTML Validator" extension by Marc Gueury (http://users.skynet.be/mgueury/mozilla/)
 	getHTMLFromCache = function(doc)
 	{	 
-		var isLoading = document.getElementById("content").mCurrentBrowser.webProgress.isLoadingDocument;
-		if (isLoading) {
+		if (isLoading()) {
 			return '';
 		}
 
