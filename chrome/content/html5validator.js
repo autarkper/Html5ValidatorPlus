@@ -92,13 +92,8 @@ com.four56bereastreet.html5validator = (function()
 			if (!this.busy)
 			{
 				this.busy = true;
-				try {
-					validateDocHTML(window.content, false);
-				}
-				catch(err) {}
-				finally {
-					this.busy = false;
-				}
+				validateDocHTML(window.content, false);
+				this.busy = false;
 			}
 		}
 	};
@@ -174,8 +169,19 @@ com.four56bereastreet.html5validator = (function()
 	}()),
 	g_cleanup = null,
 
-	// Adapted from the "HTML Validator" extension by Marc Gueury (http://users.skynet.be/mgueury/mozilla/)
 	validateDocHTML = function(frame, triggered)
+	{
+		try {
+			validateDocHTML__(frame, triggered);
+		}
+		catch (err)
+		{
+			updateStatusBar(0, 0, 'errorValidator');
+		}
+	},
+
+	// Adapted from the "HTML Validator" extension by Marc Gueury (http://users.skynet.be/mgueury/mozilla/)
+	validateDocHTML__ = function(frame, triggered)
 	{
 		if (g_cleanup) {g_cleanup();}
 		if (isLoading()) {return;}
@@ -194,7 +200,12 @@ com.four56bereastreet.html5validator = (function()
 		if (triggered)
 		{
 			html = getHTMLFromCache(doc);
-			validateDoc(doc, html);
+			if (html && html.length) {
+				validateDoc(doc, html);
+			}
+			else {
+				throw "no-html--triggered";
+			}
 			return;
 		}
 		var cache = vCache.lookupResults(doc);
@@ -231,6 +242,8 @@ com.four56bereastreet.html5validator = (function()
 				return;
 			}
 			html = html || getHTMLFromCache(doc);
+			if (!html || !html.length) {return;} // probably a premature validation attempt while still loading
+
 			var isSmallish = (html.length < (preferences.maxAutoSize) * 1024);
 			if (isSmallish)
 			{
@@ -292,65 +305,60 @@ com.four56bereastreet.html5validator = (function()
 	getHTMLFromCache = function(doc)
 	{	 
 		if (isLoading()) {
-			return '';
+			return null;
 		}
 
-		try 
+		// Part 1 : get the history entry (nsISHEntry) associated with the document
+		var webNav = null;
+
+		var win = doc.defaultView;
+		if (win == window) {
+			win = _content;
+		}
+
+		var ifRequestor = win.QueryInterface(Components.interfaces.nsIInterfaceRequestor);
+		webNav = ifRequestor.getInterface(Components.interfaces.nsIWebNavigation);
+
+		// Get the 'PageDescriptor' for the current document. This allows the
+		// to access the cached copy of the content rather than refetching it from
+		// the network...
+		var PageLoader = webNav.QueryInterface(Components.interfaces.nsIWebPageDescriptor),
+			PageCookie = PageLoader.currentDescriptor,
+			shEntry = PageCookie.QueryInterface(Components.interfaces.nsISHEntry);
+
+		// Part 2 : open a nsIChannel to get the HTML of the doc
+		var url = doc.URL;
+		var urlCharset = doc.characterSet;
+
+		var ios = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
+		var channel = ios.newChannel(url, urlCharset, null);
+		channel.loadFlags |= Components.interfaces.nsIRequest.VALIDATE_NEVER;
+		channel.loadFlags |= Components.interfaces.nsIRequest.LOAD_FROM_CACHE;
+		channel.loadFlags |= Components.interfaces.nsICachingChannel.LOAD_ONLY_FROM_CACHE;
+
+		// Use the cache key to distinguish POST entries in the cache (see nsDocShell.cpp)
+		var cacheChannel = channel.QueryInterface(Components.interfaces.nsICachingChannel);
+		cacheChannel.cacheKey = shEntry.cacheKey;
+
+		var stream = channel.open();
+
+		const scriptableStream = Components.classes["@mozilla.org/scriptableinputstream;1"].createInstance(Components.interfaces.nsIScriptableInputStream);
+		scriptableStream.init(stream);
+		var s = '', s2 = '';
+
+		while (scriptableStream.available() > 0)
 		{
-			// Part 1 : get the history entry (nsISHEntry) associated with the document
-			var webNav = null;
-
-			var win = doc.defaultView;
-			if (win == window) {
-				win = _content;
-			}
-
-			var ifRequestor = win.QueryInterface(Components.interfaces.nsIInterfaceRequestor);
-			webNav = ifRequestor.getInterface(Components.interfaces.nsIWebNavigation);
-
-			// Get the 'PageDescriptor' for the current document. This allows the
-			// to access the cached copy of the content rather than refetching it from
-			// the network...
-			var PageLoader = webNav.QueryInterface(Components.interfaces.nsIWebPageDescriptor),
-				PageCookie = PageLoader.currentDescriptor,
-				shEntry = PageCookie.QueryInterface(Components.interfaces.nsISHEntry);
-
-			// Part 2 : open a nsIChannel to get the HTML of the doc
-			var url = doc.URL;
-			var urlCharset = doc.characterSet;
-
-			var ios = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
-			var channel = ios.newChannel(url, urlCharset, null);
-			channel.loadFlags |= Components.interfaces.nsIRequest.VALIDATE_NEVER;
-			channel.loadFlags |= Components.interfaces.nsIRequest.LOAD_FROM_CACHE;
-			channel.loadFlags |= Components.interfaces.nsICachingChannel.LOAD_ONLY_FROM_CACHE;
-
-			// Use the cache key to distinguish POST entries in the cache (see nsDocShell.cpp)
-			var cacheChannel = channel.QueryInterface(Components.interfaces.nsICachingChannel);
-			cacheChannel.cacheKey = shEntry.cacheKey;
-
-			var stream = channel.open();
-
-			const scriptableStream = Components.classes["@mozilla.org/scriptableinputstream;1"].createInstance(Components.interfaces.nsIScriptableInputStream);
-			scriptableStream.init(stream);
-			var s = '', s2 = '';
-
-			while (scriptableStream.available() > 0)
-			{
-				s += scriptableStream.read(scriptableStream.available());
-			}
-			scriptableStream.close();
-			stream.close();
-
-			// Part 3 : convert the HTML in unicode
-			var ucConverter =  Components.classes["@mozilla.org/intl/scriptableunicodeconverter"].getService(Components.interfaces.nsIScriptableUnicodeConverter);
-			ucConverter.charset = urlCharset;
-			s2 = ucConverter.ConvertToUnicode(s);
-
-			return s2;
-		} catch(err) {
-			return '';
+			s += scriptableStream.read(scriptableStream.available());
 		}
+		scriptableStream.close();
+		stream.close();
+
+		// Part 3 : convert the HTML in unicode
+		var ucConverter =  Components.classes["@mozilla.org/intl/scriptableunicodeconverter"].getService(Components.interfaces.nsIScriptableUnicodeConverter);
+		ucConverter.charset = urlCharset;
+		s2 = ucConverter.ConvertToUnicode(s);
+
+		return s2;
 	},
 
 	updateStatusBar = function(errors, warnings, status)
