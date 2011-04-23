@@ -162,7 +162,6 @@ com.four56bereastreet.html5validator = (function()
 			resetResults: function()
 			{
 				resCache = {};
-				navCache = {};
 			}
 		};
 		return pub;
