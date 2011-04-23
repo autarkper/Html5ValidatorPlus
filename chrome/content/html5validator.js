@@ -25,9 +25,9 @@ com.four56bereastreet.html5validator = (function()
 				debug: prefBranch.getBoolPref("debug"),
 				ignoreXHTMLErrors: prefBranch.getBoolPref("ignoreXHTMLErrors"),
 				allowAccessibilityFeatures: prefBranch.getBoolPref("allowAccessibilityFeatures"),
-                maxAutoSize: prefBranch.getIntPref("maxAutoSize"),
-                autoValidateWaitSeconds: prefBranch.getIntPref("autoValidateWaitSeconds"),
-                parser: prefBranch.getCharPref("parser")
+				maxAutoSize: prefBranch.getIntPref("maxAutoSize"),
+				autoValidateWaitSeconds: prefBranch.getIntPref("autoValidateWaitSeconds"),
+				parser: prefBranch.getCharPref("parser")
 			};
 		},
 		// observe preferences changes
@@ -44,10 +44,10 @@ com.four56bereastreet.html5validator = (function()
 			{
 				if (aTopic != "nsPref:changed") {
 					return;
-                }
+				}
 				loadPreferences();
-                vCache.resetResults();
-                validateDocHTML(window.content, false);
+				vCache.resetResults();
+				validateDocHTML(window.content, false);
 			}
 		},
 
@@ -67,7 +67,7 @@ com.four56bereastreet.html5validator = (function()
 				aIID.equals(Components.interfaces.nsISupportsWeakReference) || 
 				aIID.equals(Components.interfaces.nsISupports)) {
 				return this;
-            }
+			}
 			throw Components.results.NS_NOINTERFACE;
 		},
 
@@ -92,13 +92,13 @@ com.four56bereastreet.html5validator = (function()
 			if (!this.busy)
 			{
 				this.busy = true;
-                try {
-                    validateDocHTML(window.content, false);
-                }
-                catch(err) {}
-                finally {
-                    this.busy = false;
-                }
+				try {
+					validateDocHTML(window.content, false);
+				}
+				catch(err) {}
+				finally {
+					this.busy = false;
+				}
 			}
 		}
 	};
@@ -110,7 +110,7 @@ com.four56bereastreet.html5validator = (function()
 	{
 		if (!url.length || url.match(/^about:/) || url == preferences.validatorURL) {
 			return false;
-        }
+		}
 
 		for (var i = 0; i < preferences.domainsWhitelist.length; i++)
 		{
@@ -130,151 +130,151 @@ com.four56bereastreet.html5validator = (function()
 	},
 
 
-    vCache = (function()
-    {
-        var resCache = {};
-        var navCache = {};
-        function normalizeUrl(url) {return url.replace(/#.*/, '');}
-        var pub = {
-            lookupResults: function(doc)
-            {
-                var url = normalizeUrl(doc.URL);
-                var result = resCache[url];
-                if (!result) {return null;}
-                return result.lastModified == doc.lastModified ? result: null;
-            },
-            seen: function(doc)
-            {
-                var url = normalizeUrl(doc.URL);
-                return !!resCache[url];
-            },
-            storeResults: function(doc, result)
-            {
-                var url = normalizeUrl(doc.URL);
-                result.lastModified = doc.lastModified;
-                resCache[url] = result;
-            },
-            lookupNoAutoValidation: function(doc)
-            {
-                var url = normalizeUrl(doc.URL);
-                return navCache[url] || false;
-            },
-            storeNoAutoValidation: function(doc)
-            {
-                var url = normalizeUrl(doc.URL);
-                navCache[url] = true;
-            },
-            resetResults: function()
-            {
-                resCache = {};
-                navCache = {};
-            }
-        };
-        return pub;
-    }()),
-    g_cleanup = null,
+	vCache = (function()
+	{
+		var resCache = {};
+		var navCache = {};
+		function normalizeUrl(url) {return url.replace(/#.*/, '');}
+		var pub = {
+			lookupResults: function(doc)
+			{
+				var url = normalizeUrl(doc.URL);
+				var result = resCache[url];
+				if (!result) {return null;}
+				return result.lastModified == doc.lastModified ? result: null;
+			},
+			seen: function(doc)
+			{
+				var url = normalizeUrl(doc.URL);
+				return !!resCache[url];
+			},
+			storeResults: function(doc, result)
+			{
+				var url = normalizeUrl(doc.URL);
+				result.lastModified = doc.lastModified;
+				resCache[url] = result;
+			},
+			lookupNoAutoValidation: function(doc)
+			{
+				var url = normalizeUrl(doc.URL);
+				return navCache[url] || false;
+			},
+			storeNoAutoValidation: function(doc)
+			{
+				var url = normalizeUrl(doc.URL);
+				navCache[url] = true;
+			},
+			resetResults: function()
+			{
+				resCache = {};
+				navCache = {};
+			}
+		};
+		return pub;
+	}()),
+	g_cleanup = null,
 
 	// Adapted from the "HTML Validator" extension by Marc Gueury (http://users.skynet.be/mgueury/mozilla/)
 	validateDocHTML = function(frame, triggered)
 	{
-        if (g_cleanup) {g_cleanup();}
+		if (g_cleanup) {g_cleanup();}
 
-        var doc = frame.document;
-        activeDocument = doc;
+		var doc = frame.document;
+		activeDocument = doc;
 		if (!doc) {return;}
 
 		var url = doc.URL || '';
-        if (!url.length || url.match(/^about:/))
-        {
-            updateStatusBar(0, 0, 'reset');
-            return;
-        }
-        var html;
-        if (triggered)
-        {
-            html = getHTMLFromCache(doc);
-            validateDoc(doc, html);
-            return;
-        }
-        var cache = vCache.lookupResults(doc);
+		if (!url.length || url.match(/^about:/))
+		{
+			updateStatusBar(0, 0, 'reset');
+			return;
+		}
+		var html;
+		if (triggered)
+		{
+			html = getHTMLFromCache(doc);
+			validateDoc(doc, html);
+			return;
+		}
+		var cache = vCache.lookupResults(doc);
 		if (cache)
-        {
-            updateStatusBar(cache['errors'], cache['warnings'], 'results');
-            return;
-        }
-        else
-        {
-            if (vCache.seen(doc))
-            {
-                updateStatusBar(0, 0, 'stale');
-                return;
-            }
-        }
-        // do not attempt auto-validation unless we have a visible UI
-        var addonBar = document.getElementById('addon-bar') || document.getElementById('status-bar');
-        if (addonBar && addonBar.collapsed) {
-            updateStatusBar(0, 0, 'use-trigger'); // display a sensible message when uncollapsed
-            return;
-        }
-        var isAutoDomain = isWhitelistDomain(url);
-        if (isAutoDomain) 
-        {
-            if (preferences.useTrigger)
-            {
-                updateStatusBar(0, 0, 'use-trigger');
-                return;
-            }
-            if (vCache.lookupNoAutoValidation(doc))
-            {
-                updateStatusBar(0, 0, 'cancelled');
-                return;
-            }
-            html = html || getHTMLFromCache(doc);
-            var isSmallish = (html.length < (preferences.maxAutoSize) * 1024);
-            if (isSmallish)
-            {
-                updateStatusBar(0, 0, 'about-to-validate');
-                var timeoutHandle = null, removeEscapeListener;
-                function stopTimeout()
-                {
-                    if (timeoutHandle) {window.clearTimeout(timeoutHandle); timeoutHandle = null;} // cancel pending validation
-                }
-                function cancelOnEscape(event)
-                {
-                    if (event.keyCode === event.DOM_VK_ESCAPE)
-                    {
-                        stopTimeout();
-                        removeEscapeListener();
-                        vCache.storeNoAutoValidation(doc);
-                        updateStatusBar(0, 0, 'cancelled');
-                    }
-                }
-                removeEscapeListener = function(){doc.removeEventListener('keydown', cancelOnEscape, false);};
+		{
+			updateStatusBar(cache['errors'], cache['warnings'], 'results');
+			return;
+		}
+		else
+		{
+			if (vCache.seen(doc))
+			{
+				updateStatusBar(0, 0, 'stale');
+				return;
+			}
+		}
+		// do not attempt auto-validation unless we have a visible UI
+		var addonBar = document.getElementById('addon-bar') || document.getElementById('status-bar');
+		if (addonBar && addonBar.collapsed) {
+			updateStatusBar(0, 0, 'use-trigger'); // display a sensible message when uncollapsed
+			return;
+		}
+		var isAutoDomain = isWhitelistDomain(url);
+		if (isAutoDomain) 
+		{
+			if (preferences.useTrigger)
+			{
+				updateStatusBar(0, 0, 'use-trigger');
+				return;
+			}
+			if (vCache.lookupNoAutoValidation(doc))
+			{
+				updateStatusBar(0, 0, 'cancelled');
+				return;
+			}
+			html = html || getHTMLFromCache(doc);
+			var isSmallish = (html.length < (preferences.maxAutoSize) * 1024);
+			if (isSmallish)
+			{
+				updateStatusBar(0, 0, 'about-to-validate');
+				var timeoutHandle = null, removeEscapeListener;
+				function stopTimeout()
+				{
+					if (timeoutHandle) {window.clearTimeout(timeoutHandle); timeoutHandle = null;} // cancel pending validation
+				}
+				function cancelOnEscape(event)
+				{
+					if (event.keyCode === event.DOM_VK_ESCAPE)
+					{
+						stopTimeout();
+						removeEscapeListener();
+						vCache.storeNoAutoValidation(doc);
+						updateStatusBar(0, 0, 'cancelled');
+					}
+				}
+				removeEscapeListener = function(){doc.removeEventListener('keydown', cancelOnEscape, false);};
 
-                doc.addEventListener('keydown', cancelOnEscape, false);
-                timeoutHandle = window.setTimeout(function() // do not flood server, use a cancellable timeout
-                {
-                    removeEscapeListener();
-                    if (addonBar && addonBar.collapsed) {
-                        updateStatusBar(0, 0, 'cancelled');
-                        return;
-                    }
-                    validateDoc(doc, html);
-                }, Math.max.apply(Math.max, [500, preferences.autoValidateWaitSeconds * 1000]));
-                g_cleanup = function() {stopTimeout(); removeEscapeListener(); g_cleanup = null;};
-                return;
-            }
-            else
-            {
-                updateStatusBar(0, 0, 'large-doc');
-                return;
-            }
-        }
-        else
-        {
-            updateStatusBar(0, 0, 'manual');
-            return;
-        }
+				doc.addEventListener('keydown', cancelOnEscape, false);
+				timeoutHandle = window.setTimeout(function() // do not flood server, use a cancellable timeout
+				{
+					removeEscapeListener();
+					if (addonBar && addonBar.collapsed) {
+						updateStatusBar(0, 0, 'cancelled');
+						return;
+					}
+					validateDoc(doc, html);
+				}, Math.max.apply(Math.max, [500, preferences.autoValidateWaitSeconds * 1000]));
+				g_cleanup = function() {stopTimeout(); removeEscapeListener(); g_cleanup = null;};
+				return;
+			}
+			else
+			{
+				updateStatusBar(0, 0, 'large-doc');
+				return;
+			}
+		}
+		else
+		{
+			updateStatusBar(0, 0, 'manual');
+			return;
+		}
 	},
 	
 	getActiveDocument = function()
@@ -284,68 +284,68 @@ com.four56bereastreet.html5validator = (function()
 	
 	// Adapted from the "HTML Validator" extension by Marc Gueury (http://users.skynet.be/mgueury/mozilla/)
 	getHTMLFromCache = function(doc)
-	{     
+	{	 
 		var isLoading = document.getElementById("content").mCurrentBrowser.webProgress.isLoadingDocument;
 		if (isLoading) {
 			return '';
-        }
+		}
 
 		try 
 		{
-            // Part 1 : get the history entry (nsISHEntry) associated with the document
-            var webNav = null;
+			// Part 1 : get the history entry (nsISHEntry) associated with the document
+			var webNav = null;
 
-            var win = doc.defaultView;
+			var win = doc.defaultView;
 			if (win == window) {
 				win = _content;
-            }
+			}
 
 			var ifRequestor = win.QueryInterface(Components.interfaces.nsIInterfaceRequestor);
 			webNav = ifRequestor.getInterface(Components.interfaces.nsIWebNavigation);
 
-            // Get the 'PageDescriptor' for the current document. This allows the
-            // to access the cached copy of the content rather than refetching it from
-            // the network...
-            var PageLoader = webNav.QueryInterface(Components.interfaces.nsIWebPageDescriptor),
-                PageCookie = PageLoader.currentDescriptor,
-                shEntry = PageCookie.QueryInterface(Components.interfaces.nsISHEntry);
+			// Get the 'PageDescriptor' for the current document. This allows the
+			// to access the cached copy of the content rather than refetching it from
+			// the network...
+			var PageLoader = webNav.QueryInterface(Components.interfaces.nsIWebPageDescriptor),
+				PageCookie = PageLoader.currentDescriptor,
+				shEntry = PageCookie.QueryInterface(Components.interfaces.nsISHEntry);
 
-            // Part 2 : open a nsIChannel to get the HTML of the doc
-            var url = doc.URL;
-            var urlCharset = doc.characterSet;
+			// Part 2 : open a nsIChannel to get the HTML of the doc
+			var url = doc.URL;
+			var urlCharset = doc.characterSet;
 
-            var ios = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
-            var channel = ios.newChannel(url, urlCharset, null);
-            channel.loadFlags |= Components.interfaces.nsIRequest.VALIDATE_NEVER;
-            channel.loadFlags |= Components.interfaces.nsIRequest.LOAD_FROM_CACHE;
-            channel.loadFlags |= Components.interfaces.nsICachingChannel.LOAD_ONLY_FROM_CACHE;
+			var ios = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
+			var channel = ios.newChannel(url, urlCharset, null);
+			channel.loadFlags |= Components.interfaces.nsIRequest.VALIDATE_NEVER;
+			channel.loadFlags |= Components.interfaces.nsIRequest.LOAD_FROM_CACHE;
+			channel.loadFlags |= Components.interfaces.nsICachingChannel.LOAD_ONLY_FROM_CACHE;
 
-            // Use the cache key to distinguish POST entries in the cache (see nsDocShell.cpp)
-            var cacheChannel = channel.QueryInterface(Components.interfaces.nsICachingChannel);
-            cacheChannel.cacheKey = shEntry.cacheKey;
+			// Use the cache key to distinguish POST entries in the cache (see nsDocShell.cpp)
+			var cacheChannel = channel.QueryInterface(Components.interfaces.nsICachingChannel);
+			cacheChannel.cacheKey = shEntry.cacheKey;
 
-            var stream = channel.open();
+			var stream = channel.open();
 
-            const scriptableStream = Components.classes["@mozilla.org/scriptableinputstream;1"].createInstance(Components.interfaces.nsIScriptableInputStream);
-            scriptableStream.init(stream);
-            var s = '', s2 = '';
+			const scriptableStream = Components.classes["@mozilla.org/scriptableinputstream;1"].createInstance(Components.interfaces.nsIScriptableInputStream);
+			scriptableStream.init(stream);
+			var s = '', s2 = '';
 
-            while (scriptableStream.available() > 0)
-            {
-                s += scriptableStream.read(scriptableStream.available());
-            }
-            scriptableStream.close();
-            stream.close();
+			while (scriptableStream.available() > 0)
+			{
+				s += scriptableStream.read(scriptableStream.available());
+			}
+			scriptableStream.close();
+			stream.close();
 
-            // Part 3 : convert the HTML in unicode
-            var ucConverter =  Components.classes["@mozilla.org/intl/scriptableunicodeconverter"].getService(Components.interfaces.nsIScriptableUnicodeConverter);
-            ucConverter.charset = urlCharset;
-            s2 = ucConverter.ConvertToUnicode(s);
+			// Part 3 : convert the HTML in unicode
+			var ucConverter =  Components.classes["@mozilla.org/intl/scriptableunicodeconverter"].getService(Components.interfaces.nsIScriptableUnicodeConverter);
+			ucConverter.charset = urlCharset;
+			s2 = ucConverter.ConvertToUnicode(s);
 
-            return s2;
-        } catch(err) {
-            return '';
-        }
+			return s2;
+		} catch(err) {
+			return '';
+		}
 	},
 
 	updateStatusBar = function(errors, warnings, status)
@@ -374,36 +374,36 @@ com.four56bereastreet.html5validator = (function()
 		}
 		else
 		{
-            statusBarPanel.src = "chrome://html5validator/skin/html5-dimmed.png";
+			statusBarPanel.src = "chrome://html5validator/skin/html5-dimmed.png";
 			statusBarPanel.className = "statusbarpanel-iconic-text";
-            statusBarPanel.label = "Click to validate";
+			statusBarPanel.label = "Click to validate";
 			switch (status) {
 				case "running":
 					statusBarPanel.label = "Validating...";
 					statusBarPanel.tooltipText = "HTML5 Validator: Document currently validating";
 					break;
 				case "reset":
-                    statusBarPanel.label = "";
+					statusBarPanel.label = "";
 					statusBarPanel.tooltipText = "HTML5 Validator: Idle";
 					break;
-                case "use-trigger":
-                    statusBarPanel.tooltipText = "HTML5 Validator: Auto-validation off, click to validate";
-                    break;
+				case "use-trigger":
+					statusBarPanel.tooltipText = "HTML5 Validator: Auto-validation off, click to validate";
+					break;
 				case "large-doc":
 					statusBarPanel.tooltipText = "HTML5 Validator: Document too large for auto-validation, click to validate";
 					break;
-                case "stale":
-                    statusBarPanel.tooltipText = "HTML5 Validator: Validation results may be stale, click to validate";
-                    break;
-                case "cancelled":
-                    statusBarPanel.tooltipText = "HTML5 Validator: Auto-validation cancelled, click to validate";
-                    break;
-                case "about-to-validate":
-                    statusBarPanel.tooltipText = "HTML5 Validator: Validation pending...";
-                    statusBarPanel.label = "Validation pending, press Escape to cancel";
-                    break;
+				case "stale":
+					statusBarPanel.tooltipText = "HTML5 Validator: Validation results may be stale, click to validate";
+					break;
+				case "cancelled":
+					statusBarPanel.tooltipText = "HTML5 Validator: Auto-validation cancelled, click to validate";
+					break;
+				case "about-to-validate":
+					statusBarPanel.tooltipText = "HTML5 Validator: Validation pending...";
+					statusBarPanel.label = "Validation pending, press Escape to cancel";
+					break;
 				case "manual":
-                    statusBarPanel.tooltipText = "HTML5 Validator: Domain not in auto-validation list, click to validate";
+					statusBarPanel.tooltipText = "HTML5 Validator: Domain not in auto-validation list, click to validate";
 					break;
 				case "errorValidator":
 					statusBarPanel.label = "Validator error";
@@ -411,87 +411,87 @@ com.four56bereastreet.html5validator = (function()
 					break;
 				case "results":
 					statusBarPanel.src = "chrome://html5validator/skin/html5-ok.png";
-                    statusBarPanel.label = "";
+					statusBarPanel.label = "";
 					statusBarPanel.tooltipText = "HTML5 Validator: No errors. Click to view validation details";
 					break;
-                default:
-                    statusBarPanel.label = "internal error";
-                    break;
+				default:
+					statusBarPanel.label = "internal error";
+					break;
 			}
 		}
 	},
 
 	validateDoc__ = function(doc, html)
 	{
-        if (html.length === 0) {return;}
+		if (html.length === 0) {return;}
 		updateStatusBar(0, 0, "running");
 
 		var xhr = new XMLHttpRequest();
 		xhr.onload = function () {
-            // Turn the returned string into a JSON object
-            var response = (xhr.responseText.length ? JSON.parse(xhr.responseText) : false);
-            if (!response) {
-                // No valid JSON object returned
-                updateStatusBar(0, 0, "errorValidator");
-            }
-            else {
-                // Check how many errors and warnings were returned
-                var messages = response.messages.length,
-                    message,
-                    errors = 0, warnings = 0;
-                var filteredMessages = [];
-                var suppressedMessages = [];
-                for (var i = 0; i < messages; i++) {
-                    message = response.messages[i];
-                    if (message.type == "error")
-                    {
-                        if (preferences.ignoreXHTMLErrors) {
-                            // Do not count errors caused by an XHTML Doctype.
-                            // Not foolproof but matches XHTML 1.0 Strict/Transitional and 1.1 as long as no XML declaration is used.
-                            if ((message.message.match(/^Legacy doctype./i) && message.extract.match(/<!DOCTYPE html PUBLIC \"-\/\/W3C\/\/DTD XHTML 1.(1|0 Strict|0 Transitional)\/\/EN/i)) || message.message.match(/^Attribute “xml:lang” not allowed/i)) {
-                                suppressedMessages.push(message);
-                                continue;
-                            }
-                        }
-                        // upload is always utf-8, ignore spurious errors caused by this
-                        if (message.message.match(/Internal encoding declaration “.+?” disagrees with the actual encoding of the document/i)) {
-                            continue;
-                        }
-                        errors++;
-                        filteredMessages.push(message);
-                    }
-                    else if (message.type == "info") {
-                        if (message.subType == "warning") {
-                            if (preferences.allowAccessibilityFeatures) {
-                                // Do not count errors caused by removed accessibility features.
-                                // Currently allows the abbr, longdesc and scope attributes.
-                                if (message.message.match(/The “abbr” attribute on the “(td|th)” element is obsolete|The “longdesc” attribute on the “img” element is obsolete|The “scope” attribute on the “td” element is obsolete/i)) {
-                                    suppressedMessages.push(message);
-                                    continue;
-                                }
-                                // Currently allows the summary attribute.
-                                if (message.message.match(/The “summary” attribute is obsolete/i)) {
-                                    suppressedMessages.push(message);
-                                    continue;
-                                }
-                            }
-                            warnings++;
-                        }
-                        filteredMessages.push(message);
-                    }
-                }
-                vCache.storeResults(doc, {
-                    "parser": preferences.parser,
-                    "messages": filteredMessages,
-                    "suppressedMessages": suppressedMessages,
-                    "errors": errors,
-                    "warnings": warnings
-                });
-                if (doc === activeDocument) // asynchronous, may have changed
-                {
-                    updateStatusBar(errors, warnings, "results");
-                }
-            }
+			// Turn the returned string into a JSON object
+			var response = (xhr.responseText.length ? JSON.parse(xhr.responseText) : false);
+			if (!response) {
+				// No valid JSON object returned
+				updateStatusBar(0, 0, "errorValidator");
+			}
+			else {
+				// Check how many errors and warnings were returned
+				var messages = response.messages.length,
+					message,
+					errors = 0, warnings = 0;
+				var filteredMessages = [];
+				var suppressedMessages = [];
+				for (var i = 0; i < messages; i++) {
+					message = response.messages[i];
+					if (message.type == "error")
+					{
+						if (preferences.ignoreXHTMLErrors) {
+							// Do not count errors caused by an XHTML Doctype.
+							// Not foolproof but matches XHTML 1.0 Strict/Transitional and 1.1 as long as no XML declaration is used.
+							if ((message.message.match(/^Legacy doctype./i) && message.extract.match(/<!DOCTYPE html PUBLIC \"-\/\/W3C\/\/DTD XHTML 1.(1|0 Strict|0 Transitional)\/\/EN/i)) || message.message.match(/^Attribute “xml:lang” not allowed/i)) {
+								suppressedMessages.push(message);
+								continue;
+							}
+						}
+						// upload is always utf-8, ignore spurious errors caused by this
+						if (message.message.match(/Internal encoding declaration “.+?” disagrees with the actual encoding of the document/i)) {
+							continue;
+						}
+						errors++;
+						filteredMessages.push(message);
+					}
+					else if (message.type == "info") {
+						if (message.subType == "warning") {
+							if (preferences.allowAccessibilityFeatures) {
+								// Do not count errors caused by removed accessibility features.
+								// Currently allows the abbr, longdesc and scope attributes.
+								if (message.message.match(/The “abbr” attribute on the “(td|th)” element is obsolete|The “longdesc” attribute on the “img” element is obsolete|The “scope” attribute on the “td” element is obsolete/i)) {
+									suppressedMessages.push(message);
+									continue;
+								}
+								// Currently allows the summary attribute.
+								if (message.message.match(/The “summary” attribute is obsolete/i)) {
+									suppressedMessages.push(message);
+									continue;
+								}
+							}
+							warnings++;
+						}
+						filteredMessages.push(message);
+					}
+				}
+				vCache.storeResults(doc, {
+					"parser": preferences.parser,
+					"messages": filteredMessages,
+					"suppressedMessages": suppressedMessages,
+					"errors": errors,
+					"warnings": warnings
+				});
+				if (doc === activeDocument) // asynchronous, may have changed
+				{
+					updateStatusBar(errors, warnings, "results");
+				}
+			}
 		};
 
 		// If we couldn't validate the document (validator not running, network down, etc.)
@@ -500,20 +500,20 @@ com.four56bereastreet.html5validator = (function()
 		};
 
 		// Send document to validator and tell it to return results in JSON format
-        var parserOpt = preferences.parser.length ? "&parser=" + preferences.parser : '';
+		var parserOpt = preferences.parser.length ? "&parser=" + preferences.parser : '';
 		xhr.open("POST", preferences.validatorURL + "?out=json" + parserOpt, true);
 		xhr.setRequestHeader("Content-Type", "text/html;charset=UTF-8");
 		xhr.send(html);
-    },
+	},
 
-    validateDoc = function(doc, html)
-    {
-        try {
-            validateDoc__(doc, html);
-        }
-        catch (err){
-            updateStatusBar(0, 0, "errorValidator");
-        }
+	validateDoc = function(doc, html)
+	{
+		try {
+			validateDoc__(doc, html);
+		}
+		catch (err){
+			updateStatusBar(0, 0, "errorValidator");
+		}
 	},
 
 	statusBarPanelClick = function(event)
@@ -524,21 +524,21 @@ com.four56bereastreet.html5validator = (function()
 			var doc = getActiveDocument();
 			if (!doc) {
 				return;
-            }
+			}
 
-            // On first click there are no cached results - validate, on following clicks - show cached results
-            if (vCache.lookupResults(doc)) {
-                showValidationResults();
-            }
-            else {
-                validateDocHTML(window.content, true);
-            }
+			// On first click there are no cached results - validate, on following clicks - show cached results
+			if (vCache.lookupResults(doc)) {
+				showValidationResults();
+			}
+			else {
+				validateDocHTML(window.content, true);
+			}
 		}
 	},
 
 	// Display the cached validation results in a separate window.
-    g_resultWindow = null,
-    g_lastId = 0,
+	g_resultWindow = null,
+	g_lastId = 0,
 	showValidationResults = function()
 	{
 		var doc = getActiveDocument();
@@ -547,88 +547,88 @@ com.four56bereastreet.html5validator = (function()
 		}
 		log('showValidationResults() ' + doc.URL);
 
-        var isNewWindow = false;
-        if (!g_resultWindow || g_resultWindow.closed)
-        {
-            g_resultWindow = window.open('about:blank', 'html5validator');
-            isNewWindow = true;
-        }
-        // g_resultWindow.location = 'about:blank';
-        setTimeout(function() {
-            var generatedDocument = g_resultWindow.document;
+		var isNewWindow = false;
+		if (!g_resultWindow || g_resultWindow.closed)
+		{
+			g_resultWindow = window.open('about:blank', 'html5validator');
+			isNewWindow = true;
+		}
+		// g_resultWindow.location = 'about:blank';
+		setTimeout(function() {
+			var generatedDocument = g_resultWindow.document;
 
-            var docBody = generatedDocument.getElementsByTagName('body')[0],
-                docHead = generatedDocument.getElementsByTagName('head')[0];
+			var docBody = generatedDocument.getElementsByTagName('body')[0],
+				docHead = generatedDocument.getElementsByTagName('head')[0];
 
-            docBody.id = 'html5validator-results';
-            var parserStr = " [parser:" + (vCache.lookupResults(doc).parser.length ? vCache.lookupResults(doc).parser : 'inferred') + "]";
-            var docTitle = 'Validation results for ' + doc.URL + parserStr;
-            var errorsAndWarnings = vCache.lookupResults(doc).errors + ' errors and ' + vCache.lookupResults(doc).warnings + ' warnings';
-            if (isNewWindow)
-            {
-                generatedDocument.title = 'Validation results';
+			docBody.id = 'html5validator-results';
+			var parserStr = " [parser:" + (vCache.lookupResults(doc).parser.length ? vCache.lookupResults(doc).parser : 'inferred') + "]";
+			var docTitle = 'Validation results for ' + doc.URL + parserStr;
+			var errorsAndWarnings = vCache.lookupResults(doc).errors + ' errors and ' + vCache.lookupResults(doc).warnings + ' warnings';
+			if (isNewWindow)
+			{
+				generatedDocument.title = 'Validation results';
 
-                // Insert styling using CSS file from the extension
-                var linkCSS = generatedDocument.createElement('link');
-                linkCSS.href = 'chrome://html5validator/skin/results.css';
-                linkCSS.rel = 'stylesheet';
-                linkCSS.type = 'text/css';
-                docHead.appendChild(linkCSS);
-            }
-            /* Create the HTML content of the body – a heading and the list of messages with some elements and class names to enable styling */
+				// Insert styling using CSS file from the extension
+				var linkCSS = generatedDocument.createElement('link');
+				linkCSS.href = 'chrome://html5validator/skin/results.css';
+				linkCSS.rel = 'stylesheet';
+				linkCSS.type = 'text/css';
+				docHead.appendChild(linkCSS);
+			}
+			/* Create the HTML content of the body – a heading and the list of messages with some elements and class names to enable styling */
 
-            // Only one section, the last one added, can have this class
-            var els = generatedDocument.getElementsByClassName('currentFocus');
-            if (els && els.length) {els[0].removeAttribute('class');}
+			// Only one section, the last one added, can have this class
+			var els = generatedDocument.getElementsByClassName('currentFocus');
+			if (els && els.length) {els[0].removeAttribute('class');}
 
-            var h1 = docBody.appendChild(generatedDocument.createElement('h1'));
-            h1.className = 'currentFocus';
-            h1.innerHTML = docTitle;
-            h1.id = 'section' + g_lastId;
-            ++g_lastId;
+			var h1 = docBody.appendChild(generatedDocument.createElement('h1'));
+			h1.className = 'currentFocus';
+			h1.innerHTML = docTitle;
+			h1.id = 'section' + g_lastId;
+			++g_lastId;
 
-            function generateErrorList(messages)
-            {
-                var errorList = generatedDocument.createElement('ol');
-                var message, li, ext, st, len;
-                for (var i = 0, l = messages.length; i < l; i++) {
-                    message = messages[i];
-                    li = errorList.appendChild(generatedDocument.createElement('li'));
-                    li.className = message['type'] + (message['subType'] ? ' ' + message['subType'] : '');
-                    li.innerHTML = '<p><strong class="type">' + (message['subType'] ? ' ' + message['subType'] : message['type']) + ':</strong> ' + encodeHTML(message['message']) + '</p>';
-                    if (message['lastLine']) {
-                        li.innerHTML += '<p class="location">At line <span class="last-line">' + message['lastLine'] + '</span>' + (message['firstColumn'] ? ', column <span class="first-col">' + message['firstColumn'] : '') + '</span></p>';
-                    }
-                    if (message['extract']) {
-                        ext = message['extract'];
-                        // If highlight positions are found, insert wrap the highlighted code
-                        if ((message['hiliteStart'] >= 0) && message['hiliteLength'])
-                        {
-                            st = message['hiliteStart'];
-                            len = message['hiliteLength'];
-                            ext = ext.substr(0, st) + '~^~' + ext.substr(st, len) + '~$~' + ext.substr(st + len);
-                            ext = encodeHTML(ext).replace('~^~', '<strong class="highlight">').replace('~$~', '</strong>');
-                        }
-                        else {
-                            ext = encodeHTML(ext);
-                        }
-                        li.innerHTML += '<pre class="extract"><code>' + ext + '</code></pre>';
-                    }
-                }
-                docBody.appendChild(errorList);
-            } // function
-            var h2 = docBody.appendChild(generatedDocument.createElement('h2'));
-            h2.innerHTML = errorsAndWarnings;
-            generateErrorList(vCache.lookupResults(doc).messages);
-            if (vCache.lookupResults(doc).suppressedMessages.length)
-            {
-                h2 = docBody.appendChild(generatedDocument.createElement('h2'));
-                h2.innerHTML = "Errors and warnings filtered out due to preference settings";
-                generateErrorList(vCache.lookupResults(doc).suppressedMessages);
-            }
-            g_resultWindow.focus();
-            g_resultWindow.location = "about:blank#" + h1.id;
-        }, 1);
+			function generateErrorList(messages)
+			{
+				var errorList = generatedDocument.createElement('ol');
+				var message, li, ext, st, len;
+				for (var i = 0, l = messages.length; i < l; i++) {
+					message = messages[i];
+					li = errorList.appendChild(generatedDocument.createElement('li'));
+					li.className = message['type'] + (message['subType'] ? ' ' + message['subType'] : '');
+					li.innerHTML = '<p><strong class="type">' + (message['subType'] ? ' ' + message['subType'] : message['type']) + ':</strong> ' + encodeHTML(message['message']) + '</p>';
+					if (message['lastLine']) {
+						li.innerHTML += '<p class="location">At line <span class="last-line">' + message['lastLine'] + '</span>' + (message['firstColumn'] ? ', column <span class="first-col">' + message['firstColumn'] : '') + '</span></p>';
+					}
+					if (message['extract']) {
+						ext = message['extract'];
+						// If highlight positions are found, insert wrap the highlighted code
+						if ((message['hiliteStart'] >= 0) && message['hiliteLength'])
+						{
+							st = message['hiliteStart'];
+							len = message['hiliteLength'];
+							ext = ext.substr(0, st) + '~^~' + ext.substr(st, len) + '~$~' + ext.substr(st + len);
+							ext = encodeHTML(ext).replace('~^~', '<strong class="highlight">').replace('~$~', '</strong>');
+						}
+						else {
+							ext = encodeHTML(ext);
+						}
+						li.innerHTML += '<pre class="extract"><code>' + ext + '</code></pre>';
+					}
+				}
+				docBody.appendChild(errorList);
+			} // function
+			var h2 = docBody.appendChild(generatedDocument.createElement('h2'));
+			h2.innerHTML = errorsAndWarnings;
+			generateErrorList(vCache.lookupResults(doc).messages);
+			if (vCache.lookupResults(doc).suppressedMessages.length)
+			{
+				h2 = docBody.appendChild(generatedDocument.createElement('h2'));
+				h2.innerHTML = "Errors and warnings filtered out due to preference settings";
+				generateErrorList(vCache.lookupResults(doc).suppressedMessages);
+			}
+			g_resultWindow.focus();
+			g_resultWindow.location = "about:blank#" + h1.id;
+		}, 1);
 	},
 	encodeHTML = function(html) {
 		return html.replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
