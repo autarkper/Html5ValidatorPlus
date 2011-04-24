@@ -598,6 +598,8 @@ com.four56bereastreet.html5validator = (function()
 			h1.innerHTML = docTitle;
 			h1.id = 'section' + g_lastId;
 			++g_lastId;
+			var dateP = docBody.appendChild(generatedDocument.createElement('p'));
+			dateP.textContent = "Timestamp: " + (new Date()).toLocaleString();
 
 			function generateErrorList(messages)
 			{
