@@ -547,6 +547,29 @@ com.four56bereastreet.html5validator = (function()
 		}
 	},
 
+	findWindowWithURL = function(url)
+	{ // Adapted from: https://developer.mozilla.org/en/Code_snippets/Tabbed_browser
+		var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+			.getService(Components.interfaces.nsIWindowMediator);
+		var browserEnumerator = wm.getEnumerator("navigator:browser");
+
+		// Check each browser instance for our URL
+		while (browserEnumerator.hasMoreElements()) {
+			var browserWin = browserEnumerator.getNext();
+			var tabbrowser = browserWin.gBrowser;
+
+			// Check each tab of this browser instance
+			var numTabs = tabbrowser.browsers.length;
+			for (var index = 0; index < numTabs; index++) {
+				var currentBrowser = tabbrowser.getBrowserAtIndex(index);
+				if (url == currentBrowser.currentURI.spec) {
+					return currentBrowser.contentWindow;
+				}
+			}
+		}
+		return null;
+	},
+
 	// Display the cached validation results in a separate window.
 	g_resultWindow = null,
 	g_lastId = 0,
@@ -561,7 +584,7 @@ com.four56bereastreet.html5validator = (function()
 
 		if (!g_resultWindow || g_resultWindow.closed)
 		{
-			g_resultWindow = window.open(RESULTWINDOW, 'html5validator');
+			g_resultWindow = findWindowWithURL(RESULTWINDOW) || window.open(RESULTWINDOW, 'html5validator');
 		}
 		/* window.open returns before the new window is fully initialized, so we have to wait for it to
 		 initialize. "window.addEventListener('load', ...)" does not seem to work, so a simple timeout
@@ -587,6 +610,9 @@ com.four56bereastreet.html5validator = (function()
 			// Only one section, the last one added, can have this class
 			var els = generatedDocument.getElementsByClassName('currentFocus');
 			if (els.length) {els[0].removeAttribute('class');}
+
+			var elNoResult = generatedDocument.getElementById('no-results');
+			if (elNoResult) {elNoResult.parentNode.removeChild(elNoResult);}
 
 			var fragment = generatedDocument.createDocumentFragment();
 
