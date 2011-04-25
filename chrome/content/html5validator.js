@@ -18,7 +18,7 @@ com.four56bereastreet.html5validator = (function()
 					return (r1.length ? r1.toLowerCase() : 'http://') + r3.toLowerCase() + '/';
 				});
 				domains[i] = domains[i].replace(/\s+/g, '');
-				if (domains[i].length) {filtered_domains.push(domains[i])};
+				if (domains[i].length) {filtered_domains.push(domains[i]);};
 			}
 
 			preferences = {
@@ -119,9 +119,18 @@ com.four56bereastreet.html5validator = (function()
 			var d = preferences.domainsWhitelist[i];
 			if (d.indexOf('*') > 0) {
 				// d contains a wildcard, so change it to a regexp
-				d = new RegExp(d.replace(/\*+/g, '(.*?)'));
-				if (url.match(d)) {
-					return true;
+				d = new RegExp(d.replace(/([\.\+\?\(\)\[\]\|\!\\])+/g, function(r0, r1){
+						return "\\" + r1;
+					}).replace(/\*+/g, '(.*?)')
+				);
+				try // in case some funny character creeps through...
+				{
+					if (url.match(d)) {
+						return true;
+					}
+				}
+				catch (err) {
+					return false;
 				}
 			} else if (d == url.replace('://www.', '://').substr(0, d.length)) {
 				return true;
