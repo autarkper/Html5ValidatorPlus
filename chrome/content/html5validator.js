@@ -608,7 +608,6 @@ com.four56bereastreet.html5validator = (function()
 		if (!doc || !vCache.lookupResults(doc)) {
 			return;
 		}
-		log('showValidationResults() ' + doc.URL);
 
 		if (!g_resultWindow || g_resultWindow.closed)
 		{

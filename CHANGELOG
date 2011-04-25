@@ -13,8 +13,8 @@ CHANGELOG
 * 1.5.3 - 2011-02-24 - FIX: Changed element used for code highlighting, added check for undefined column numbers, added body ID to results tab
 * 1.5.4 - 2011-02-25 - NEW: Allow wildcards in domain whitelist
 * 1.5.5 - 2011-02-25 - FIX: Improved status info, issue #3
+* 1.5.6 - 2011-04-24 - FIX: Changed from evil eval to JSON.parse for parsing of validator response
 * 2.0.0 - 2011-04-23 - Various changes and fixes:
-** FIX: use JSON.parse instead of eval (more secure)
 ** FIX: broader exception handling to catch more errors
 ** FIX: URI fragments ("#") are ignored when determining whether to validate the current document
 ** FIX: if the current location changes while a validation is in progress, the results will still end up connected to the validated document
