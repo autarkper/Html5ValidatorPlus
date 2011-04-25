@@ -20,11 +20,11 @@ CHANGELOG
 ** FIX: if the current location changes while a validation is in progress, the results will still end up connected to the validated document
 ** FIX: do not offer to validate about:blank and similar pages
 ** FIX: do not auto-validate if toolbar is collapsed
+** FIX: strip empty or blank lines from domain whitelist
 ** NEW: validation results are cached across different tabs
 ** NEW: bump forward version compatibility
 ** NEW: display validation details in a separate window
-** NEW: domain whitelist now determines which domains to auto-validate, does no longer restrict click-to-validate
-** NEW: empty domain whitelist no longer interpreted as a wildcard, use "*" to enable global auto-validation (not recommended)
+** NEW: empty domain whitelist no longer interpreted as a wildcard for auto-validation, use "*" to enable global auto-validation (not recommended)
 ** NEW: pending auto-validation can be cancelled by pressing Escape
 ** NEW: pending auto-validation is automatically cancelled if the current location changes (tab switch, link followed, etc.)
 ** NEW: preference to control the maximum size of a document to auto-validate

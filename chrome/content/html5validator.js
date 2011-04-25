@@ -8,7 +8,8 @@ com.four56bereastreet.html5validator = (function()
 		{
 			var prefBranch = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.html5validator."),
 				whitelist = prefBranch.getCharPref("domainsWhitelist"),
-				domains = (whitelist.length ? whitelist.split('\n') : []);
+				domains = (whitelist.length ? whitelist.split('\n') : []),
+				filtered_domains = [];
 
 			// fix domains, accepts: domain OR http://domain OR https://domain
 			for (var i = 0; i < domains.length; i++)
@@ -16,11 +17,14 @@ com.four56bereastreet.html5validator = (function()
 				domains[i] = domains[i].replace(/(https?:\/\/)?(www\.)?([^\s\/]+)\/?/i, function(r, r1, r2, r3){
 					return (r1.length ? r1.toLowerCase() : 'http://') + r3.toLowerCase() + '/';
 				});
+				domains[i] = domains[i].replace(/\s+/g, '');
+				if (domains[i].length) {filtered_domains.push(domains[i])};
 			}
 
 			preferences = {
 				validatorURL: prefBranch.getCharPref("validatorURL"),
-				domainsWhitelist: domains,
+				domainsWhitelist: filtered_domains,
+				restrictToWhitelist: prefBranch.getBoolPref("restrictToWhitelist"),
 				useTrigger: prefBranch.getBoolPref("useTrigger"),
 				debug: prefBranch.getBoolPref("debug"),
 				ignoreXHTMLErrors: prefBranch.getBoolPref("ignoreXHTMLErrors"),
@@ -106,6 +110,10 @@ com.four56bereastreet.html5validator = (function()
 			return false;
 		}
 
+		// if no domains whitelisted, then validate all URLs
+		if (!preferences.domainsWhitelist.length) {
+			return preferences.useTrigger; // but only if auto-validation is not in effect
+		}
 		for (var i = 0; i < preferences.domainsWhitelist.length; i++)
 		{
 			var d = preferences.domainsWhitelist[i];
@@ -284,7 +292,7 @@ com.four56bereastreet.html5validator = (function()
 		}
 		else
 		{
-			updateStatusBar(0, 0, 'manual');
+			updateStatusBar(0, 0, preferences.restrictToWhitelist ? 'restricted' : 'manual');
 			return;
 		}
 	},
@@ -359,6 +367,7 @@ com.four56bereastreet.html5validator = (function()
 		return s2;
 	},
 
+	g_clickEnabled = true,
 	updateStatusBar = function(errors, warnings, status)
 	{
 		if (errors || warnings) {
@@ -382,9 +391,11 @@ com.four56bereastreet.html5validator = (function()
 			statusBarPanel.src = "chrome://html5validator/skin/html5-error-red.png";
 			statusBarPanel.className = "statusbarpanel-iconic-text errors";
 			statusBarPanel.tooltipText = "HTML5 Validator: Click to view validation details";
+			g_clickEnabled = true;
 		}
 		else
 		{
+			g_clickEnabled = true;
 			statusBarPanel.src = "chrome://html5validator/skin/html5-dimmed.png";
 			statusBarPanel.className = "statusbarpanel-iconic-text";
 			statusBarPanel.label = "Click to validate";
@@ -392,10 +403,12 @@ com.four56bereastreet.html5validator = (function()
 				case "running":
 					statusBarPanel.label = "Validating...";
 					statusBarPanel.tooltipText = "HTML5 Validator: Document currently validating";
+					g_clickEnabled = false;
 					break;
 				case "reset":
 					statusBarPanel.label = "";
 					statusBarPanel.tooltipText = "HTML5 Validator: Idle";
+					g_clickEnabled = false;
 					break;
 				case "use-trigger":
 					statusBarPanel.tooltipText = "HTML5 Validator: Auto-validation off, click to validate";
@@ -414,7 +427,12 @@ com.four56bereastreet.html5validator = (function()
 					statusBarPanel.label = "Validation pending, press Escape to cancel";
 					break;
 				case "manual":
-					statusBarPanel.tooltipText = "HTML5 Validator: Domain not in auto-validation list, click to validate";
+					statusBarPanel.tooltipText = "HTML5 Validator: Domain not in whitelist, click to validate";
+					break;
+				case "restricted":
+					statusBarPanel.label = "";
+					statusBarPanel.tooltipText = "HTML5 Validator: Domain not in whitelist, validation restricted";
+					g_clickEnabled = false;
 					break;
 				case "errorValidator":
 					statusBarPanel.label = "Validator error";
@@ -542,7 +560,7 @@ com.four56bereastreet.html5validator = (function()
 			if (vCache.lookupResults(doc)) {
 				showValidationResults();
 			}
-			else {
+			else if (g_clickEnabled) {
 				validateDocHTML(window.content, true);
 			}
 		}

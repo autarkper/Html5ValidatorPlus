@@ -12,6 +12,7 @@
 		<preferences>
 			<preference id="pref-validatorURL" name="extensions.html5validator.validatorURL" type="string"/>
 			<preference id="pref-domainsWhitelist" name="extensions.html5validator.domainsWhitelist" type="string"/>
+			<preference id="pref-restrictToWhitelist" name="extensions.html5validator.restrictToWhitelist" type="bool"/>
 			<preference id="pref-useTrigger" name="extensions.html5validator.useTrigger" type="bool"/>
 			<preference id="pref-ignoreXHTMLErrors" name="extensions.html5validator.ignoreXHTMLErrors" type="bool"/>
 			<preference id="pref-allowAccessibilityFeatures" name="extensions.html5validator.allowAccessibilityFeatures" type="bool"/>
@@ -30,23 +31,9 @@
 					<label accesskey="U" control="validatorURL">Validator URL</label>
 					<textbox id="validatorURL" preference="pref-validatorURL"/>
 				</row>
-			</rows>
-		</grid>
-		<groupbox>
-			<caption label="Interface"/>
-			<checkbox label="Validate only on request (on left-click), disable automatic validation" id="useTrigger" preference="pref-useTrigger"/>
-		</groupbox>
-		<groupbox id="autoValidation">
-			<caption label="Automatic validation"/>
-			<grid>
-				<columns>
-					<column flex="1"/>
-					<column flex="2"/>
-				</columns>
-				<rows>
 					<row>
 						<vbox>
-							<label accesskey="D" control="domainsWhitelist">Domains to auto-validate</label>
+							<label accesskey="D" control="domainsWhitelist">Domain whitelist</label>
 							<spacer flex="1"/>
 							<vbox>
 								<description>Enter one domain per line</description>
@@ -57,6 +44,18 @@
 						</vbox>
 						<textbox id="domainsWhitelist" preference="pref-domainsWhitelist" multiline="true" cols="30" rows="10" newlines="stripsurroundingwhitespace" wrap="off"/>
 					</row>
+			</rows>
+		</grid>
+			<checkbox label="Restrict validation to whitelisted domains" id="restrictToWhitelist" preference="pref-restrictToWhitelist"/>
+			<checkbox label="Validate only on request (on left-click), disable automatic validation" id="useTrigger" preference="pref-useTrigger"/>
+		<groupbox id="autoValidation">
+			<caption label="Automatic validation"/>
+			<grid>
+				<columns>
+					<column flex="1"/>
+					<column flex="2"/>
+				</columns>
+				<rows>
 					<row>
 						<label accesskey="M" control="maxAutoSize">Max size (kB) to auto-validate</label>
 						<textbox id="maxAutoSize" preference="pref-maxAutoSize"/>
