@@ -119,7 +119,7 @@ com.four56bereastreet.html5validator = (function()
 			var d = preferences.domainsWhitelist[i];
 			if (d.indexOf('*') > 0) {
 				// d contains a wildcard, so change it to a regexp
-				d = new RegExp(d.replace('*', '(.*?)'), "i");
+				d = new RegExp(d.replace(/\*+/g, '(.*?)'));
 				if (url.match(d)) {
 					return true;
 				}
