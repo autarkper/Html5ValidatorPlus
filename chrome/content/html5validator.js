@@ -97,13 +97,12 @@ com.four56bereastreet.html5validator = (function()
 			}
 		}
 	};
-
-
 	var statusBarPanel, activeDocument,
+	g_invalidUrlRe = /^(about|chrome):/,
 	
 	isWhitelistDomain = function(url)
 	{
-		if (!url.length || url.match(/^about:/) || url == preferences.validatorURL) {
+		if (!url.length || url.match(g_invalidUrlRe) || url == preferences.validatorURL) {
 			return false;
 		}
 
@@ -190,7 +189,7 @@ com.four56bereastreet.html5validator = (function()
 		if (!doc) {return;}
 
 		var url = doc.URL || '';
-		if (!url.length || url.match(/^about:/))
+		if (!url.length || url.match(g_invalidUrlRe))
 		{
 			updateStatusBar(0, 0, 'reset');
 			return;
@@ -551,6 +550,7 @@ com.four56bereastreet.html5validator = (function()
 	// Display the cached validation results in a separate window.
 	g_resultWindow = null,
 	g_lastId = 0,
+	RESULTWINDOW = 'chrome://html5validator/content/resultswindow.html',
 	showValidationResults = function()
 	{
 		var doc = getActiveDocument();
@@ -559,46 +559,43 @@ com.four56bereastreet.html5validator = (function()
 		}
 		log('showValidationResults() ' + doc.URL);
 
-		var isNewWindow = false;
 		if (!g_resultWindow || g_resultWindow.closed)
 		{
-			g_resultWindow = window.open('about:blank', 'html5validator');
-			isNewWindow = true;
+			g_resultWindow = window.open(RESULTWINDOW, 'html5validator');
 		}
-		// g_resultWindow.location = 'about:blank';
-		setTimeout(function() {
+		/* window.open returns before the new window is fully initialized, so we have to wait for it to
+		 initialize. "window.addEventListener('load', ...)" does not seem to work, so a simple timeout
+		 loop is used instead.
+		 */
+		var timeoutMs = 50;
+		var populateResultWindow = function()
+		{
 			var generatedDocument = g_resultWindow.document;
 
-			var docBody = generatedDocument.getElementsByTagName('body')[0],
-				docHead = generatedDocument.getElementsByTagName('head')[0];
+			var docBody = generatedDocument.getElementsByTagName('body')[0];
+			if (!docBody) {
+				timeoutMs = timeoutMs * 2; // increasingly less aggressive timeout
+				setTimeout(populateResultWindow, timeoutMs);
+				return;
+			}
 
-			docBody.id = 'html5validator-results';
 			var parserStr = " [parser:" + (vCache.lookupResults(doc).parser.length ? vCache.lookupResults(doc).parser : 'inferred') + "]";
 			var docTitle = 'Validation results for ' + doc.URL + parserStr;
 			var errorsAndWarnings = vCache.lookupResults(doc).errors + ' errors and ' + vCache.lookupResults(doc).warnings + ' warnings';
-			if (isNewWindow)
-			{
-				generatedDocument.title = 'Validation results';
-
-				// Insert styling using CSS file from the extension
-				var linkCSS = generatedDocument.createElement('link');
-				linkCSS.href = 'chrome://html5validator/skin/results.css';
-				linkCSS.rel = 'stylesheet';
-				linkCSS.type = 'text/css';
-				docHead.appendChild(linkCSS);
-			}
 			/* Create the HTML content of the body – a heading and the list of messages with some elements and class names to enable styling */
 
 			// Only one section, the last one added, can have this class
 			var els = generatedDocument.getElementsByClassName('currentFocus');
-			if (els && els.length) {els[0].removeAttribute('class');}
+			if (els.length) {els[0].removeAttribute('class');}
 
-			var h1 = docBody.appendChild(generatedDocument.createElement('h1'));
+			var fragment = generatedDocument.createDocumentFragment();
+
+			var h1 = fragment.appendChild(generatedDocument.createElement('h1'));
 			h1.className = 'currentFocus';
 			h1.innerHTML = docTitle;
 			h1.id = 'section' + g_lastId;
 			++g_lastId;
-			var dateP = docBody.appendChild(generatedDocument.createElement('p'));
+			var dateP = fragment.appendChild(generatedDocument.createElement('p'));
 			dateP.textContent = "Timestamp: " + (new Date()).toLocaleString();
 
 			function generateErrorList(messages)
@@ -629,20 +626,22 @@ com.four56bereastreet.html5validator = (function()
 						li.innerHTML += '<pre class="extract"><code>' + ext + '</code></pre>';
 					}
 				}
-				docBody.appendChild(errorList);
+				fragment.appendChild(errorList);
 			} // function
-			var h2 = docBody.appendChild(generatedDocument.createElement('h2'));
+			var h2 = fragment.appendChild(generatedDocument.createElement('h2'));
 			h2.innerHTML = errorsAndWarnings;
 			generateErrorList(vCache.lookupResults(doc).messages);
 			if (vCache.lookupResults(doc).suppressedMessages.length)
 			{
-				h2 = docBody.appendChild(generatedDocument.createElement('h2'));
+				h2 = fragment.appendChild(generatedDocument.createElement('h2'));
 				h2.innerHTML = "Errors and warnings filtered out due to preference settings";
 				generateErrorList(vCache.lookupResults(doc).suppressedMessages);
 			}
+			docBody.insertBefore(fragment, docBody.firstChild);
 			g_resultWindow.focus();
-			g_resultWindow.location = "about:blank#" + h1.id;
-		}, 1);
+			g_resultWindow.scrollTo(0,0);
+		};
+		setTimeout(populateResultWindow, timeoutMs);
 	},
 	encodeHTML = function(html) {
 		return html.replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
