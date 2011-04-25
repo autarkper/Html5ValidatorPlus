@@ -492,6 +492,7 @@ com.four56bereastreet.html5validator = (function()
 					}
 				}
 				vCache.storeResults(doc, {
+					"timestamp": new Date(),
 					"parser": preferences.parser,
 					"messages": filteredMessages,
 					"suppressedMessages": suppressedMessages,
@@ -622,7 +623,9 @@ com.four56bereastreet.html5validator = (function()
 			h1.id = 'section' + g_lastId;
 			++g_lastId;
 			var dateP = fragment.appendChild(generatedDocument.createElement('p'));
-			dateP.textContent = "Timestamp: " + (new Date()).toLocaleString();
+			dateP.textContent = "Display timestamp: " + (new Date()).toLocaleString();
+			dateP = fragment.appendChild(generatedDocument.createElement('p'));
+			dateP.textContent = "Validation timestamp: " + vCache.lookupResults(doc).timestamp.toLocaleString();
 
 			function generateErrorList(messages)
 			{
