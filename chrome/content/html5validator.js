@@ -45,14 +45,14 @@ com.four56bereastreet.html5validator = (function()
 				this._branch.QueryInterface(Components.interfaces.nsIPrefBranch2);
 				this._branch.addObserver("", this, false);
 			},
-			g_timeoutHandle: null,
+			timeoutHandle: null,
 			observe: function(aSubject, aTopic, aData)
 			{
 				if (aTopic != "nsPref:changed") {
 					return;
 				}
-				if (this.g_timeoutHandle) {window.clearTimeout(this.g_timeoutHandle);}
-				this.g_timeoutHandle = window.setTimeout(function() {
+				if (this.timeoutHandle) {window.clearTimeout(this.timeoutHandle);}
+				this.timeoutHandle = window.setTimeout(function() {
 					loadPreferences();
 					vCache.resetResults();
 					validateDocHTML(window.content, false);
