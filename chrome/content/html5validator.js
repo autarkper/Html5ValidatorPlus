@@ -1,5 +1,6 @@
-if(typeof(com) === "undefined") {var com={};}
-if(!com.four56bereastreet) {com.four56bereastreet={};}
+/* namespacing technique adapted from http://blogger.ziesemer.com/2007/10/respecting-javascript-global-namespace.html */
+if (typeof(window.com) === "undefined") {var com={};}
+if (typeof(com.four56bereastreet) === "undefined") {com.four56bereastreet={};}
 
 com.four56bereastreet.html5validator = (function()
 {
