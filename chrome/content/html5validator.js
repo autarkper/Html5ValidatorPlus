@@ -19,7 +19,7 @@ com.four56bereastreet.html5validator = (function()
 					return (r1.length ? r1.toLowerCase() : 'http://') + r3.toLowerCase() + '/';
 				});
 				domains[i] = domains[i].replace(/\s+/g, '');
-				if (domains[i].length) {filtered_domains.push(domains[i]);};
+				if (domains[i].length) {filtered_domains.push(domains[i]);}
 			}
 
 			preferences = {
@@ -45,14 +45,18 @@ com.four56bereastreet.html5validator = (function()
 				this._branch.QueryInterface(Components.interfaces.nsIPrefBranch2);
 				this._branch.addObserver("", this, false);
 			},
+			g_timeoutHandle: null,
 			observe: function(aSubject, aTopic, aData)
 			{
 				if (aTopic != "nsPref:changed") {
 					return;
 				}
-				loadPreferences();
-				vCache.resetResults();
-				validateDocHTML(window.content, false);
+				if (this.g_timeoutHandle) {window.clearTimeout(this.g_timeoutHandle);}
+				this.g_timeoutHandle = window.setTimeout(function() {
+					loadPreferences();
+					vCache.resetResults();
+					validateDocHTML(window.content, false);
+				}, 500); // don't be overly reactive to preference changes, let user correct typos, etc.
 			}
 		},
 
