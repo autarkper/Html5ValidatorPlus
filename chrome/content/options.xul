@@ -58,11 +58,11 @@
 				<rows>
 					<row>
 						<label accesskey="M" control="maxAutoSize">Max size (kB) to auto-validate</label>
-						<textbox id="maxAutoSize" preference="pref-maxAutoSize"/>
+						<textbox type="number" min="0" id="maxAutoSize" preference="pref-maxAutoSize"/>
 					</row>
 					<row>
 						<label control="autoValidateWaitSeconds">Seconds to wait before auto-validation</label>
-						<textbox id="autoValidateWaitSeconds" preference="pref-autoValidateWaitSeconds"/>
+						<textbox type="number" min="0" id="autoValidateWaitSeconds" preference="pref-autoValidateWaitSeconds"/>
 					</row>
 				</rows>
 			</grid>
