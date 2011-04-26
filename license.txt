@@ -448,7 +448,9 @@ EXHIBIT A -Mozilla Public License.
 
 	The Initial Developer of the Original Code is Roger Johansson, http://456bereastreet.com/
 
-	Contributor(s): Valentin Agachi, http://agachi.name/
+	Contributors: 
+        Valentin Agachi, http://agachi.name/
+        Per Ångström, http://www.autark.se/
 
 
 	The Original Code also incorporates parts of code from Multiple Licensed source files, which contain their own license terms compatible with Mozilla Public License Version 1.1:
