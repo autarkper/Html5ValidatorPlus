@@ -85,26 +85,21 @@ four56bereastreet.html5validator = (function()
 			validateDocHTML(window.content, false);
 		},
 
-		onStateChange: function(aWebProgress, aRequest, aFlag, aStatus){},
+		onStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus){
+		/* See: https://developer.mozilla.org/en/XUL_School/Intercepting_Page_Loads */
+			if ((aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_STOP) &&
+				(aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW))
+			{
+				if (aWebProgress.DOMWindow === aWebProgress.DOMWindow.top) {
+					validateDocHTML(window.content, false);
+				}
+			}
+		},
 		onProgressChange: function(aWebProgress, aRequest, curSelf, maxSelf, curTot, maxTot){},
 		onStatusChange: function(aWebProgress, aRequest, aStatus, aMessage){},
 		onSecurityChange: function(aWebProgress, aRequest, aState){}
 	};
 
-
-	var html5validatorObserver =
-	{
-		busy: false,
-		observe: function(subject, topic, data) 
-		{
-			if (!this.busy)
-			{
-				this.busy = true;
-				validateDocHTML(window.content, false);
-				this.busy = false;
-			}
-		}
-	};
 	var statusBarPanel, activeDocument,
 	g_invalidUrlRe = /^(about|chrome):/,
 	
@@ -714,11 +709,7 @@ four56bereastreet.html5validator = (function()
 		{
 			loadPreferences();
 
-			gBrowser.addProgressListener(html5validatorListener);
-
-			var oObsService = Components.classes["@mozilla.org/observer-service;1"].getService();
-			var oObsInterface = oObsService.QueryInterface(Components.interfaces.nsIObserverService);
-			oObsInterface.addObserver(html5validatorObserver, "EndDocumentLoad", false);
+			gBrowser.addProgressListener(html5validatorListener, Components.interfaces.nsIWebProgress.NOTIFY_LOCATION | Components.interfaces.nsIWebProgress.NOTIFY_STATE_WINDOW);
 
 			statusBarPanel = document.getElementById('html5validator-status-bar');
 			statusBarPanel.addEventListener("click", statusBarPanelClick, false);
