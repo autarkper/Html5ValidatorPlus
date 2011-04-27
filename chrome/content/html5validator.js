@@ -82,6 +82,7 @@ four56bereastreet.html5validator = (function()
 		onLocationChange: function(aProgress, aRequest, aURI)
 		{
 			updateStatusBar(0, 0, "reset");
+			log("LocChange: " + window.content.document.URL);
 			validateDocHTML(window.content, false);
 		},
 
@@ -89,11 +90,13 @@ four56bereastreet.html5validator = (function()
 		/* See: https://developer.mozilla.org/en/XUL_School/Intercepting_Page_Loads */
 			if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW)
 			{
+				if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_RESTORING) {
+					return;
+				}
 				if (aWebProgress.DOMWindow === aWebProgress.DOMWindow.top) {
-					if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_START) {
-						if (activeDocument) {vCache.invalidate(activeDocument);}
-					}
-					else if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_STOP) {
+					if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_STOP) {
+						log("State STOP: " + window.content.document.URL);
+						vCache.invalidate(window.content.document);
 						validateDocHTML(window.content, false);
 					}
 				}
@@ -207,7 +210,6 @@ four56bereastreet.html5validator = (function()
 	validateDocHTML__ = function(frame, triggered)
 	{
 		if (g_cleanup) {g_cleanup();}
-		if (isLoading()) {return;}
 
 		var doc = frame.document;
 		activeDocument = doc;
@@ -719,7 +721,7 @@ four56bereastreet.html5validator = (function()
 		{
 			loadPreferences();
 
-			gBrowser.addProgressListener(html5validatorListener, Components.interfaces.nsIWebProgress.NOTIFY_LOCATION | Components.interfaces.nsIWebProgress.NOTIFY_STATE_WINDOW);
+			gBrowser.addProgressListener(html5validatorListener);
 
 			statusBarPanel = document.getElementById('html5validator-status-bar');
 			statusBarPanel.addEventListener("click", statusBarPanelClick, false);
