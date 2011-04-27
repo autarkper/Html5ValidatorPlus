@@ -450,6 +450,10 @@ four56bereastreet.html5validator = (function()
 					statusBarPanel.label = "Validator error";
 					statusBarPanel.tooltipText = "HTML5 Validator: Could not contact the validator";
 					break;
+				case "internalError":
+					statusBarPanel.label = "Internal Error";
+					statusBarPanel.tooltipText = "HTML5 Validator: Some internal error occurred";
+					break;
 				case "results":
 					statusBarPanel.src = "chrome://html5validator/skin/html5-ok.png";
 					statusBarPanel.label = "";
@@ -554,7 +558,7 @@ four56bereastreet.html5validator = (function()
 			validateDoc__(doc, html);
 		}
 		catch (err){
-			updateStatusBar(0, 0, "errorValidator");
+			updateStatusBar(0, 0, "internalError");
 		}
 	},
 
