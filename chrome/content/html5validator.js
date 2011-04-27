@@ -87,11 +87,15 @@ four56bereastreet.html5validator = (function()
 
 		onStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus){
 		/* See: https://developer.mozilla.org/en/XUL_School/Intercepting_Page_Loads */
-			if ((aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_STOP) &&
-				(aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW))
+			if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW)
 			{
 				if (aWebProgress.DOMWindow === aWebProgress.DOMWindow.top) {
-					validateDocHTML(window.content, false);
+					if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_START) {
+						if (activeDocument) {vCache.invalidate(activeDocument);}
+					}
+					else if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_STOP) {
+						validateDocHTML(window.content, false);
+					}
 				}
 			}
 		},
@@ -150,7 +154,7 @@ four56bereastreet.html5validator = (function()
 				var url = normalizeUrl(doc.URL);
 				var result = resCache[url];
 				if (!result) {return null;}
-				return result.lastModified == doc.lastModified ? result: null;
+				return !result.stale ? result : null;
 			},
 			seen: function(doc)
 			{
@@ -160,8 +164,14 @@ four56bereastreet.html5validator = (function()
 			storeResults: function(doc, result)
 			{
 				var url = normalizeUrl(doc.URL);
-				result.lastModified = doc.lastModified;
 				resCache[url] = result;
+			},
+			invalidate: function(doc)
+			{
+				var url = normalizeUrl(doc.URL);
+				if (resCache[url]) {
+					resCache[url] = {stale: true};
+				}
 			},
 			lookupNoAutoValidation: function(doc)
 			{

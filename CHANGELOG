@@ -31,7 +31,6 @@ CHANGELOG
 ** NEW: preference to control the timeout before auto-validation kicks in
 ** NEW: preference to control the parser to be used by the validator
 ** NEW: the results cache is cleared whenever a preference is changed
-** NEW: use the last-modified timestamp to determine whether a cached result is still valid
 ** NEW: suppress error message if the document encoding is not UTF-8
 ** NEW: keep track of error and warning messages that were suppressed due to preference settings
 ** NEW: keep track of info messages
