@@ -123,9 +123,8 @@ four56bereastreet.html5validator = (function()
 			var d = preferences.domainsWhitelist[i];
 			if (d.indexOf('*') > 0) {
 				// d contains a wildcard, so change it to a regexp
-				d = new RegExp(d.replace(/([\.\+\?\(\)\[\]\|\!\\])+/g, function(r0, r1){
-						return "\\" + r1;
-					}).replace(/\*+/g, '(.*?)')
+				d = new RegExp(d.replace(/[-[\]{}()+?.,\\^$|]/g, "\\$&"). // escape other reserved characters
+					replace(/\*+/g, '(.*?)')
 				);
 				try // in case some funny character creeps through...
 				{
