@@ -1,8 +1,7 @@
 /* namespacing technique adapted from http://blogger.ziesemer.com/2007/10/respecting-javascript-global-namespace.html */
-if (typeof(window.com) === "undefined") {var com={};}
-if (typeof(com.four56bereastreet) === "undefined") {com.four56bereastreet={};}
+if (!window.four56bereastreet) {var four56bereastreet = {};}
 
-com.four56bereastreet.html5validator = (function()
+four56bereastreet.html5validator = (function()
 {
 	var preferences = {},
 		loadPreferences = function()
@@ -733,4 +732,4 @@ com.four56bereastreet.html5validator = (function()
 	};
 }());
 
-window.addEventListener("load", com.four56bereastreet.html5validator.init, false);
+window.addEventListener("load", four56bereastreet.html5validator.init, false);

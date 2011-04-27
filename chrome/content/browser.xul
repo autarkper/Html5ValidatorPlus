@@ -6,7 +6,7 @@
 
 	<popupset id="mainPopupSet">
 		<menupopup id="html5validator-menupopup">
-			<menuitem label="Options" oncommand="com.four56bereastreet.html5validator.showOptions()"/>
+			<menuitem label="Options" oncommand="four56bereastreet.html5validator.showOptions()"/>
 		</menupopup>
 	</popupset>
 
