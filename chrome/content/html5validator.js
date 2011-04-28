@@ -3,6 +3,11 @@ if (!window.four56bereastreet) {var four56bereastreet = {};}
 
 four56bereastreet.html5validator = (function()
 {
+	function normalizeUrl(url)
+	{
+		return url.replace(/#.*/, '');
+	}
+
 	var preferences = {},
 		loadPreferences = function()
 		{
@@ -66,7 +71,6 @@ four56bereastreet.html5validator = (function()
 			console.logStringMessage('html5validator: ' + msg);
 		};
 
-
 	var html5validatorListener = 
 	{
 		QueryInterface: function(aIID)
@@ -83,25 +87,47 @@ four56bereastreet.html5validator = (function()
 		{
 			activeDocument = window.content.document;
 			updateStatusBar(0, 0, "reset");
-			log("LocChange: " + activeDocument.URL);
-			validateDocHTML(window.content, false);
+			if (activeDocument && activeDocument.URL)
+			{
+				log("LocChange: " + activeDocument.URL);
+				validateDocHTML(window.content, false);
+			}
 		},
 
+		lastStartURL: null,
 		onStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus)
 		{
 		/* See: https://developer.mozilla.org/en/XUL_School/Intercepting_Page_Loads */
 			if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW)
 			{
 				if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_RESTORING) {
+				/*
+				 * Unfortunately, this flag is not reliable: it is not set when going back more than three pages
+				 * in the page history.
+				*/
 					return;
 				}
 				if (aWebProgress.DOMWindow === aWebProgress.DOMWindow.top) {
+				/* It seems that on reload (F5) we get a STATE_START and a STATE_STOP on
+					* the same location. If it is a case of going back and forth in the page history,
+					* we get a STATE_START on the old location, and then STATE_STOP on the
+					* new location.
+					* We can use this heuristic to avoid invalidating our cache expect when there is
+					* a genuine reload.
+					* Tested in FF 5.02a.
+				*/
 					if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_START) {
 						log("State START: " + window.content.document.URL);
+						this.lastStartURL = normalizeUrl(window.content.document.URL);
 					}
 					if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_STOP) {
 						log("State STOP: " + window.content.document.URL);
-						vCache.invalidate(window.content.document);
+						if (normalizeUrl(window.content.document.URL) == this.lastStartURL)
+						{
+							log("Invalidate results cache: " + window.content.document.URL);
+							vCache.invalidate(window.content.document);
+						}
+						this.lastStartURL = null;
 						validateDocHTML(window.content, false);
 					}
 				}
@@ -155,7 +181,6 @@ four56bereastreet.html5validator = (function()
 	{
 		var resCache = {};
 		var navCache = {};
-		function normalizeUrl(url) {return url.replace(/#.*/, '');}
 		var pub = {
 			lookupResults: function(doc)
 			{
@@ -201,26 +226,34 @@ four56bereastreet.html5validator = (function()
 
 	g_cleanup = null,
 	g_validationTimerHandle = null,
-	validateDocHTML = function(frame, triggered)
+	validateDocHTML = function(frame, triggered, optTimeoutMs)
 	{
+		var timeoutMs = optTimeoutMs || 100;
 		if (g_cleanup) {g_cleanup();}
-		if (g_validationTimerHandle != null) {
+		if (g_validationTimerHandle) {
 			window.clearTimeout(g_validationTimerHandle);
 		}
 		g_validationTimerHandle = window.setTimeout(function() {
 			try {
-				validateDocHTML__(frame, triggered);
+				validateDocHTML__(frame, triggered, timeoutMs);
 			}
 			catch (err)
 			{
 				updateStatusBar(0, 0, 'internalError');
 			}
-		}, 100); // avoid calling validateDocHTML__ repeatedly in case of rapid state changes
+		}, timeoutMs); // avoid calling validateDocHTML__ repeatedly in case of rapid state changes
 	},
 
 	// Adapted from the "HTML Validator" extension by Marc Gueury (http://users.skynet.be/mgueury/mozilla/)
-	validateDocHTML__ = function(frame, triggered)
+	validateDocHTML__ = function(frame, triggered, optTimeoutMs)
 	{
+		if (isLoading())
+		{
+			updateStatusBar(0, 0, 'document-loading');
+			validateDocHTML(frame, triggered, optTimeoutMs * 2); // come back later
+			return;
+		}
+		
 		var doc = activeDocument;
 		if (!doc) {return;}
 
@@ -277,9 +310,9 @@ four56bereastreet.html5validator = (function()
 			}
 			html = html || getHTMLFromCache(doc);
 			if (!html || !html.length) {
-				log("getHTMLFromCache: null");
+				updateStatusBar(0, 0, 'reload-document');
 				return;
-			} // probably a premature validation attempt while still loading
+			} // the cache seems to have been cleared
 
 			var isSmallish = (html.length < (preferences.maxAutoSize) * 1024);
 			if (isSmallish)
@@ -342,6 +375,7 @@ four56bereastreet.html5validator = (function()
 	getHTMLFromCache = function(doc)
 	{	 
 		if (isLoading()) {
+			log("getHTMLFromCache: is loading");
 			return null;
 		}
 
@@ -401,6 +435,7 @@ four56bereastreet.html5validator = (function()
 	g_clickEnabled = true,
 	updateStatusBar = function(errors, warnings, status)
 	{
+		log("updateStatusBar: " + status);
 		if (errors || warnings) {
 			var errorText = "";
 			if (errors) {
@@ -431,6 +466,16 @@ four56bereastreet.html5validator = (function()
 			statusBarPanel.className = "statusbarpanel-iconic-text";
 			statusBarPanel.label = "Click to validate";
 			switch (status) {
+				case "reload-document":
+					statusBarPanel.label = "Refresh (F5) required";
+					statusBarPanel.tooltipText = "HTML5 Validator: Document not in cache, refresh it to enable validation";
+					g_clickEnabled = false;
+					break;
+				case "document-loading":
+					statusBarPanel.label = "Document loading...";
+					statusBarPanel.tooltipText = "HTML5 Validator: Document is loading, please wait";
+					g_clickEnabled = false;
+					break;
 				case "running":
 					statusBarPanel.label = "Validating...";
 					statusBarPanel.tooltipText = "HTML5 Validator: Document currently validating";
