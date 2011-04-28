@@ -81,12 +81,14 @@ four56bereastreet.html5validator = (function()
 
 		onLocationChange: function(aProgress, aRequest, aURI)
 		{
+			activeDocument = window.content.document;
 			updateStatusBar(0, 0, "reset");
-			log("LocChange: " + window.content.document.URL);
+			log("LocChange: " + activeDocument.URL);
 			validateDocHTML(window.content, false);
 		},
 
-		onStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus){
+		onStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus)
+		{
 		/* See: https://developer.mozilla.org/en/XUL_School/Intercepting_Page_Loads */
 			if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW)
 			{
@@ -94,6 +96,9 @@ four56bereastreet.html5validator = (function()
 					return;
 				}
 				if (aWebProgress.DOMWindow === aWebProgress.DOMWindow.top) {
+					if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_START) {
+						log("State START: " + window.content.document.URL);
+					}
 					if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_STOP) {
 						log("State STOP: " + window.content.document.URL);
 						vCache.invalidate(window.content.document);
@@ -193,26 +198,30 @@ four56bereastreet.html5validator = (function()
 		};
 		return pub;
 	}()),
-	g_cleanup = null,
 
+	g_cleanup = null,
+	g_validationTimerHandle = null,
 	validateDocHTML = function(frame, triggered)
 	{
-		try {
-			validateDocHTML__(frame, triggered);
+		if (g_cleanup) {g_cleanup();}
+		if (g_validationTimerHandle != null) {
+			window.clearTimeout(g_validationTimerHandle);
 		}
-		catch (err)
-		{
-			updateStatusBar(0, 0, 'errorValidator');
-		}
+		g_validationTimerHandle = window.setTimeout(function() {
+			try {
+				validateDocHTML__(frame, triggered);
+			}
+			catch (err)
+			{
+				updateStatusBar(0, 0, 'internalError');
+			}
+		}, 100); // avoid calling validateDocHTML__ repeatedly in case of rapid state changes
 	},
 
 	// Adapted from the "HTML Validator" extension by Marc Gueury (http://users.skynet.be/mgueury/mozilla/)
 	validateDocHTML__ = function(frame, triggered)
 	{
-		if (g_cleanup) {g_cleanup();}
-
-		var doc = frame.document;
-		activeDocument = doc;
+		var doc = activeDocument;
 		if (!doc) {return;}
 
 		var url = doc.URL || '';
@@ -267,7 +276,10 @@ four56bereastreet.html5validator = (function()
 				return;
 			}
 			html = html || getHTMLFromCache(doc);
-			if (!html || !html.length) {return;} // probably a premature validation attempt while still loading
+			if (!html || !html.length) {
+				log("getHTMLFromCache: null");
+				return;
+			} // probably a premature validation attempt while still loading
 
 			var isSmallish = (html.length < (preferences.maxAutoSize) * 1024);
 			if (isSmallish)
