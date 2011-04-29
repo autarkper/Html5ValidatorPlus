@@ -121,14 +121,19 @@ four56bereastreet.html5validator = (function()
 						this.lastStartURL = normalizeUrl(window.content.document.URL);
 					}
 					if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_STOP) {
-						log("State STOP: " + window.content.document.URL);
+						log("State STOP: " + window.content.document.URL + ", aStatus: " + aStatus);
 						if (normalizeUrl(window.content.document.URL) == this.lastStartURL)
 						{
 							log("Invalidate results cache: " + window.content.document.URL);
 							vCache.invalidate(window.content.document);
 						}
 						this.lastStartURL = null;
-						validateDocHTML(window.content, false);
+						if (aStatus) { // error
+							updateStatusBar(0,0, 'reload-document');
+						}
+						else { // OK
+							validateDocHTML(window.content, false);
+						}
 					}
 				}
 			}
@@ -271,7 +276,7 @@ four56bereastreet.html5validator = (function()
 				validateDoc(doc, html);
 			}
 			else {
-				throw "no-html--triggered";
+				updateStatusBar(0, 0, 'reload-document');
 			}
 			return;
 		}
@@ -363,7 +368,7 @@ four56bereastreet.html5validator = (function()
 	
 	getActiveDocument = function()
 	{
-		return window.content.document;
+		return activeDocument;
 	},
 
 	isLoading = function()
@@ -468,7 +473,7 @@ four56bereastreet.html5validator = (function()
 			switch (status) {
 				case "reload-document":
 					statusBarPanel.label = "Refresh (F5) required";
-					statusBarPanel.tooltipText = "HTML5 Validator: Document not in cache, refresh it to enable validation";
+					statusBarPanel.tooltipText = "HTML5 Validator: Document not in cache, refresh required";
 					g_clickEnabled = false;
 					break;
 				case "document-loading":
@@ -633,6 +638,7 @@ four56bereastreet.html5validator = (function()
 		{
 			var doc = getActiveDocument();
 			if (!doc) {
+				log("statusBarPanelClick: no document");
 				return;
 			}
 
