@@ -437,8 +437,17 @@ four56bereastreet.html5validator = (function()
 		return s2;
 	},
 
-	g_clickEnabled = true,
+	g_usbTimeoutHandle = null,
 	updateStatusBar = function(errors, warnings, status)
+	{
+		if (g_usbTimeoutHandle) {window.clearTimeout(g_usbTimeoutHandle);}
+		g_usbTimeoutHandle = window.setTimeout( function() {
+			updateStatusBar__(errors, warnings, status);
+		}, 100); // prevent flickering in case of user flipping through tabs, etc.
+	},
+
+	g_clickEnabled = true,
+	updateStatusBar__ = function(errors, warnings, status)
 	{
 		log("updateStatusBar: " + status);
 		if (errors || warnings) {
