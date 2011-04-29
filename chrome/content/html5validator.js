@@ -131,9 +131,8 @@ four56bereastreet.html5validator = (function()
 						if (aStatus) { // error
 							updateStatusBar(0,0, 'reload-document');
 						}
-						else { // OK
-							validateDocHTML(window.content, false);
-						}
+						// attempt validation anyway, in case the main document was downloaded OK
+						validateDocHTML(window.content, false);
 					}
 				}
 			}
