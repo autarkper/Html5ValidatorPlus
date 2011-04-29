@@ -190,9 +190,7 @@ four56bereastreet.html5validator = (function()
 			lookupResults: function(doc)
 			{
 				var url = normalizeUrl(doc.URL);
-				var result = resCache[url];
-				if (!result) {return null;}
-				return !result.stale ? result : null;
+				return resCache[url] || null;
 			},
 			seen: function(doc)
 			{
@@ -207,9 +205,7 @@ four56bereastreet.html5validator = (function()
 			invalidate: function(doc)
 			{
 				var url = normalizeUrl(doc.URL);
-				if (resCache[url]) {
-					resCache[url] = {stale: true};
-				}
+				delete resCache[url];
 			},
 			lookupNoAutoValidation: function(doc)
 			{
@@ -285,14 +281,6 @@ four56bereastreet.html5validator = (function()
 		{
 			updateStatusBar(cache['errors'], cache['warnings'], 'results');
 			return;
-		}
-		else
-		{
-			if (vCache.seen(doc))
-			{
-				updateStatusBar(0, 0, 'stale');
-				return;
-			}
 		}
 		// do not attempt auto-validation unless we have a visible UI
 		var addonBar = document.getElementById('addon-bar') || document.getElementById('status-bar');
@@ -505,9 +493,6 @@ four56bereastreet.html5validator = (function()
 					break;
 				case "large-doc":
 					statusBarPanel.tooltipText = "HTML5 Validator: Document too large for auto-validation, click to validate";
-					break;
-				case "stale":
-					statusBarPanel.tooltipText = "HTML5 Validator: Validation results may be stale, click to validate";
 					break;
 				case "cancelled":
 					statusBarPanel.tooltipText = "HTML5 Validator: Auto-validation cancelled, click to validate";
