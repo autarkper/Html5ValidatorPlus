@@ -116,6 +116,9 @@ four56bereastreet.html5validator = (function()
 					* a genuine reload.
 					* Tested in FF 5.02a.
 				*/
+					if (!window.content.document.URL) {
+						return;
+					}
 					if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_START) {
 						log("State START: " + window.content.document.URL);
 						this.lastStartURL = normalizeUrl(window.content.document.URL);
