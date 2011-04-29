@@ -1,8 +1,10 @@
-# HTML5 Validator
+# HTML5 Validator Plus
 
-This is a forked version of Roger Johansson's HTML5 Validator, a Firefox add-on that helps with validating the HTML source using the validator.nu engine (online or local instance).
+HTML5 Validator Plus is a forked version of Roger Johansson's HTML5 Validator, a Firefox add-on that helps with validating the HTML source using the validator.nu engine (online or local instance).
 
-Basically this fork has more options than the original, and it displays validation results in a separate window for convenience. It is designed to limit the number of unnecessary calls to the validator, which is especially useful if you don't have a local validator. In particular, it keeps a longer-life cache of validation results that is shared between different tabs, compared to the original version, which ties the validation result to the relatively short-lived and isolated DOM document object.
+Basically, HTML5 Validator Plus has more options than the original, and it displays validation results in a separate window for convenience. It is designed to limit the number of unnecessary calls to the validator, which is especially useful if you don't have a local validator. Thus, an empty domain whitelist effectively disables auto-validation, but if you really want global auto-validation you can have a single "*" entry instead.
+
+Furthermore, HTML5 Validator Plus keeps a cache of validation results that is shared between different tabs, compared to the original version, which ties the validation result to the relatively short-lived and isolated DOM document object. HTML5 Validator Plus is smart enough to let different #fragment links on the same page share one single cache entry.
 
 Another improvement is the ability to choose which parser the validator should use. The filtering of validator error and warning messages is also improved to filter out the validator's rather pointless error message in case your pages use some other encoding than UTF-8. Just to make sure you don't miss out on any important message, all other messages, including info messages and suppressed error warning messages, are displayed on the results page, even if they don't affect the error and warning count.
 

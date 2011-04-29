@@ -2,15 +2,15 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	 xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 	<Description about="urn:mozilla:install-manifest">
-		<em:id>html5validator@456bereastreet.com</em:id>
-		<em:name>HTML5 Validator</em:name>
+		<em:id>Html5ValidatorPlus@autark.se</em:id>
+		<em:name>HTML5 Validator Plus</em:name>
 		<em:version>1.9.5.1</em:version>
 		<em:type>2</em:type>
 		<em:creator>Roger Johansson</em:creator>
 		<em:contributor>Valentin Agachi</em:contributor>
 		<em:contributor>Per Ångström</em:contributor>
 		<em:description>Validates HTML documents with Validator.nu (online or local instance)</em:description>
-		<em:homepageURL>https://github.com/rogerjohansson/html5validator</em:homepageURL>
+		<em:homepageURL>https://github.com/autarkper/Html5ValidatorPlus</em:homepageURL>
 		<em:optionsURL>chrome://html5validator/content/options.xul</em:optionsURL>
 		<em:iconURL>chrome://html5validator/skin/html5-32x32.png</em:iconURL>
 
