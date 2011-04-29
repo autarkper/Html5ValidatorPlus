@@ -14,13 +14,14 @@ CHANGELOG
 * 1.5.4 - 2011-02-25 - NEW: Allow wildcards in domain whitelist
 * 1.5.5 - 2011-02-25 - FIX: Improved status info, issue #3
 * 1.5.6 - 2011-04-24 - FIX: Changed from evil eval to JSON.parse for parsing of validator response
-* 2.0.0 - 2011-04-23 - Various changes and fixes:
+* 1.9.* - 2011-04-29 - Various changes and fixes:
 ** FIX: broader exception handling to catch more errors
 ** FIX: URI fragments ("#") are ignored when determining whether to validate the current document
 ** FIX: if the current location changes while a validation is in progress, the results will still end up connected to the validated document
-** FIX: do not offer to validate about:blank and similar pages
+** FIX: do not offer to validate about:blank, chrome: and similar pages
 ** FIX: do not auto-validate if toolbar is collapsed
 ** FIX: strip empty or blank lines from domain whitelist
+** FIX: detect document-load failures
 ** NEW: validation results are cached across different tabs
 ** NEW: bump forward version compatibility
 ** NEW: display validation details in a separate window
