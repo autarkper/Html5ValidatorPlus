@@ -116,7 +116,7 @@ four56bereastreet.html5validator = (function()
 					* a genuine reload.
 					* Tested in FF 5.02a.
 				*/
-					if (!window.content.document.URL) {
+					if (!isValidUrl(aWebProgress.DOMWindow.content.document.URL)) {
 						return;
 					}
 					if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_START) {
@@ -147,10 +147,15 @@ four56bereastreet.html5validator = (function()
 
 	var statusBarPanel, activeDocument,
 	g_invalidUrlRe = /^(about|chrome):/,
+
+	isValidUrl = function(url)
+	{
+		return url && !url.match(g_invalidUrlRe);
+	},
 	
 	isWhitelistDomain = function(url)
 	{
-		if (!url.length || url.match(g_invalidUrlRe) || url == preferences.validatorURL) {
+		if (!isValidUrl(url) || url == preferences.validatorURL) {
 			return false;
 		}
 
