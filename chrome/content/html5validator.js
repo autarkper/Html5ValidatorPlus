@@ -30,12 +30,13 @@ four56bereastreet.html5validator = (function()
 				validatorURL: prefBranch.getCharPref("validatorURL"),
 				domainsWhitelist: filtered_domains,
 				restrictToWhitelist: prefBranch.getBoolPref("restrictToWhitelist"),
+				displayResultsInTab: prefBranch.getBoolPref("displayResultsInTab"),
+				maxAutoSize: prefBranch.getIntPref("maxAutoSize"),
+				autoValidateWaitSeconds: prefBranch.getIntPref("autoValidateWaitSeconds"),
 				useTrigger: prefBranch.getBoolPref("useTrigger"),
 				debug: prefBranch.getBoolPref("debug"),
 				ignoreXHTMLErrors: prefBranch.getBoolPref("ignoreXHTMLErrors"),
 				allowAccessibilityFeatures: prefBranch.getBoolPref("allowAccessibilityFeatures"),
-				maxAutoSize: prefBranch.getIntPref("maxAutoSize"),
-				autoValidateWaitSeconds: prefBranch.getIntPref("autoValidateWaitSeconds"),
 				parser: prefBranch.getCharPref("parser")
 			};
 		},
@@ -55,12 +56,22 @@ four56bereastreet.html5validator = (function()
 				if (aTopic != "nsPref:changed") {
 					return;
 				}
-				if (this.timeoutHandle) {window.clearTimeout(this.timeoutHandle);}
-				this.timeoutHandle = window.setTimeout(function() {
-					loadPreferences();
-					vCache.resetResults();
-					validateDocHTML(window.content, false);
-				}, 500); // don't be overly reactive to preference changes, let user correct typos, etc.
+
+				switch (aData) {
+					// list those preferences that should flush the validation cache
+					case "ignoreXHTMLErrors":
+					case "allowAccessibilityFeatures":
+					case "parser":
+						if (this.timeoutHandle) {window.clearTimeout(this.timeoutHandle);}
+						this.timeoutHandle = window.setTimeout(function() {
+							loadPreferences();
+							vCache.resetResults();
+							validateDocHTML(window.content, false);
+						}, 500); // don't be overly reactive to preference changes, let user correct typos, etc.
+						break;
+					default:
+						break;
+				}
 			}
 		},
 
@@ -687,9 +698,20 @@ four56bereastreet.html5validator = (function()
 			return;
 		}
 
-		if (!g_resultWindow || g_resultWindow.closed)
+		var openInTab = preferences.displayResultsInTab;
+		if (openInTab || !g_resultWindow || g_resultWindow.closed)
 		{
-			g_resultWindow = findWindowWithURL(RESULTWINDOW) || window.open(RESULTWINDOW, 'html5validator');
+			function openNewTab()
+			{
+				var tab = getBrowser().addTab(RESULTWINDOW);
+				getBrowser().selectedTab = tab;
+				var newbrowser = getBrowser().getBrowserForTab(tab);
+				return newbrowser.contentWindow;
+			}
+			function findOrOpenWindow() {
+				return findWindowWithURL(RESULTWINDOW) || window.open(RESULTWINDOW, 'html5validator');
+			}
+			g_resultWindow = openInTab ? openNewTab() : findOrOpenWindow();
 		}
 		/* window.open returns before the new window is fully initialized, so we have to wait for it to
 		 initialize. "window.addEventListener('load', ...)" does not seem to work, so a simple timeout

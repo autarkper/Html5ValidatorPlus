@@ -1,6 +1,7 @@
 pref("extensions.html5validator.validatorURL", "http://localhost:8888/");
 pref("extensions.html5validator.domainsWhitelist", "");
 pref("extensions.html5validator.restrictToWhitelist", true);
+pref("extensions.html5validator.displayResultsInTab", false);
 pref("extensions.html5validator.useTrigger", false);
 pref("extensions.html5validator.debug", false);
 pref("extensions.html5validator.ignoreXHTMLErrors", false);

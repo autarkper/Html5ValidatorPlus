@@ -13,6 +13,7 @@
 			<preference id="pref-validatorURL" name="extensions.html5validator.validatorURL" type="string"/>
 			<preference id="pref-domainsWhitelist" name="extensions.html5validator.domainsWhitelist" type="string"/>
 			<preference id="pref-restrictToWhitelist" name="extensions.html5validator.restrictToWhitelist" type="bool"/>
+			<preference id="pref-displayResultsInTab" name="extensions.html5validator.displayResultsInTab" type="bool"/>
 			<preference id="pref-useTrigger" name="extensions.html5validator.useTrigger" type="bool"/>
 			<preference id="pref-ignoreXHTMLErrors" name="extensions.html5validator.ignoreXHTMLErrors" type="bool"/>
 			<preference id="pref-allowAccessibilityFeatures" name="extensions.html5validator.allowAccessibilityFeatures" type="bool"/>
@@ -48,6 +49,7 @@
 		</grid>
 			<checkbox label="Restrict validation to whitelisted domains" id="restrictToWhitelist" preference="pref-restrictToWhitelist"/>
 			<checkbox label="Validate only on request (on toolbar click), disable automatic validation" id="useTrigger" preference="pref-useTrigger"/>
+			<checkbox label="Display validation results in tabs" id="displayResultsInTab" preference="pref-displayResultsInTab"/>
 		<groupbox id="autoValidation">
 			<caption label="Automatic validation"/>
 			<grid>
