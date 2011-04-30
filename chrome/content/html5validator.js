@@ -116,7 +116,7 @@ four56bereastreet.html5validator = (function()
 					* a genuine reload.
 					* Tested in FF 5.02a.
 				*/
-					if (!isValidUrl(aWebProgress.DOMWindow.content.document.URL)) {
+					if (!aWebProgress.DOMWindow.content.document.URL || !isValidUrl(aWebProgress.DOMWindow.content.document.URL)) {
 						return;
 					}
 					if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_START) {
