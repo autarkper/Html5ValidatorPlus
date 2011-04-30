@@ -57,6 +57,7 @@ four56bereastreet.html5validator = (function()
 					return;
 				}
 
+				loadPreferences();
 				switch (aData) {
 					// list those preferences that should flush the validation cache
 					case "ignoreXHTMLErrors":
@@ -64,7 +65,6 @@ four56bereastreet.html5validator = (function()
 					case "parser":
 						if (this.timeoutHandle) {window.clearTimeout(this.timeoutHandle);}
 						this.timeoutHandle = window.setTimeout(function() {
-							loadPreferences();
 							vCache.resetResults();
 							validateDocHTML(window.content, false);
 						}, 500); // don't be overly reactive to preference changes, let user correct typos, etc.
