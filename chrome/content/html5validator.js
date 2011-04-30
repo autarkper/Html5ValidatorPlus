@@ -68,7 +68,7 @@ four56bereastreet.html5validator = (function()
 		log = function(msg)
 		{
 			if (!console || !preferences.debug) {return;}
-			console.logStringMessage('html5validator: ' + msg);
+			console.logStringMessage('Html5ValidatorPlus: ' + msg);
 		};
 
 	var html5validatorListener = 
