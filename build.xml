@@ -1,77 +1,65 @@
 <?xml version="1.0"?>
 <!-- build command: ant build -->
-<project name="html5validator" default="." basedir=".">
+<project name="Generic" default="." basedir=".">
+    <description>Generic Firefox add-on build script</description>
 
-	<description>html5validator add-on build script</description>
+    <property name="src" location="."/>
+    <property name="build" location="build"/>
+    <property name="dist" location="xpi"/>
 
-	<property name="src" location="."/>
-	<property name="build" location="build"/>
-	<property name="dist" location="xpi"/>
+    <!-- determine version number based on install.rdf -->
+    <target name="read-install.rdf">
+        <xmlproperty file="${src}/install.rdf"/>
+    </target>
 
-	<!-- determine verion number based on install.rdf -->
-	<target name="version">
-		<loadfile property="version" srcFile="${src}/install.rdf">
-			<filterchain>
-				<filterreader classname="org.apache.tools.ant.filters.LineContainsRegExp">
-					<param type="regexp" value="em:version"/>
-				</filterreader>
-				<tokenfilter>
-					<replaceregex pattern="([^0-9\.b]+)" replace="" flags="gi"/>
-				</tokenfilter>
-				 <striplinebreaks />
-			</filterchain>
-		</loadfile>
-		<echo>${version}</echo>
-	</target>
+    <target name="copy-build" depends="read-install.rdf">
+        <mkdir dir="${build}"/>
 
-	<target name="copy-build" depends="version">
-		<mkdir dir="${build}"/>
+        <copy todir="${build}">
+            <fileset dir="${src}">
+                <exclude name=".git/**"/>
+                <exclude name="xpi/**"/>
+                <exclude name="build/**"/>
+                <exclude name=".gitignore"/>
+                <exclude name="build.xml"/>
+                <exclude name="README.md"/>
+            </fileset>
+        </copy>
+    </target>
 
-		<copy todir="${build}">
-			<fileset dir="${src}">
-				<exclude name=".git/**"/>
-				<exclude name="xpi/**"/>
-				<exclude name="build/**"/>
-				<exclude name=".gitignore"/>
-				<exclude name="build.xml"/>
-				<exclude name="README.md"/>
-			</fileset>
-		</copy>
-	</target>
+    <target name="clean-build" depends="copy-build">
+        <echo>Stripping log() invocations</echo>
+        <replaceregexp byline="true">
+            <regexp pattern="\s+log\(.+\);"/>
+            <substitution expression=""/>
+            <fileset dir="${build}">
+                <include name="**/*.js"/>
+            </fileset>
+        </replaceregexp>
+    </target>
 
-	<target name="clean-build" depends="copy-build">
-		<echo>Stripping log() invocations</echo>
-		<replaceregexp byline="true">
-			<regexp pattern="\s+log\(.+\);"/>
-			<substitution expression=""/>
-			<fileset dir="${build}">
-				<include name="**/*.js"/>
-			</fileset>
-		</replaceregexp>
-	</target>
+    <!-- archive sources into .xpi file -->
+    <target name="archive" depends="copy-build" description="archive the add-on">
+        <mkdir dir="${dist}"/>
 
-	<!-- archive sources into .xpi file -->
-	<target name="archive" depends="copy-build" description="archive the add-on">
-		<mkdir dir="${dist}"/>
+        <delete file="${dist}/${RDF.Description.em:name}-${RDF.Description.em:version}.xpi" quiet="true"/>
 
-		<delete file="${dist}/html5validator-${version}.xpi" quiet="true"/>
+        <zip destfile="${dist}/${RDF.Description.em:name}-${RDF.Description.em:version}.xpi" level="9">
+            <fileset dir="${build}"/>
+        </zip>
+    </target>
 
-		<zip destfile="${dist}/html5validator-${version}.xpi" level="9">
-			<fileset dir="${build}"/>
-		</zip>
-	</target>
-
-	<!-- post-build cleanup -->
-	<target name="cleanup">
-		<delete dir="${build}"/>
-	</target>
+    <!-- post-build cleanup -->
+    <target name="cleanup">
+        <delete dir="${build}"/>
+    </target>
 
 <!-- build without stripping log() invocations -->
-	<target name="build-debug" depends="archive, cleanup">
-	</target>
+    <target name="build-debug" depends="archive, cleanup">
+    </target>
 
 <!-- main build action -->
-	<target name="build" depends="clean-build, archive, cleanup">
-	</target>
+    <target name="build" depends="clean-build, archive, cleanup">
+    </target>
 
 </project>
