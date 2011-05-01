@@ -523,7 +523,7 @@ four56bereastreet.html5validator = (function()
 					statusBarPanel.tooltipText = "HTML5 Validator: Domain not in whitelist, click to validate";
 					break;
 				case "restricted":
-					statusBarPanel.label = "";
+					statusBarPanel.label = "Restricted";
 					statusBarPanel.tooltipText = "HTML5 Validator: Domain not in whitelist, validation restricted";
 					g_clickEnabled = false;
 					break;
