@@ -40,6 +40,7 @@
 	</target>
 
 	<target name="clean-build" depends="copy-build">
+		<echo>Stripping log() invocations</echo>
 		<replaceregexp byline="true">
 			<regexp pattern="\s+log\(.+\);"/>
 			<substitution expression=""/>
@@ -50,7 +51,7 @@
 	</target>
 
 	<!-- archive sources into .xpi file -->
-	<target name="archive" depends="clean-build" description="archive the add-on">
+	<target name="archive" depends="copy-build" description="archive the add-on">
 		<mkdir dir="${dist}"/>
 
 		<delete file="${dist}/html5validator-${version}.xpi" quiet="true"/>
@@ -60,9 +61,17 @@
 		</zip>
 	</target>
 
-	<!-- main build action -->
-	<target name="build" depends="archive">
+	<!-- post-build cleanup -->
+	<target name="cleanup">
 		<delete dir="${build}"/>
+	</target>
+
+<!-- build without stripping log() invocations -->
+	<target name="build-debug" depends="archive, cleanup">
+	</target>
+
+<!-- main build action -->
+	<target name="build" depends="clean-build, archive, cleanup">
 	</target>
 
 </project>
