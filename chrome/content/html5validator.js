@@ -379,7 +379,7 @@ four56bereastreet.html5validator = (function()
 
 	isLoading = function()
 	{
-		return document.getElementById("content").mCurrentBrowser.webProgress.isLoadingDocument;
+		return document.readyState === "loading";
 	},
 
 	// Adapted from the "HTML Validator" extension by Marc Gueury (http://users.skynet.be/mgueury/mozilla/)
@@ -717,17 +717,17 @@ four56bereastreet.html5validator = (function()
 		 initialize. "window.addEventListener('load', ...)" does not seem to work, so a simple timeout
 		 loop is used instead.
 		 */
-		var timeoutMs = 50;
+		var timeoutMs = 25;
 		var populateResultWindow = function()
 		{
 			var generatedDocument = g_resultWindow.document;
-
-			var docBody = generatedDocument.getElementsByTagName('body')[0];
-			if (!docBody) {
+			if (generatedDocument.readyState !== "complete") {
+				log("results window state: " + generatedDocument.readyState);
 				timeoutMs = timeoutMs * 2; // increasingly less aggressive timeout
 				setTimeout(populateResultWindow, timeoutMs);
 				return;
 			}
+			var docBody = generatedDocument.getElementsByTagName('body')[0];
 
 			var parserStr = " [parser:" + (vCache.lookupResults(doc).parser.length ? vCache.lookupResults(doc).parser : 'inferred') + "]";
 			var docTitle = 'Validation results for ' + doc.URL + parserStr;
@@ -796,7 +796,7 @@ four56bereastreet.html5validator = (function()
 			g_resultWindow.focus();
 			g_resultWindow.scrollTo(0,0);
 		};
-		setTimeout(populateResultWindow, timeoutMs);
+		populateResultWindow();
 	},
 	encodeHTML = function(html) {
 		return html.replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
