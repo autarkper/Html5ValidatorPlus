@@ -10,4 +10,4 @@ Another enhancement is the ability to choose which parser the validator should u
 
 The validation results page keeps a running log of all results viewed in the current browsing session, as long as you keep the window open, with the latest results on top. The results window is reused between sessions, if possible, so you will not end up with lots of old windows saved from previous sessions.
 
-Acknowledgements: Thanks to Roger Johansson and contributors to the original HTML5 Validator, who did all the hard stuff.
+Acknowledgements: Thanks to Roger Johansson and contributors to the original HTML5 Validator, who did all the hard work while I had all the fun.
