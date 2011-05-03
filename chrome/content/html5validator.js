@@ -325,7 +325,9 @@ four56bereastreet.html5validator = (function()
 				return;
 			} // the cache seems to have been cleared
 
-			var isSmallish = (html.length < (preferences.maxAutoSize) * 1024);
+			var isSmallish =
+                preferences.maxAutoSize < 0 // unlimited
+                ||(html.length < (preferences.maxAutoSize) * 1024);
 			if (isSmallish)
 			{
 				updateStatusBar(0, 0, 'about-to-validate');

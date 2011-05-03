@@ -60,7 +60,7 @@
 				<rows>
 					<row>
 						<label accesskey="M" control="maxAutoSize">Max size (kB) to auto-validate</label>
-						<textbox type="number" min="0" id="maxAutoSize" preference="pref-maxAutoSize"/>
+						<textbox type="number" min="-1" id="maxAutoSize" preference="pref-maxAutoSize"/>
 					</row>
 					<row>
 						<label control="autoValidateWaitSeconds">Seconds to wait before auto-validation</label>
