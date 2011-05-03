@@ -476,7 +476,7 @@ four56bereastreet.html5validator = (function()
 				errorText += "s";
 			}
 			statusBarPanel.label = errorText;
-			statusBarPanel.src = "chrome://html5validator/skin/html5-error-red.png";
+			statusBarPanel.src = "chrome://html5validatorplus/skin/html5-error-red.png";
 			statusBarPanel.className = "statusbarpanel-iconic-text errors";
 			statusBarPanel.tooltipText = "HTML5 Validator: Click to view validation details";
 			g_clickEnabled = true;
@@ -484,7 +484,7 @@ four56bereastreet.html5validator = (function()
 		else
 		{
 			g_clickEnabled = true;
-			statusBarPanel.src = "chrome://html5validator/skin/html5-dimmed.png";
+			statusBarPanel.src = "chrome://html5validatorplus/skin/html5-dimmed.png";
 			statusBarPanel.className = "statusbarpanel-iconic-text";
 			statusBarPanel.label = "Click to validate";
 			switch (status) {
@@ -538,7 +538,7 @@ four56bereastreet.html5validator = (function()
 					statusBarPanel.tooltipText = "HTML5 Validator: Some internal error occurred";
 					break;
 				case "results":
-					statusBarPanel.src = "chrome://html5validator/skin/html5-ok.png";
+					statusBarPanel.src = "chrome://html5validatorplus/skin/html5-ok.png";
 					statusBarPanel.label = "";
 					statusBarPanel.tooltipText = "HTML5 Validator: No errors. Click to view validation details";
 					break;
@@ -692,7 +692,7 @@ four56bereastreet.html5validator = (function()
 	// Display the cached validation results in a separate window.
 	g_resultWindow = null,
 	g_lastId = 0,
-	RESULTWINDOW = 'chrome://html5validator/content/resultswindow.html',
+	RESULTWINDOW = 'chrome://html5validatorplus/content/resultswindow.html',
 	showValidationResults = function()
 	{
 		var doc = getActiveDocument();
@@ -821,7 +821,7 @@ four56bereastreet.html5validator = (function()
 		
 		showOptions: function()
 		{
-			window.openDialog("chrome://html5validator/content/options.xul", "", null);
+			window.openDialog("chrome://html5validatorplus/content/options.xul", "", null);
 		}
 	};
 }());
