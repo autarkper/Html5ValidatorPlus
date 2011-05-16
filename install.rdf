@@ -11,8 +11,8 @@
 		<em:contributor>Valentin Agachi</em:contributor>
 		<em:description>Validates HTML documents with Validator.nu (online or local instance)</em:description>
 		<em:homepageURL>https://github.com/autarkper/Html5ValidatorPlus</em:homepageURL>
-		<em:optionsURL>chrome://html5validatorplus/content/options.xul</em:optionsURL>
-		<em:iconURL>chrome://html5validatorplus/skin/html5-32x32.png</em:iconURL>
+		<em:optionsURL>chrome://html5validator/content/options.xul</em:optionsURL>
+		<em:iconURL>chrome://html5validator/skin/html5-32x32.png</em:iconURL>
 		<em:targetApplication>
 			<Description>
 				<em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>

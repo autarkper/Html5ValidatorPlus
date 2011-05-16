@@ -1,6 +1,6 @@
-content     html5validatorplus    chrome/content/
-content     html5validatorplus    chrome/content/ contentaccessible=yes
-overlay chrome://browser/content/browser.xul chrome://html5validatorplus/content/browser.xul
+content     html5validator    chrome/content/
+content     html5validator    chrome/content/ contentaccessible=yes
+overlay chrome://browser/content/browser.xul chrome://html5validator/content/browser.xul
 
-skin	html5validatorplus	classic/1.0	skin/
-style	chrome://global/content/customizeToolbar.xul	chrome://html5validatorplus/skin/skin.css
+skin	html5validator	classic/1.0	skin/
+style	chrome://global/content/customizeToolbar.xul	chrome://html5validator/skin/skin.css
