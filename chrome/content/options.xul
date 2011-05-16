@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://html5validator/skin/skin.css" type="text/css"?>
+<?xml-stylesheet href="chrome://html5validatorplus/skin/skin.css" type="text/css"?>
 
 <prefwindow 
 	id="html5validator-prefwindow"
