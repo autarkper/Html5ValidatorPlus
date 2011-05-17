@@ -9,6 +9,7 @@ four56bereastreet.html5validator = (function()
 	}
 
 	var preferences = {},
+		preferenceToken, // a concatenated string of all result-affecting preference values
 		loadPreferences = function()
 		{
 			var prefBranch = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.html5validator."),
@@ -39,6 +40,12 @@ four56bereastreet.html5validator = (function()
 				allowAccessibilityFeatures: prefBranch.getBoolPref("allowAccessibilityFeatures"),
 				parser: prefBranch.getCharPref("parser")
 			};
+			preferenceToken = [ // remember to update this as new result-affecting preferences are added!
+				preferences.parser,
+				preferences.ignoreXHTMLErrors,
+				preferences.allowAccessibilityFeatures
+			].join(";");
+			log("Preference Token: " + preferenceToken);
 		},
 		// observe preferences changes
 		preferencesObserver =
@@ -58,20 +65,10 @@ four56bereastreet.html5validator = (function()
 				}
 
 				loadPreferences();
-				switch (aData) {
-					// list those preferences that should flush the validation cache
-					case "ignoreXHTMLErrors":
-					case "allowAccessibilityFeatures":
-					case "parser":
-						if (this.timeoutHandle) {window.clearTimeout(this.timeoutHandle);}
-						this.timeoutHandle = window.setTimeout(function() {
-							vCache.resetResults();
-							validateDocHTML(window.content, false);
-						}, 500); // don't be overly reactive to preference changes, let user correct typos, etc.
-						break;
-					default:
-						break;
-				}
+				if (this.timeoutHandle) {window.clearTimeout(this.timeoutHandle);}
+				this.timeoutHandle = window.setTimeout(function() {
+					validateDocHTML(window.content, false);
+				}, 500); // don't be overly reactive to preference changes, let user correct typos, etc.
 			}
 		},
 
@@ -208,16 +205,19 @@ four56bereastreet.html5validator = (function()
 			lookupResults: function(doc)
 			{
 				var url = normalizeUrl(doc.URL);
-				return resCache[url] || null;
-			},
-			seen: function(doc)
-			{
-				var url = normalizeUrl(doc.URL);
-				return !!resCache[url];
+				var result = resCache[url];
+				if (!result) {
+					return null;
+				}
+				if (result.preferenceToken != preferenceToken) {
+					return null;
+				}
+				return  result;
 			},
 			storeResults: function(doc, result)
 			{
 				var url = normalizeUrl(doc.URL);
+				result.preferenceToken = preferenceToken;
 				resCache[url] = result;
 			},
 			invalidate: function(doc)
@@ -234,10 +234,6 @@ four56bereastreet.html5validator = (function()
 			{
 				var url = normalizeUrl(doc.URL);
 				navCache[url] = true;
-			},
-			resetResults: function()
-			{
-				resCache = {};
 			}
 		};
 		return pub;
