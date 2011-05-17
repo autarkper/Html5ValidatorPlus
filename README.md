@@ -11,7 +11,6 @@ Another enhancement is the ability to choose which parser the validator should u
 The validation results window keeps a running log of all results viewed in the current browsing session, as long as you keep the window open, with the latest results on top. The results window is reused between sessions, if possible, so you will not end up with lots of old browser windows saved from previous sessions. There is also an option to open a new validation-results tab in the current browser window, if you like it that way.
 
 Known bugs and problems: 
-* If "Display validation results in tabs" is in effect, the opened tabs are not activated, so it may appear as if nothing happened.
-* Switching between displaying validation results in tabs and displaying in a separate window can make subsequent display of results end up in the last opened results tab until it is closed.
+* Switching between displaying validation results in tabs and displaying in a separate window can make subsequent display of results silently end up in the last opened results tab until it is closed.
 
 Acknowledgements: Thanks to Roger Johansson and contributors to the original HTML5 Validator, who did all the hard work while I had all the fun.
