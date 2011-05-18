@@ -736,10 +736,6 @@ four56bereastreet.html5validator = (function()
 			var errorsAndWarnings = result.errors + ' errors and ' + result.warnings + ' warnings';
 			/* Create the HTML content of the body – a heading and the list of messages with some elements and class names to enable styling */
 
-			// Only one section, the last one added, can have this class
-			var els = generatedDocument.getElementsByClassName('currentFocus');
-			if (els.length) {els[0].removeAttribute('class');}
-
 			var fragment = generatedDocument.createElement("DIV");
 			fragment.id = 'section' + lastId;
 			var linkList = fragment.appendChild(generatedDocument.createElement("UL"));
@@ -754,20 +750,19 @@ four56bereastreet.html5validator = (function()
 				var li = linkList.appendChild(generatedDocument.createElement("LI"));
 				var fwdLink = li.appendChild(generatedDocument.createElement("A"));
 				fwdLink.href = '#section' + (lastId - 1);
-				fwdLink.textContent = "Skip to next";
+				fwdLink.textContent = "Next";
 				fwdLink.title = lastDocTitle;
 
 				li = generatedDocument.linkList.appendChild(generatedDocument.createElement("LI"));
 				var backLink = li.appendChild(generatedDocument.createElement("A"));
 				backLink.href = "#" + fragment.id;
-				backLink.textContent = "Skip to previous";
+				backLink.textContent = "Previous";
 				backLink.title = docTitle;
 			}
 			generatedDocument.linkList = linkList;
 
 			generatedDocument.lastId = lastId + 1;
 			var h1 = fragment.appendChild(generatedDocument.createElement('h1'));
-			h1.className = 'currentFocus';
 			h1.innerHTML = docTitle;
 			generatedDocument.lastDocTitle = docTitle;
 			var dateP = fragment.appendChild(generatedDocument.createElement('p'));
