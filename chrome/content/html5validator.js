@@ -660,7 +660,7 @@ four56bereastreet.html5validator = (function()
 		var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
 			.getService(Components.interfaces.nsIWindowMediator);
 		var browserEnumerator = wm.getEnumerator("navigator:browser");
-
+		url = normalizeUrl(url);
 		// Check each browser instance for our URL
 		while (browserEnumerator.hasMoreElements()) {
 			var browserWin = browserEnumerator.getNext();
@@ -670,7 +670,7 @@ four56bereastreet.html5validator = (function()
 			var numTabs = tabbrowser.browsers.length;
 			for (var index = 0; index < numTabs; index++) {
 				var currentBrowser = tabbrowser.getBrowserAtIndex(index);
-				if (url == currentBrowser.currentURI.spec) {
+				if (url == normalizeUrl(currentBrowser.currentURI.spec)) {
 					return currentBrowser.contentWindow;
 				}
 			}
@@ -680,7 +680,6 @@ four56bereastreet.html5validator = (function()
 
 	// Display the cached validation results in a separate window.
 	g_resultWindow = null,
-	g_lastId = 0,
 	RESULTWINDOW = 'chrome://html5validator/content/resultswindow.html',
 	showValidationResults = function()
 	{
@@ -718,31 +717,52 @@ four56bereastreet.html5validator = (function()
 				setTimeout(populateResultWindow, timeoutMs);
 				return;
 			}
+			var resultsLookup = generatedDocument.resultsLookup || (generatedDocument.resultsLookup = {});
+			var lastId = generatedDocument.lastId || 0;
+			var lastDocTitle = generatedDocument.lastDocTitle || '';
+			var result = vCache.lookupResults(doc);
+			var resultId = result.timestamp.getTime();
+			if (resultsLookup[resultId])
+			{
+				log(resultId);
+				g_resultWindow.focus();
+				g_resultWindow.location = RESULTWINDOW + "#" + resultsLookup[resultId];
+				return;
+			}
 			var docBody = generatedDocument.getElementsByTagName('body')[0];
 
-			var parserStr = " [parser:" + (vCache.lookupResults(doc).parser.length ? vCache.lookupResults(doc).parser : 'inferred') + "]";
+			var parserStr = " [parser:" + (result.parser.length ? result.parser : 'inferred') + "]";
 			var docTitle = 'Validation results for ' + doc.URL + parserStr;
-			var errorsAndWarnings = vCache.lookupResults(doc).errors + ' errors and ' + vCache.lookupResults(doc).warnings + ' warnings';
+			var errorsAndWarnings = result.errors + ' errors and ' + result.warnings + ' warnings';
 			/* Create the HTML content of the body – a heading and the list of messages with some elements and class names to enable styling */
 
 			// Only one section, the last one added, can have this class
 			var els = generatedDocument.getElementsByClassName('currentFocus');
 			if (els.length) {els[0].removeAttribute('class');}
 
+			var fragment = generatedDocument.createElement("DIV");
 			var elNoResult = generatedDocument.getElementById('no-results');
-			if (elNoResult) {elNoResult.parentNode.removeChild(elNoResult);}
+			if (elNoResult) {
+				elNoResult.parentNode.removeChild(elNoResult);
+			}
+			else {
+				docBody.insertBefore(generatedDocument.createElement("HR"), docBody.firstChild);
+				var prevLink = fragment.appendChild(generatedDocument.createElement("A"));
+				prevLink.href = '#section' + (lastId - 1);
+				prevLink.textContent = "Skip to next";
+				prevLink.title = lastDocTitle;
+			}
 
-			var fragment = generatedDocument.createDocumentFragment();
-
+			fragment.id = 'section' + lastId;
+			generatedDocument.lastId = lastId + 1;
 			var h1 = fragment.appendChild(generatedDocument.createElement('h1'));
 			h1.className = 'currentFocus';
 			h1.innerHTML = docTitle;
-			h1.id = 'section' + g_lastId;
-			++g_lastId;
+			generatedDocument.lastDocTitle = docTitle;
 			var dateP = fragment.appendChild(generatedDocument.createElement('p'));
 			dateP.textContent = "Display timestamp: " + (new Date()).toLocaleString();
 			dateP = fragment.appendChild(generatedDocument.createElement('p'));
-			dateP.textContent = "Validation timestamp: " + vCache.lookupResults(doc).timestamp.toLocaleString();
+			dateP.textContent = "Validation timestamp: " + result.timestamp.toLocaleString();
 
 			function generateErrorList(messages)
 			{
@@ -776,16 +796,17 @@ four56bereastreet.html5validator = (function()
 			} // function
 			var h2 = fragment.appendChild(generatedDocument.createElement('h2'));
 			h2.innerHTML = errorsAndWarnings;
-			generateErrorList(vCache.lookupResults(doc).messages);
-			if (vCache.lookupResults(doc).suppressedMessages.length)
+			generateErrorList(result.messages);
+			if (result.suppressedMessages.length)
 			{
 				h2 = fragment.appendChild(generatedDocument.createElement('h2'));
 				h2.innerHTML = "Errors and warnings filtered out due to preference settings";
-				generateErrorList(vCache.lookupResults(doc).suppressedMessages);
+				generateErrorList(result.suppressedMessages);
 			}
 			docBody.insertBefore(fragment, docBody.firstChild);
+			resultsLookup[resultId] = fragment.id;
 			g_resultWindow.focus();
-			g_resultWindow.scrollTo(0,0);
+			g_resultWindow.location = RESULTWINDOW + "#" + fragment.id;
 		};
 		populateResultWindow();
 	},
