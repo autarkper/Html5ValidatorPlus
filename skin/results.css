@@ -28,3 +28,13 @@ pre {white-space:pre-wrap;}
 }
 .highlight {background:rgba(255,255,255,0.6);}
 *.currentFocus {border: thin solid black;}
+ul.prevnext {
+	display: inline;
+	padding-left:0;
+	margin-left:0;
+}
+ul.prevnext li {
+	display: inline;
+	padding-left:1ex;
+	margin-left:1ex;
+}

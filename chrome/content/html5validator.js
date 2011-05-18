@@ -741,19 +741,30 @@ four56bereastreet.html5validator = (function()
 			if (els.length) {els[0].removeAttribute('class');}
 
 			var fragment = generatedDocument.createElement("DIV");
+			fragment.id = 'section' + lastId;
+			var linkList = fragment.appendChild(generatedDocument.createElement("UL"));
+			linkList.className = "prevnext";
 			var elNoResult = generatedDocument.getElementById('no-results');
 			if (elNoResult) {
 				elNoResult.parentNode.removeChild(elNoResult);
 			}
 			else {
 				docBody.insertBefore(generatedDocument.createElement("HR"), docBody.firstChild);
-				var prevLink = fragment.appendChild(generatedDocument.createElement("A"));
-				prevLink.href = '#section' + (lastId - 1);
-				prevLink.textContent = "Skip to next";
-				prevLink.title = lastDocTitle;
-			}
 
-			fragment.id = 'section' + lastId;
+				var li = linkList.appendChild(generatedDocument.createElement("LI"));
+				var fwdLink = li.appendChild(generatedDocument.createElement("A"));
+				fwdLink.href = '#section' + (lastId - 1);
+				fwdLink.textContent = "Skip to next";
+				fwdLink.title = lastDocTitle;
+
+				li = generatedDocument.linkList.appendChild(generatedDocument.createElement("LI"));
+				var backLink = li.appendChild(generatedDocument.createElement("A"));
+				backLink.href = "#" + fragment.id;
+				backLink.textContent = "Skip to previous";
+				backLink.title = docTitle;
+			}
+			generatedDocument.linkList = linkList;
+
 			generatedDocument.lastId = lastId + 1;
 			var h1 = fragment.appendChild(generatedDocument.createElement('h1'));
 			h1.className = 'currentFocus';
