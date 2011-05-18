@@ -1,6 +1,6 @@
 # HTML5 Validator Plus
 
-HTML5 Validator Plus is a forked version of Roger Johansson's HTML5 Validator, a Firefox add-on that helps with validating HTML(5) source using the validator.nu engine (online or local instance).
+HTML5 Validator Plus is a forked and enhanced version of Roger Johansson's HTML5 Validator, a Firefox add-on that helps with validating HTML(5) source using the validator.nu engine (online or local instance).
 
 Basically, HTML5 Validator Plus has more options than the original, and it optionally displays validation results in a separate window so you can easily switch between the validated page and the results page. One important design goal to limit the number of requests to the validator, which is especially useful if you don't have a local validator. Thus, an empty domain whitelist effectively disables auto-validation, but if you really want global auto-validation you can have a single "*" entry instead.
 
