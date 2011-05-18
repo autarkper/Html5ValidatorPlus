@@ -57,7 +57,6 @@ four56bereastreet.html5validator = (function()
 				this._branch.QueryInterface(Components.interfaces.nsIPrefBranch2);
 				this._branch.addObserver("", this, false);
 			},
-			timeoutHandle: null,
 			observe: function(aSubject, aTopic, aData)
 			{
 				if (aTopic != "nsPref:changed") {
@@ -65,10 +64,7 @@ four56bereastreet.html5validator = (function()
 				}
 
 				loadPreferences();
-				if (this.timeoutHandle) {window.clearTimeout(this.timeoutHandle);}
-				this.timeoutHandle = window.setTimeout(function() {
-					validateDocHTML(window.content, false);
-				}, 500); // don't be overly reactive to preference changes, let user correct typos, etc.
+				validateDocHTML(window.content, false);
 			}
 		},
 
@@ -205,20 +201,17 @@ four56bereastreet.html5validator = (function()
 			lookupResults: function(doc)
 			{
 				var url = normalizeUrl(doc.URL);
-				var result = resCache[url];
-				if (!result) {
+				var results = resCache[url];
+				if (!results) {
 					return null;
 				}
-				if (result.preferenceToken != preferenceToken) {
-					return null;
-				}
-				return  result;
+				return results[preferenceToken] || null;
 			},
 			storeResults: function(doc, result)
 			{
 				var url = normalizeUrl(doc.URL);
-				result.preferenceToken = preferenceToken;
-				resCache[url] = result;
+				var results = resCache[url] || (resCache[url] = {});
+				results[preferenceToken] = result;
 			},
 			invalidate: function(doc)
 			{
