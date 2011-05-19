@@ -714,9 +714,11 @@ four56bereastreet.html5validator = (function()
 		{
 			function openNewTab()
 			{
-				var tab = getBrowser().addTab(RESULTWINDOW);
-				getBrowser().selectedTab = tab;
-				var newbrowser = getBrowser().getBrowserForTab(tab);
+				var index = getBrowser().getBrowserIndexForDocument(doc);
+				var newTab = getBrowser().addTab(RESULTWINDOW);
+				getBrowser().moveTabTo(newTab, index + 1);
+				getBrowser().selectedTab = newTab;
+				var newbrowser = getBrowser().getBrowserForTab(newTab);
 				return newbrowser.contentWindow;
 			}
 			function findOrOpenWindow() {
