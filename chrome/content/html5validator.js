@@ -531,7 +531,11 @@ four56bereastreet.html5validator = (function()
 					break;
 				case "errorValidator":
 					statusBarPanel.label = "Validator error";
-					statusBarPanel.tooltipText = "HTML5 Validator Plus: Could not contact the validator";
+					statusBarPanel.tooltipText = "HTML5 Validator Plus: Could not contact the validator, at '" + preferences.validatorURL + "'";
+					break;
+				case "badResponse":
+					statusBarPanel.label = "Validator problem";
+					statusBarPanel.tooltipText = "HTML5 Validator Plus: Bad response from validator, at '" + preferences.validatorURL + "'";
 					break;
 				case "internalError":
 					statusBarPanel.label = "Internal Error";
@@ -549,18 +553,18 @@ four56bereastreet.html5validator = (function()
 		}
 	},
 
-	validateDoc__ = function(doc, html)
+	validateDoc = function(doc, html)
 	{
 		if (html.length === 0) {return;}
 		updateStatusBar(0, 0, "running");
 
 		var xhr = new XMLHttpRequest();
-		xhr.onload = function () {
+		function onload() {
 			// Turn the returned string into a JSON object
 			var response = (xhr.responseText.length ? JSON.parse(xhr.responseText) : false);
 			if (!response) {
 				// No valid JSON object returned
-				updateStatusBar(0, 0, "errorValidator");
+				throw "badResponse";
 			}
 			else {
 				// Check how many errors and warnings were returned
@@ -624,6 +628,15 @@ four56bereastreet.html5validator = (function()
 		};
 
 		// If we couldn't validate the document (validator not running, network down, etc.)
+		xhr.onload = function () {
+			try {
+				onload();
+			}
+			catch (err) {
+				log(err);
+				updateStatusBar(0, 0, "badResponse");
+			}
+		};
 		xhr.onerror = function(){
 			updateStatusBar(0, 0, "errorValidator");
 		};
@@ -633,16 +646,6 @@ four56bereastreet.html5validator = (function()
 		xhr.open("POST", preferences.validatorURL + "?out=json" + parserOpt, true);
 		xhr.setRequestHeader("Content-Type", "text/html;charset=UTF-8");
 		xhr.send(html);
-	},
-
-	validateDoc = function(doc, html)
-	{
-		try {
-			validateDoc__(doc, html);
-		}
-		catch (err){
-			updateStatusBar(0, 0, "internalError");
-		}
 	},
 
 	statusBarPanelClick = function(event)
