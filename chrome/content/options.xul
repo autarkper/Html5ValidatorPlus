@@ -37,10 +37,11 @@
 							<label accesskey="D" control="domainsWhitelist">Domain whitelist</label>
 							<spacer flex="1"/>
 							<vbox>
-								<description>Enter one domain per line</description>
-								<description>http:// prefix is optional</description>
-								<description>https:// prefix is supported</description>
-								<description>Use '*' as a wildcard, eg. *.local</description>
+								<description>Enter one domain per line.</description>
+								<description>http:// prefix is optional.</description>
+								<description>https:// prefix is supported.</description>
+								<description>Use '*' as a wildcard,</description>
+								<description>e.g., '*.local'.</description>
 							</vbox>
 						</vbox>
 						<textbox id="domainsWhitelist" preference="pref-domainsWhitelist" multiline="true" cols="30" rows="10" newlines="stripsurroundingwhitespace" wrap="off"/>
@@ -49,7 +50,6 @@
 		</grid>
 			<checkbox label="Restrict validation to whitelisted domains" id="restrictToWhitelist" preference="pref-restrictToWhitelist"/>
 			<checkbox label="Validate only on request (on toolbar click), disable automatic validation" id="useTrigger" preference="pref-useTrigger"/>
-			<checkbox label="Display validation results in tabs" id="displayResultsInTab" preference="pref-displayResultsInTab"/>
 		<groupbox id="autoValidation">
 			<caption label="Automatic validation"/>
 			<grid>
@@ -87,6 +87,10 @@
 			<caption label="Error Filtering"/>
 			<checkbox label="Ignore XHTML errors" id="ignoreXHTMLErrors" preference="pref-ignoreXHTMLErrors"/>
 			<checkbox label="Allow HTML 4.01 accessibility features (summary, abbr, longdesc, scope)" id="allowAccessibilityFeatures" preference="pref-allowAccessibilityFeatures"/>
+		</groupbox>
+		<groupbox>
+			<caption label="Display"/>
+			<checkbox label="Display validation results in tabs (instead of a separate window)" id="displayResultsInTab" preference="pref-displayResultsInTab"/>
 		</groupbox>
 		
 	</prefpane>
