@@ -720,7 +720,8 @@ four56bereastreet.html5validator = (function()
 				return newbrowser.contentWindow;
 			}
 			function findOrOpenWindow() {
-				return findWindowWithURL(RESULTWINDOW) || window.open(RESULTWINDOW, 'html5validator');
+				return findWindowWithURL(RESULTWINDOW) || window.open(RESULTWINDOW, 'html5validator',
+					"menubar=no,location=no,resizable=yes,minimizable=yes,scrollbars=yes,status=yes");
 			}
 			g_resultWindow = openInTab ? openNewTab() : findOrOpenWindow();
 		}
