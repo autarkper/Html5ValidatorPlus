@@ -612,9 +612,13 @@ four56bereastreet.html5validator = (function()
 						filteredMessages.push(message);
 					}
 				}
+				var prefCopy = {};
+				for (var key in preferences) {
+					prefCopy[key] = preferences[key];
+				}
 				vCache.storeResults(doc, {
 					"timestamp": new Date(),
-					"parser": preferences.parser,
+					"preferences": prefCopy,
 					"messages": filteredMessages,
 					"suppressedMessages": suppressedMessages,
 					"errors": errors,
@@ -748,7 +752,7 @@ four56bereastreet.html5validator = (function()
 			}
 			var docBody = generatedDocument.getElementsByTagName('body')[0];
 
-			var parserStr = " [parser:" + (result.parser.length ? result.parser : 'inferred') + "]";
+			var parserStr = " [parser:" + (result.preferences.parser.length ? result.preferences.parser : 'inferred') + "]";
 			var docTitle = 'Validation results for ' + doc.URL + parserStr;
 			var errorsAndWarnings = result.errors + ' errors and ' + result.warnings + ' warnings';
 			/* Create the HTML content of the body – a heading and the list of messages with some elements and class names to enable styling */
@@ -786,6 +790,13 @@ four56bereastreet.html5validator = (function()
 			dateP.textContent = "Display timestamp: " + (new Date()).toLocaleString();
 			dateP = fragment.appendChild(generatedDocument.createElement('p'));
 			dateP.textContent = "Validation timestamp: " + result.timestamp.toLocaleString();
+			function displayPreference(key, value)
+			{
+				var p = fragment.appendChild(generatedDocument.createElement('p'));
+				p.textContent = key + ": " + value;
+			}
+			displayPreference("Ignore XHTML Errors", result.preferences.ignoreXHTMLErrors);
+			displayPreference("Allow Accessibility Features", result.preferences.allowAccessibilityFeatures);
 
 			function generateErrorList(messages)
 			{
