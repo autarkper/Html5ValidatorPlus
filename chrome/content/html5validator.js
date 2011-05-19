@@ -825,7 +825,7 @@ four56bereastreet.html5validator = (function()
 			g_resultWindow.focus();
 			g_resultWindow.location = RESULTWINDOW + "#" + fragment.id;
 		};
-		populateResultWindow();
+		setTimeout(populateResultWindow, timeoutMs); // FF < 4.0 seems to need a timeout even for the first invocation
 	},
 	encodeHTML = function(html) {
 		return html.replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
