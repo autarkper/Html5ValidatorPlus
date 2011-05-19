@@ -3,6 +3,7 @@ if (!window.four56bereastreet) {var four56bereastreet = {};}
 
 four56bereastreet.html5validator = (function()
 {
+	var Application = Components.classes["@mozilla.org/fuel/application;1"].getService(Components.interfaces.fuelIApplication);
 	function normalizeUrl(url)
 	{
 		return url.replace(/#.*/, '');
@@ -195,13 +196,23 @@ four56bereastreet.html5validator = (function()
 
 	vCache = (function()
 	{
-		var resCache = {};
-		var navCache = {};
+		function cache(key)
+		{
+			var cached = Application.storage.get(key, null);
+			if (!cached) {
+				cached = {};
+				Application.storage.set(key, cached);
+			}
+			return cached;
+		}
+		function resCache() {return cache("resCache");}
+		function navCache() {return cache("navCache");}
+
 		var pub = {
 			lookupResults: function(doc)
 			{
 				var url = normalizeUrl(doc.URL);
-				var results = resCache[url];
+				var results = resCache()[url];
 				if (!results) {
 					return null;
 				}
@@ -210,23 +221,23 @@ four56bereastreet.html5validator = (function()
 			storeResults: function(doc, result)
 			{
 				var url = normalizeUrl(doc.URL);
-				var results = resCache[url] || (resCache[url] = {});
+				var results = resCache()[url] || (resCache()[url] = {});
 				results[preferenceToken] = result;
 			},
 			invalidate: function(doc)
 			{
 				var url = normalizeUrl(doc.URL);
-				delete resCache[url];
+				delete resCache()[url];
 			},
 			lookupNoAutoValidation: function(doc)
 			{
 				var url = normalizeUrl(doc.URL);
-				return navCache[url] || false;
+				return navCache()[url] || false;
 			},
 			storeNoAutoValidation: function(doc)
 			{
 				var url = normalizeUrl(doc.URL);
-				navCache[url] = true;
+				navCache()[url] = true;
 			}
 		};
 		return pub;
