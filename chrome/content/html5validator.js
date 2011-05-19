@@ -666,6 +666,9 @@ four56bereastreet.html5validator = (function()
 			else if (g_clickEnabled) {
 				validateDocHTML(window.content, true);
 			}
+			else {
+				showOptionsDialog();
+			}
 		}
 	},
 
@@ -830,6 +833,11 @@ four56bereastreet.html5validator = (function()
 		};
 		setTimeout(populateResultWindow, timeoutMs); // FF < 4.0 seems to need a timeout even for the first invocation
 	},
+	showOptionsDialog = function()
+	{
+		var win = window.openDialog("chrome://html5validator/content/options.xul", "html5validator-prefs", null);
+		win.focus();
+	},
 	encodeHTML = function(html) {
 		return html.replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 	};
@@ -851,7 +859,7 @@ four56bereastreet.html5validator = (function()
 		
 		showOptions: function()
 		{
-			window.openDialog("chrome://html5validator/content/options.xul", "", null);
+			showOptionsDialog();
 		}
 	};
 }());
