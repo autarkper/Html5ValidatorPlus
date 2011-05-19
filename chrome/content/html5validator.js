@@ -757,9 +757,9 @@ four56bereastreet.html5validator = (function()
 			var errorsAndWarnings = result.errors + ' errors and ' + result.warnings + ' warnings';
 			/* Create the HTML content of the body – a heading and the list of messages with some elements and class names to enable styling */
 
-			var fragment = generatedDocument.createElement("DIV");
-			fragment.id = 'section' + lastId;
-			var linkList = fragment.appendChild(generatedDocument.createElement("UL"));
+			var container = generatedDocument.createElement("DIV");
+			container.id = 'section' + lastId;
+			var linkList = container.appendChild(generatedDocument.createElement("UL"));
 			linkList.className = "prevnext";
 			var elNoResult = generatedDocument.getElementById('no-results');
 			if (elNoResult) {
@@ -776,13 +776,14 @@ four56bereastreet.html5validator = (function()
 
 				li = generatedDocument.linkList.appendChild(generatedDocument.createElement("LI"));
 				var backLink = li.appendChild(generatedDocument.createElement("A"));
-				backLink.href = "#" + fragment.id;
+				backLink.href = "#" + container.id;
 				backLink.textContent = "Previous";
 				backLink.title = docTitle;
 			}
 			generatedDocument.linkList = linkList;
 
 			generatedDocument.lastId = lastId + 1;
+			var fragment = container.appendChild(generatedDocument.createElement("DIV"));
 			var h1 = fragment.appendChild(generatedDocument.createElement('h1'));
 			h1.innerHTML = docTitle;
 			generatedDocument.lastDocTitle = docTitle;
@@ -837,10 +838,10 @@ four56bereastreet.html5validator = (function()
 				h2.innerHTML = "Errors and warnings filtered out due to preference settings";
 				generateErrorList(result.suppressedMessages);
 			}
-			docBody.insertBefore(fragment, docBody.firstChild);
-			resultsLookup[resultId] = fragment.id;
+			docBody.insertBefore(container, docBody.firstChild);
+			resultsLookup[resultId] = container.id;
 			g_resultWindow.focus();
-			g_resultWindow.location = RESULTWINDOW + "#" + fragment.id;
+			g_resultWindow.location = RESULTWINDOW + "#" + container.id;
 		};
 		setTimeout(populateResultWindow, timeoutMs); // FF < 4.0 seems to need a timeout even for the first invocation
 	},

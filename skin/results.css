@@ -37,7 +37,7 @@ ul.prevnext li {
 	margin: 0;
 	padding: 0 0.2 0 0em;
 }
-:target {
+:target > :last-child {
 	border: thin solid black;
 	padding: 0.5em;
 }
