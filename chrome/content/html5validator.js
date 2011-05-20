@@ -636,8 +636,6 @@ four56bereastreet.html5validator = (function()
 				}
 			}
 		};
-
-		// If we couldn't validate the document (validator not running, network down, etc.)
 		xhr.onload = function () {
 			try {
 				onload();
@@ -647,6 +645,7 @@ four56bereastreet.html5validator = (function()
 				updateStatusBar(0, 0, "badResponse");
 			}
 		};
+		// If we couldn't validate the document (validator not running, network down, etc.)
 		xhr.onerror = function(){
 			updateStatusBar(0, 0, "errorValidator");
 		};
