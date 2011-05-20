@@ -33,6 +33,7 @@ four56bereastreet.html5validator = (function()
 				domainsWhitelist: filtered_domains,
 				restrictToWhitelist: prefBranch.getBoolPref("restrictToWhitelist"),
 				displayResultsInTab: prefBranch.getBoolPref("displayResultsInTab"),
+				openResultsTabToTheRightOfCurrentTab: prefBranch.getBoolPref("openResultsTabToTheRightOfCurrentTab"),
 				maxAutoSize: prefBranch.getIntPref("maxAutoSize"),
 				autoValidateWaitSeconds: prefBranch.getIntPref("autoValidateWaitSeconds"),
 				useTrigger: prefBranch.getBoolPref("useTrigger"),
@@ -703,8 +704,10 @@ four56bereastreet.html5validator = (function()
 			{
 				var index = getBrowser().getBrowserIndexForDocument(doc);
 				var newTab = getBrowser().addTab(RESULTWINDOW);
-				// open new tab at the current index position, move current tab to the right:
-				getBrowser().moveTabTo(newTab, index);
+				var newIndex = preferences.openResultsTabToTheRightOfCurrentTab ?
+					index + 1 : // next to the right
+					index; // current index, move current tab to the right
+				getBrowser().moveTabTo(newTab, newIndex);
 				getBrowser().selectedTab = newTab;
 				var newbrowser = getBrowser().getBrowserForTab(newTab);
 				return newbrowser.contentWindow;
