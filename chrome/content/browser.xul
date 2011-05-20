@@ -19,5 +19,8 @@
 			tooltiptext="HTML5 Validator"
 			label="" />
 	</statusbar>
+	<keyset>
+		<key id="test-key" modifiers="control alt shift" key="V" oncommand="four56bereastreet.html5validator.onHotKey()"/>
+	</keyset>
 
 </overlay>

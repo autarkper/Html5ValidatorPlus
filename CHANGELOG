@@ -38,3 +38,6 @@ CHANGELOG
 ** NEW: the results tab opens immediately to the left of the originating tab, automatically returning focus to the originating tab when closed
 ** NEW: preference to open the results tab to the right of the originating tab
 ** NEW: on session restart, all results tabs and windows left over from the last session are automatically closed
+** NEW: clicking the validator icon in the idle state brings up the preferences dialog
+** NEW: keyboard shortcut SHIFT+CONTROL+ALT+v equivalent to clicking the validator icon
+

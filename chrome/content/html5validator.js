@@ -658,27 +658,32 @@ four56bereastreet.html5validator = (function()
 		xhr.send(html);
 	},
 
+	handleLeftClick = function()
+	{
+		var doc = getActiveDocument();
+		if (!doc) {
+			log("statusBarPanelClick: no document");
+			return;
+		}
+
+		// On first click there are no cached results - validate, on following clicks - show cached results
+		if (vCache.lookupResults(doc)) {
+			showValidationResults();
+		}
+		else if (g_clickEnabled) {
+			validateDocHTML(window.content, true);
+		}
+		else {
+			showOptionsDialog();
+		}
+	},
+
 	statusBarPanelClick = function(event)
 	{
 		// event.button: 0 - left, 1 - middle, 2 - right
 		if (event.button === 0)
 		{
-			var doc = getActiveDocument();
-			if (!doc) {
-				log("statusBarPanelClick: no document");
-				return;
-			}
-
-			// On first click there are no cached results - validate, on following clicks - show cached results
-			if (vCache.lookupResults(doc)) {
-				showValidationResults();
-			}
-			else if (g_clickEnabled) {
-				validateDocHTML(window.content, true);
-			}
-			else {
-				showOptionsDialog();
-			}
+			handleLeftClick();
 		}
 	},
 
@@ -882,6 +887,11 @@ four56bereastreet.html5validator = (function()
 		showOptions: function()
 		{
 			showOptionsDialog();
+		},
+
+		onHotKey: function()
+		{
+			handleLeftClick();
 		}
 	};
 }());
