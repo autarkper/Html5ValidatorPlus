@@ -747,7 +747,7 @@ four56bereastreet.html5validator = (function()
 				resultWindow.location = RESULTWINDOW + "#" + resultsLookup[resultId];
 				return;
 			}
-			var docBody = generatedDocument.getElementsByTagName('body')[0];
+			var docBody = generatedDocument.getElementById('results');
 
 			if (openInTab)
 			{
@@ -757,7 +757,7 @@ four56bereastreet.html5validator = (function()
 					titleElement.textContent = "[" + doc.URL + "] - Validation results";
 				}
 			}
-			var sectionHeading = 'Validation results for ' + doc.URL + parserString(result.preferences);
+			var sectionHeading = doc.URL + parserString(result.preferences);
 			var errorsAndWarnings = result.errors + ' errors and ' + result.warnings + ' warnings';
 			/* Create the HTML content of the body – a heading and the list of messages with some elements and class names to enable styling */
 
@@ -790,8 +790,8 @@ four56bereastreet.html5validator = (function()
 
 			generatedDocument.lastId = lastId + 1;
 			var fragment = container.appendChild(generatedDocument.createElement("DIV"));
-			var h1 = fragment.appendChild(generatedDocument.createElement('h1'));
-			h1.innerHTML = sectionHeading;
+			var h2 = fragment.appendChild(generatedDocument.createElement('h2'));
+			h2.innerHTML = sectionHeading;
 			generatedDocument.lastSectionHeading = sectionHeading;
 			var dateP = fragment.appendChild(generatedDocument.createElement('p'));
 			dateP.textContent = "Display timestamp: " + (new Date()).toLocaleString();
@@ -835,13 +835,13 @@ four56bereastreet.html5validator = (function()
 				}
 				fragment.appendChild(errorList);
 			} // function
-			var h2 = fragment.appendChild(generatedDocument.createElement('h2'));
-			h2.innerHTML = errorsAndWarnings;
+			var h3 = fragment.appendChild(generatedDocument.createElement('h3'));
+			h3.innerHTML = errorsAndWarnings;
 			generateErrorList(result.messages);
 			if (result.suppressedMessages.length)
 			{
-				h2 = fragment.appendChild(generatedDocument.createElement('h2'));
-				h2.innerHTML = "Errors and warnings filtered out due to preference settings";
+				h3 = fragment.appendChild(generatedDocument.createElement('h3'));
+				h3.innerHTML = "Errors and warnings filtered out due to preference settings";
 				generateErrorList(result.suppressedMessages);
 			}
 			docBody.insertBefore(container, docBody.firstChild);
