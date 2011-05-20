@@ -15,18 +15,19 @@ CHANGELOG
 * 1.5.5 - 2011-02-25 - FIX: Improved status info, issue #3
 * 1.5.6 - 2011-04-24 - FIX: Changed from evil eval to JSON.parse for parsing of validator response
 * 1.9.* - 2011-05-20 - Various changes and fixes:
-** FIX: if the current location changes while a validation is in progress, the results will still end up connected to the validated document
+** FIX: if the current location changes while a validation is in progress, make sure the results will still end up connected to the validated document
 ** FIX: strip empty or blank lines from domain whitelist
-** NEW: do not offer to validate about:blank, chrome: and similar pages
+** FIX: better protection against bad regular expression (e.g., "*.[") in domain whitelist
 ** NEW: do not auto-validate if add-on bar is collapsed
 ** NEW: detect document-load failures
 ** NEW: validation results are cached and shared between all tabs displaying the same document
 ** NEW: the validation-result cache is independent of the browser's page cache
-** NEW: (optional) display validation details in a separate window
-** NEW: empty domain whitelist no longer interpreted as a wildcard for auto-validation, use "*" to enable global auto-validation (not recommended)
+** NEW: (optional) display validation details in a separate window, which keeps a running log of all displayed results during the session
+** NEW: empty domain whitelist no longer interpreted as a wildcard for auto-validation; use "*" to enable global auto-validation (not recommended)
 ** NEW: pending auto-validation can be cancelled by pressing Escape
 ** NEW: pending auto-validation is automatically cancelled if the current location changes (tab switch, link followed, etc.)
-** NEW: preference to control the maximum size of a document to auto-validate
+** NEW: preference to allow manual validation of non-whitelisted domains
+** NEW: preference to control the maximum size of a document to auto-validate (use -1 to override)
 ** NEW: preference to control the timeout before auto-validation kicks in
 ** NEW: preference to control the parser to be used by the validator
 ** NEW: the results cache is indexed on the validation settings in effect at the time of the validation
@@ -34,3 +35,5 @@ CHANGELOG
 ** NEW: keep track of error and warning messages that were suppressed due to preference settings
 ** NEW: more detailed status information in the add-on bar
 ** NEW: more information about validation settings on the results page
+** NEW: the results tab opens to the left of the originating tab, automatically returning focus to the originating tab when closed
+** NEW: on session restart, all result tabs and windows left over from the last session are automatically closed
