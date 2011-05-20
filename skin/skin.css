@@ -1,5 +1,8 @@
+#status-bar {
+}
 #html5validator-status-bar {
 	margin: 2px 0;
+	min-width: 5em; /* always provide some space to click and mouse over*/
 }
 #html5validator-status-bar.errors {
 	color: #600;
