@@ -698,7 +698,7 @@ four56bereastreet.html5validator = (function()
 			{
 				var index = getBrowser().getBrowserIndexForDocument(doc);
 				var newTab = getBrowser().addTab(RESULTWINDOW);
-				getBrowser().moveTabTo(newTab, index + 1);
+				getBrowser().moveTabTo(newTab, index);
 				getBrowser().selectedTab = newTab;
 				var newbrowser = getBrowser().getBrowserForTab(newTab);
 				return newbrowser.contentWindow;
@@ -840,6 +840,7 @@ four56bereastreet.html5validator = (function()
 			docBody.insertBefore(container, docBody.firstChild);
 			resultsLookup[resultId] = container.id;
 			resultWindow.focus();
+			resultWindow.scroll(0, 0);
 			resultWindow.location = RESULTWINDOW + "#" + container.id;
 		};
 		setTimeout(populateResultWindow, timeoutMs); // FF < 4.0 seems to need a timeout even for the first invocation
