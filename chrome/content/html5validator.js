@@ -703,6 +703,7 @@ four56bereastreet.html5validator = (function()
 			{
 				var index = getBrowser().getBrowserIndexForDocument(doc);
 				var newTab = getBrowser().addTab(RESULTWINDOW);
+				// open new tab at the current index position, move current tab to the right:
 				getBrowser().moveTabTo(newTab, index);
 				getBrowser().selectedTab = newTab;
 				var newbrowser = getBrowser().getBrowserForTab(newTab);
@@ -766,6 +767,8 @@ four56bereastreet.html5validator = (function()
 			linkList.className = "prevnext";
 			var elNoResult = generatedDocument.getElementById('no-results');
 			if (elNoResult) {
+				// while this no longer has any visual effect, it is very
+				// important since it serves to defuse the document's built-in time bomb!
 				elNoResult.parentNode.removeChild(elNoResult);
 			}
 			else {
