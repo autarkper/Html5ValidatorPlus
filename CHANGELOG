@@ -35,5 +35,6 @@ CHANGELOG
 ** NEW: keep track of error and warning messages that were suppressed due to preference settings
 ** NEW: more detailed status information in the add-on bar
 ** NEW: more information about validation settings on the results page
-** NEW: the results tab opens to the left of the originating tab, automatically returning focus to the originating tab when closed
-** NEW: on session restart, all result tabs and windows left over from the last session are automatically closed
+** NEW: the results tab opens immediately to the left of the originating tab, automatically returning focus to the originating tab when closed
+** NEW: preference to open the results tab to the right of the originating tab
+** NEW: on session restart, all results tabs and windows left over from the last session are automatically closed
