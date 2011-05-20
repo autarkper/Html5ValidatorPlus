@@ -1,16 +1,15 @@
 # HTML5 Validator Plus
 
-HTML5 Validator Plus is a forked and enhanced version of Roger Johansson's HTML5 Validator, a Firefox add-on that helps with validating HTML(5) source using the validator.nu engine (online or local instance).
+HTML5 Validator Plus is an enhanced version of Roger Johansson's HTML5 Validator, a Firefox add-on that helps with validating HTML(5) source using the validator.nu engine (online or local instance).
 
-Basically, HTML5 Validator Plus has more options than the original, and it optionally displays validation results in a separate window so you can easily switch between the validated page and the results page. One important design goal to limit the number of requests to the validator, which is especially useful if you don't have a local validator. Thus, an empty domain whitelist effectively disables auto-validation, but if you really want global auto-validation you can have a single "*" entry instead.
+One important design goal of the HTML5 Validator Plus enhancements is to limit the number of requests to the validator, which is especially useful if you don't have a local validator. Thus, an empty domain whitelist effectively disables auto-validation, but if you really want global auto-validation you can have a single "*" entry instead.
 
-Furthermore, HTML5 Validator Plus keeps a cache of validation results that is shared between different tabs and windows, compared to the original version, which ties the validation result to the relatively short-lived and isolated DOM document object (which causes validation results to be lost when flipping more than a few levels back and forth in the page history). Each cached validation result is indexed on the validation settings in effect when performing the validation, so if you switch back and forth between different settings you will not lose old validation results, as long as you don't reload the validated document.
+With HTML5 Validator Plus you can choose to see the validation results in a separate window or in a new tab next to the current tab. Both options are set up so you can easily switch between the validated page and the results page. The validation results window keeps a running log of all results viewed in the current browsing session, as long as you keep the window open, with the latest results on top. All results windows and tabs are automatically closed if opened empty, so you will not end up with lots of old browser windows or tabs saved from previous sessions after a restart.
+
+Furthermore, HTML5 Validator Plus keeps a cache of validation results that is shared between different tabs and windows, compared to the original version, which ties the validation result to the relatively short-lived and isolated DOM document object (which causes validation results to be lost when flipping more than a few levels back and forth in the page history). Each cached validation result is indexed on the validation settings in effect when performing the validation, so if you switch back and forth between different settings you will not lose any old validation results, as long as you don't reload the validated document.
 
 Another enhancement is the ability to choose which parser the validator should use. The filtering of validator error and warning messages is also enhanced to filter out the validator's rather pointless error message in case your pages use some other encoding than UTF-8. Just to make sure you don't miss out on any important message, all other messages, including info messages and suppressed error or warning messages, are displayed on the results page, even if they don't affect the error and warning count.
 
-The validation results window keeps a running log of all results viewed in the current browsing session, as long as you keep the window open, with the latest results on top. The results window is reused between sessions, if possible, so you will not end up with lots of old browser windows saved from previous sessions. There is also an option to open a new validation-results tab in the current browser window, if you like it that way.
-
-Known bugs and problems: 
-* Switching between displaying validation results in tabs and displaying in a separate window can make subsequent display of results silently end up in the last opened results tab until it is closed.
+Known bugs and problems: Currently none.
 
 Acknowledgements: Thanks to Roger Johansson and contributors to the original HTML5 Validator, who did all the hard work while I had all the fun.
