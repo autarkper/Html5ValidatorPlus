@@ -5,7 +5,19 @@
 <link type="text/css" rel="stylesheet" href="chrome://html5validator/skin/results.css"/>
 <link rel="shortcut icon" href="chrome://html5validator/skin/html5-dimmed.png" type="image/png">
 </head>
-<body id="html5validator-results">
+<script type="application/javascript">
+function timeBomb()
+{
+	if (document.getElementById('no-results'))
+	{
+		// if there still is a no-results element after the timeout,
+		// it is most probably a left-over window or tab from a session restart,
+		// so we'd better just close it.
+		window.close();
+	}
+}
+</script>
+<body id="html5validator-results" onload="setTimeout(timeBomb, 250);">
 <h1 id="no-results">No validation results to display</h1>
 </body>
 </html>
