@@ -676,31 +676,12 @@ four56bereastreet.html5validator = (function()
 		}
 	},
 
-	findWindowWithURL = function(url)
-	{ // Adapted from: https://developer.mozilla.org/en/Code_snippets/Tabbed_browser
-		var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-			.getService(Components.interfaces.nsIWindowMediator);
-		var browserEnumerator = wm.getEnumerator("navigator:browser");
-		url = normalizeUrl(url);
-		// Check each browser instance for our URL
-		while (browserEnumerator.hasMoreElements()) {
-			var browserWin = browserEnumerator.getNext();
-			var tabbrowser = browserWin.gBrowser;
-
-			// Check each tab of this browser instance
-			var numTabs = tabbrowser.browsers.length;
-			for (var index = 0; index < numTabs; index++) {
-				var currentBrowser = tabbrowser.getBrowserAtIndex(index);
-				if (url == normalizeUrl(currentBrowser.currentURI.spec)) {
-					return currentBrowser.contentWindow;
-				}
-			}
-		}
-		return null;
+	getResultWindow = function() {
+		return Application.storage.get("resultWindow", null);
 	},
-
-	// Display the cached validation results in a separate window.
-	g_resultWindow = null,
+	setResultWindow = function(win) {
+		Application.storage.set("resultWindow", win);
+	},
 	RESULTWINDOW = 'chrome://html5validator/content/resultswindow.html',
 	showValidationResults = function()
 	{
@@ -710,7 +691,8 @@ four56bereastreet.html5validator = (function()
 		}
 
 		var openInTab = preferences.displayResultsInTab;
-		if (openInTab || !g_resultWindow || g_resultWindow.closed)
+		var resultWindow = null;
+		if (openInTab || !getResultWindow() || getResultWindow().closed)
 		{
 			function openNewTab()
 			{
@@ -722,10 +704,17 @@ four56bereastreet.html5validator = (function()
 				return newbrowser.contentWindow;
 			}
 			function findOrOpenWindow() {
-				return findWindowWithURL(RESULTWINDOW) || window.open(RESULTWINDOW, 'html5validator',
-					"menubar=no,location=no,resizable=yes,minimizable=yes,scrollbars=yes,status=yes");
+				setResultWindow(
+					window.open(RESULTWINDOW, 'html5validator',
+						"menubar=no,location=no,resizable=yes,minimizable=yes,scrollbars=yes,status=yes")
+					);
+				return getResultWindow();
 			}
-			g_resultWindow = openInTab ? openNewTab() : findOrOpenWindow();
+			resultWindow = openInTab ? openNewTab() : findOrOpenWindow();
+		}
+		else
+		{
+			resultWindow = getResultWindow();
 		}
 		/* window.open returns before the new window is fully initialized, so we have to wait for it to
 		 initialize. "window.addEventListener('load', ...)" does not seem to work, so a simple timeout
@@ -734,7 +723,7 @@ four56bereastreet.html5validator = (function()
 		var timeoutMs = 25;
 		var populateResultWindow = function()
 		{
-			var generatedDocument = g_resultWindow.document;
+			var generatedDocument = resultWindow.document;
 			if (generatedDocument.readyState !== "complete") {
 				log("results window state: " + generatedDocument.readyState);
 				timeoutMs = timeoutMs * 2; // increasingly less aggressive timeout
@@ -748,8 +737,8 @@ four56bereastreet.html5validator = (function()
 			var resultId = result.timestamp.getTime();
 			if (resultsLookup[resultId])
 			{
-				g_resultWindow.focus();
-				g_resultWindow.location = RESULTWINDOW + "#" + resultsLookup[resultId];
+				resultWindow.focus();
+				resultWindow.location = RESULTWINDOW + "#" + resultsLookup[resultId];
 				return;
 			}
 			var docBody = generatedDocument.getElementsByTagName('body')[0];
@@ -850,8 +839,8 @@ four56bereastreet.html5validator = (function()
 			}
 			docBody.insertBefore(container, docBody.firstChild);
 			resultsLookup[resultId] = container.id;
-			g_resultWindow.focus();
-			g_resultWindow.location = RESULTWINDOW + "#" + container.id;
+			resultWindow.focus();
+			resultWindow.location = RESULTWINDOW + "#" + container.id;
 		};
 		setTimeout(populateResultWindow, timeoutMs); // FF < 4.0 seems to need a timeout even for the first invocation
 	},
