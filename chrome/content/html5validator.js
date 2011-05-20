@@ -743,20 +743,27 @@ four56bereastreet.html5validator = (function()
 			}
 			var resultsLookup = generatedDocument.resultsLookup || (generatedDocument.resultsLookup = {});
 			var lastId = generatedDocument.lastId || 0;
-			var lastDocTitle = generatedDocument.lastDocTitle || '';
+			var lastSectionHeading = generatedDocument.lastSectionHeading || '';
 			var result = vCache.lookupResults(doc);
 			var resultId = result.timestamp.getTime();
 			if (resultsLookup[resultId])
 			{
-				log(resultId);
 				g_resultWindow.focus();
 				g_resultWindow.location = RESULTWINDOW + "#" + resultsLookup[resultId];
 				return;
 			}
 			var docBody = generatedDocument.getElementsByTagName('body')[0];
 
+			if (openInTab)
+			{
+				var titleElement = generatedDocument.getElementsByTagName('title')[0];
+				if (titleElement)
+				{
+					titleElement.textContent = "[" + doc.URL + "] - Validation results";
+				}
+			}
 			var parserStr = " [parser:" + (result.preferences.parser.length ? result.preferences.parser : 'inferred') + "]";
-			var docTitle = 'Validation results for ' + doc.URL + parserStr;
+			var sectionHeading = 'Validation results for ' + doc.URL + parserStr;
 			var errorsAndWarnings = result.errors + ' errors and ' + result.warnings + ' warnings';
 			/* Create the HTML content of the body – a heading and the list of messages with some elements and class names to enable styling */
 
@@ -775,21 +782,21 @@ four56bereastreet.html5validator = (function()
 				var fwdLink = li.appendChild(generatedDocument.createElement("A"));
 				fwdLink.href = '#section' + (lastId - 1);
 				fwdLink.textContent = "Next";
-				fwdLink.title = lastDocTitle;
+				fwdLink.title = lastSectionHeading;
 
 				li = generatedDocument.linkList.appendChild(generatedDocument.createElement("LI"));
 				var backLink = li.appendChild(generatedDocument.createElement("A"));
 				backLink.href = "#" + container.id;
 				backLink.textContent = "Previous";
-				backLink.title = docTitle;
+				backLink.title = sectionHeading;
 			}
 			generatedDocument.linkList = linkList;
 
 			generatedDocument.lastId = lastId + 1;
 			var fragment = container.appendChild(generatedDocument.createElement("DIV"));
 			var h1 = fragment.appendChild(generatedDocument.createElement('h1'));
-			h1.innerHTML = docTitle;
-			generatedDocument.lastDocTitle = docTitle;
+			h1.innerHTML = sectionHeading;
+			generatedDocument.lastSectionHeading = sectionHeading;
 			var dateP = fragment.appendChild(generatedDocument.createElement('p'));
 			dateP.textContent = "Display timestamp: " + (new Date()).toLocaleString();
 			dateP = fragment.appendChild(generatedDocument.createElement('p'));
