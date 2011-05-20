@@ -153,6 +153,12 @@ four56bereastreet.html5validator = (function()
 	var statusBarPanel, activeDocument,
 	g_invalidUrlRe = /^(about|chrome):/,
 
+	parserString = function(prefs)
+	{
+		// only write out the parser string if not inferred
+		return prefs.parser.length ? " [parser:" + prefs.parser  + "]" : "";
+	},
+
 	isValidUrl = function(url)
 	{
 		return url && !url.match(g_invalidUrlRe);
@@ -478,7 +484,7 @@ four56bereastreet.html5validator = (function()
 			statusBarPanel.label = errorText;
 			statusBarPanel.src = "chrome://html5validator/skin/html5-error-red.png";
 			statusBarPanel.className = "statusbarpanel-iconic-text errors";
-			statusBarPanel.tooltipText = "HTML5 Validator Plus: Click to view validation details";
+			statusBarPanel.tooltipText = "HTML5 Validator Plus" + parserString(preferences) + ": Click to view validation details";
 			g_clickEnabled = true;
 		}
 		else
@@ -544,7 +550,7 @@ four56bereastreet.html5validator = (function()
 				case "results":
 					statusBarPanel.src = "chrome://html5validator/skin/html5-ok.png";
 					statusBarPanel.label = "";
-					statusBarPanel.tooltipText = "HTML5 Validator Plus: No errors. Click to view validation details";
+					statusBarPanel.tooltipText = "HTML5 Validator Plus" + parserString(preferences) + ": No errors. Click to view validation details";
 					break;
 				default:
 					statusBarPanel.label = "internal error";
@@ -751,8 +757,7 @@ four56bereastreet.html5validator = (function()
 					titleElement.textContent = "[" + doc.URL + "] - Validation results";
 				}
 			}
-			var parserStr = " [parser:" + (result.preferences.parser.length ? result.preferences.parser : 'inferred') + "]";
-			var sectionHeading = 'Validation results for ' + doc.URL + parserStr;
+			var sectionHeading = 'Validation results for ' + doc.URL + parserString(result.preferences);
 			var errorsAndWarnings = result.errors + ' errors and ' + result.warnings + ' warnings';
 			/* Create the HTML content of the body – a heading and the list of messages with some elements and class names to enable styling */
 
