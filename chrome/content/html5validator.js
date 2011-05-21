@@ -214,6 +214,7 @@ four56bereastreet.html5validator = (function()
 		}
 		function resCache() {return cache("resCache");}
 		function navCache() {return cache("navCache");}
+		function busyCache() {return cache("busyCache");}
 
 		var pub = {
 			lookupResults: function(doc)
@@ -228,6 +229,7 @@ four56bereastreet.html5validator = (function()
 			storeResults: function(doc, result)
 			{
 				var url = normalizeUrl(doc.URL);
+				delete busyCache()[url];
 				var results = resCache()[url] || (resCache()[url] = {});
 				results[preferenceToken] = result;
 			},
@@ -235,6 +237,21 @@ four56bereastreet.html5validator = (function()
 			{
 				var url = normalizeUrl(doc.URL);
 				delete resCache()[url];
+			},
+			setBusyState: function(doc, busy)
+			{
+				var url = normalizeUrl(doc.URL);
+				if (busy) {
+					busyCache()[url] = true;
+				}
+				else {
+					delete busyCache()[url];
+				}
+			},
+			isBusy: function(doc)
+			{
+				var url = normalizeUrl(doc.URL);
+				return busyCache()[url] || false;
 			},
 			lookupNoAutoValidation: function(doc)
 			{
@@ -279,9 +296,15 @@ four56bereastreet.html5validator = (function()
 			validateDocHTML(frame, triggered, optTimeoutMs * 2); // come back later
 			return;
 		}
-		
+
 		var doc = activeDocument;
 		if (!doc) {return;}
+
+		if (vCache.isBusy(doc))
+		{
+			updateStatusBar(0, 0, "running");
+			return;
+		}
 
 		var url = doc.URL || '';
 		if (!url.length || url.match(g_invalidUrlRe))
@@ -564,6 +587,7 @@ four56bereastreet.html5validator = (function()
 	{
 		if (html.length === 0) {return;}
 		updateStatusBar(0, 0, "running");
+		vCache.setBusyState(doc, true);
 
 		var xhr = new XMLHttpRequest();
 		function onload() {
@@ -643,11 +667,13 @@ four56bereastreet.html5validator = (function()
 			}
 			catch (err) {
 				log(err);
+				vCache.setBusyState(doc, false);
 				updateStatusBar(0, 0, "badResponse");
 			}
 		};
 		// If we couldn't validate the document (validator not running, network down, etc.)
 		xhr.onerror = function(){
+			vCache.setBusyState(doc, false);
 			updateStatusBar(0, 0, "errorValidator");
 		};
 
