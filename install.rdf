@@ -2,7 +2,7 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	 xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 	<Description about="urn:mozilla:install-manifest">
-		<em:id>Html5ValidatorPlus@autark.se</em:id>
+		<em:id>html5validator@456bereastreet.com</em:id>
 		<em:name>HTML5 Validator Plus</em:name>
 		<em:version>1.9.9.1</em:version>
 		<em:type>2</em:type>
