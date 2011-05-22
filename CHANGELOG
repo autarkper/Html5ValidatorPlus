@@ -21,7 +21,7 @@ CHANGELOG
 ** NEW: do not auto-validate if add-on bar is collapsed
 ** NEW: detect document-load failures
 ** NEW: validation results are shared between all tabs and windows displaying the same document
-** NEW: the validation-result cache is independent of the browser's page cache
+** NEW: the validation-results cache is independent of the browser's page cache
 ** NEW: (optional) display validation details in a separate window, which keeps a running log of all displayed results during the session
 ** NEW: empty domain whitelist no longer interpreted as a wildcard for auto-validation; use "*" to enable global auto-validation (not recommended)
 ** NEW: pending auto-validation can be cancelled by pressing Escape
@@ -35,10 +35,9 @@ CHANGELOG
 ** NEW: keep track of error and warning messages that were suppressed due to preference settings
 ** NEW: more detailed status information in the add-on bar
 ** NEW: information about validation settings on the results page
-** NEW: the results tab opens immediately to the left of the originating tab, automatically returning focus to the originating tab when closed
-** NEW: preference to open the results tab to the right of the originating tab
+** NEW: the results tab opens immediately to the right of the originating tab, automatically returning focus to the originating tab when closed
 ** NEW: on session restart, all results tabs and windows left over from the last session are automatically closed
 ** NEW: clicking the validator icon in "non-clickable" state brings up the preferences dialog
 ** NEW: keyboard shortcut SHIFT+CONTROL+ALT+v equivalent to clicking the validator icon
-** NEW: press Escape to easily close results window or tab
+** NEW: press Escape in the results window or tab to easily close it
 
