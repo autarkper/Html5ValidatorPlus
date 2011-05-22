@@ -152,6 +152,7 @@ four56bereastreet.html5validator = (function()
 
 	var statusBarPanel, activeDocument,
 	g_invalidUrlRe = /^(about|chrome):/,
+	addonBar = document.getElementById('addon-bar') || document.getElementById('status-bar'),
 
 	parserString = function(prefs)
 	{
@@ -330,7 +331,6 @@ four56bereastreet.html5validator = (function()
 			return;
 		}
 		// do not attempt auto-validation unless we have a visible UI
-		var addonBar = document.getElementById('addon-bar') || document.getElementById('status-bar');
 		if (addonBar && addonBar.collapsed) {
 			updateStatusBar(0, 0, 'use-trigger'); // display a sensible message when uncollapsed
 			return;
@@ -910,6 +910,9 @@ four56bereastreet.html5validator = (function()
 
 		onHotKey: function()
 		{
+			if (addonBar) {
+				addonBar.collapsed = false;
+			}
 			handleLeftClick();
 		}
 	};
