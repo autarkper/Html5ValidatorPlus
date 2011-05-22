@@ -732,8 +732,7 @@ four56bereastreet.html5validator = (function()
 		{
 			function openNewTab()
 			{
-				var newTab = getBrowser().addTab(RESULTWINDOW, {relatedToCurrent: true});
-				getBrowser().selectedTab = newTab;
+				var newTab = getBrowser().loadOneTab(RESULTWINDOW, {relatedToCurrent:true, inBackground:false});
 				var newbrowser = getBrowser().getBrowserForTab(newTab);
 				return newbrowser.contentWindow;
 			}
