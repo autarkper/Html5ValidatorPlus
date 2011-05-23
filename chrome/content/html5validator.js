@@ -3,6 +3,7 @@ if (!window.four56bereastreet) {var four56bereastreet = {};}
 
 four56bereastreet.html5validator = (function()
 {
+	var myName = "HTML5 Validator Plus";
 	var Application = Components.classes["@mozilla.org/fuel/application;1"].getService(Components.interfaces.fuelIApplication);
 	function normalizeUrl(url)
 	{
@@ -507,7 +508,7 @@ four56bereastreet.html5validator = (function()
 			statusBarPanel.label = errorText;
 			statusBarPanel.src = "chrome://html5validator/skin/html5-error-red.png";
 			statusBarPanel.className = "statusbarpanel-iconic-text errors";
-			statusBarPanel.tooltipText = "HTML5 Validator Plus" + parserString(preferences) + ": Click to view validation details";
+			statusBarPanel.tooltipText = myName + parserString(preferences) + ": Click to view validation details";
 			g_clickEnabled = true;
 		}
 		else
@@ -519,61 +520,61 @@ four56bereastreet.html5validator = (function()
 			switch (status) {
 				case "reload-document":
 					statusBarPanel.label = "Refresh (F5) required";
-					statusBarPanel.tooltipText = "HTML5 Validator Plus: Document not in cache, refresh required";
+					statusBarPanel.tooltipText = myName + ": Document not in cache, refresh required";
 					g_clickEnabled = false;
 					break;
 				case "document-loading":
 					statusBarPanel.label = "Document loading...";
-					statusBarPanel.tooltipText = "HTML5 Validator Plus: Document is loading, please wait";
+					statusBarPanel.tooltipText = myName + ": Document is loading, please wait";
 					g_clickEnabled = false;
 					break;
 				case "running":
 					statusBarPanel.label = "Validating...";
-					statusBarPanel.tooltipText = "HTML5 Validator Plus: Document currently validating";
+					statusBarPanel.tooltipText = myName + ": Document currently validating";
 					g_clickEnabled = false;
 					break;
 				case "reset":
 					statusBarPanel.label = "";
-					statusBarPanel.tooltipText = "HTML5 Validator Plus: Idle";
+					statusBarPanel.tooltipText = myName + ": Idle";
 					g_clickEnabled = false;
 					break;
 				case "use-trigger":
-					statusBarPanel.tooltipText = "HTML5 Validator Plus: Auto-validation off, click to validate";
+					statusBarPanel.tooltipText = myName + ": Auto-validation off, click to validate";
 					break;
 				case "large-doc":
-					statusBarPanel.tooltipText = "HTML5 Validator Plus: Document too large for auto-validation, click to validate";
+					statusBarPanel.tooltipText = myName + ": Document too large for auto-validation, click to validate";
 					break;
 				case "cancelled":
-					statusBarPanel.tooltipText = "HTML5 Validator Plus: Auto-validation cancelled, click to validate";
+					statusBarPanel.tooltipText = myName + ": Auto-validation cancelled, click to validate";
 					break;
 				case "about-to-validate":
-					statusBarPanel.tooltipText = "HTML5 Validator Plus: Validation pending...";
+					statusBarPanel.tooltipText = myName + ": Validation pending...";
 					statusBarPanel.label = "Validation pending, press Escape to cancel";
 					break;
 				case "manual":
-					statusBarPanel.tooltipText = "HTML5 Validator Plus: Domain not in whitelist, click to validate";
+					statusBarPanel.tooltipText = myName + ": Domain not in whitelist, click to validate";
 					break;
 				case "restricted":
 					statusBarPanel.label = "Restricted";
-					statusBarPanel.tooltipText = "HTML5 Validator Plus: Domain not in whitelist, validation restricted";
+					statusBarPanel.tooltipText = myName + ": Domain not in whitelist, validation restricted";
 					g_clickEnabled = false;
 					break;
 				case "errorValidator":
 					statusBarPanel.label = "Validator error";
-					statusBarPanel.tooltipText = "HTML5 Validator Plus: Could not contact the validator, at '" + preferences.validatorURL + "'";
+					statusBarPanel.tooltipText = myName + ": Could not contact the validator, at '" + preferences.validatorURL + "'";
 					break;
 				case "badResponse":
 					statusBarPanel.label = "Validator problem";
-					statusBarPanel.tooltipText = "HTML5 Validator Plus: Bad response from validator, at '" + preferences.validatorURL + "'";
+					statusBarPanel.tooltipText = myName + ": Bad response from validator, at '" + preferences.validatorURL + "'";
 					break;
 				case "internalError":
 					statusBarPanel.label = "Internal Error";
-					statusBarPanel.tooltipText = "HTML5 Validator Plus: Some internal error occurred";
+					statusBarPanel.tooltipText = myName + ": Some internal error occurred";
 					break;
 				case "results":
 					statusBarPanel.src = "chrome://html5validator/skin/html5-ok.png";
 					statusBarPanel.label = "";
-					statusBarPanel.tooltipText = "HTML5 Validator Plus" + parserString(preferences) + ": No errors. Click to view validation details";
+					statusBarPanel.tooltipText = myName + "" + parserString(preferences) + ": No errors. Click to view validation details";
 					break;
 				default:
 					statusBarPanel.label = "internal error";
