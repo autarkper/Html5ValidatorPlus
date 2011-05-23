@@ -10,7 +10,7 @@
 			contextmenu="html5validator-menupopup"
 			src="chrome://html5validator/skin/html5-dimmed.png"
 			tooltiptext="HTML5 Validator Plus"
-			onclick="if (event.button===0) four56bereastreet.html5validator.onHotKey()"
+			onclick="if (event.button===0) four56bereastreet.html5validator.onCommand()"
 			label="" />
 	</statusbar>
 </overlay>
