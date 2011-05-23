@@ -5,6 +5,7 @@ four56bereastreet.html5validator = (function()
 {
 	var myName = "HTML5 Validator Plus";
 	var addonBar = null;
+	var statusBar = null;
 	var Application = Components.classes["@mozilla.org/fuel/application;1"].getService(Components.interfaces.fuelIApplication);
 	function normalizeUrl(url)
 	{
@@ -333,8 +334,9 @@ four56bereastreet.html5validator = (function()
 		}
 		// do not attempt auto-validation unless we have a visible UI
 		var addonBar = document.getElementById('addon-bar');
-		if (addonBar && addonBar.collapsed) {
-			updateStatusBar(0, 0, 'use-trigger'); // display a sensible message when uncollapsed
+		if ((addonBar && addonBar.collapsed) || (!addonBar && statusBar.hidden)) {
+			log("ui collapsed or hidden");
+			updateStatusBar(0, 0, 'use-trigger'); // display a sensible message later when made visible
 			return;
 		}
 		var isAutoDomain = isWhitelistDomain(url);
@@ -895,6 +897,7 @@ four56bereastreet.html5validator = (function()
 				addonBar.collapsed = false;
 			}
 			statusBarPanel = document.getElementById('html5validator-status-bar');
+			statusBar = document.getElementById('status-bar');
 			updateStatusBar(0, 0, 'reset');
 
 			preferencesObserver.register();
@@ -912,8 +915,11 @@ four56bereastreet.html5validator = (function()
 
 		onHotKey: function()
 		{
-			if (addonBar) {
+			if (addonBar && addonBar.collapsed) {
 				addonBar.collapsed = false;
+			}
+			else if (!addonBar && statusBar.hidden) {
+				statusBar.hidden = false;
 			}
 			statusBarPanelClick();
 		}
