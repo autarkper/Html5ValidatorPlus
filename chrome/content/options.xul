@@ -7,7 +7,7 @@
 	title="HTML5 Validator Plus Preferences"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
  
-	<prefpane label="HTML5 Validator Plus Preferences">
+	<prefpane label="Preferences - HTML5 Validator Plus">
 
 		<preferences>
 			<preference id="pref-validatorURL" name="extensions.html5validator.validatorURL" type="string"/>
