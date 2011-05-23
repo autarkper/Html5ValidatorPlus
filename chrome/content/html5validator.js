@@ -4,6 +4,7 @@ if (!window.four56bereastreet) {var four56bereastreet = {};}
 four56bereastreet.html5validator = (function()
 {
 	var myName = "HTML5 Validator Plus";
+	var addonBar = null;
 	var Application = Components.classes["@mozilla.org/fuel/application;1"].getService(Components.interfaces.fuelIApplication);
 	function normalizeUrl(url)
 	{
@@ -331,7 +332,7 @@ four56bereastreet.html5validator = (function()
 			return;
 		}
 		// do not attempt auto-validation unless we have a visible UI
-		var addonBar = document.getElementById('addon-bar') || document.getElementById('status-bar');
+		var addonBar = document.getElementById('addon-bar');
 		if (addonBar && addonBar.collapsed) {
 			updateStatusBar(0, 0, 'use-trigger'); // display a sensible message when uncollapsed
 			return;
@@ -896,6 +897,7 @@ four56bereastreet.html5validator = (function()
 
 			gBrowser.addProgressListener(html5validatorListener);
 
+			addonBar = document.getElementById('addon-bar');
 			statusBarPanel = document.getElementById('html5validator-status-bar');
 			statusBarPanel.addEventListener("click", statusBarPanelClick, false);
 
@@ -911,6 +913,9 @@ four56bereastreet.html5validator = (function()
 
 		onHotKey: function()
 		{
+			if (addonBar) {
+				addonBar.collapsed = false;
+			}
 			handleLeftClick();
 		}
 	};
