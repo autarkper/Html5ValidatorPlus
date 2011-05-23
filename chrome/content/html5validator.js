@@ -750,15 +750,16 @@ four56bereastreet.html5validator = (function()
 		{
 			resultWindow = getResultWindow();
 		}
-		/* window.open returns before the new window is fully initialized, so we have to wait for it to
-		 initialize. "window.addEventListener('load', ...)" does not seem to work, so a simple timeout
-		 loop is used instead.
-		 */
 		var timeoutMs = 25;
 		var populateResultWindow = function()
 		{
 			var generatedDocument = resultWindow.document;
-			if (generatedDocument.readyState !== "complete") {
+			var docBody = generatedDocument.getElementById('results');
+			if (!docBody) {
+				/* window.open returns before the new window is fully initialized, so we have to wait for it to
+				initialize. "resultWindow.addEventListener('load', ...)" does not seem to work
+				(possibly a race condition), so a simple timeout loop is used instead.
+				*/
 				log("results window state: " + generatedDocument.readyState);
 				timeoutMs = timeoutMs * 2; // increasingly less aggressive timeout
 				setTimeout(populateResultWindow, timeoutMs);
@@ -775,7 +776,6 @@ four56bereastreet.html5validator = (function()
 				resultWindow.location = RESULTWINDOW + "#" + resultsLookup[resultId];
 				return;
 			}
-			var docBody = generatedDocument.getElementById('results');
 
 			if (openInTab)
 			{
@@ -878,7 +878,7 @@ four56bereastreet.html5validator = (function()
 			resultWindow.scroll(0, 0);
 			resultWindow.location = RESULTWINDOW + "#" + container.id;
 		};
-		setTimeout(populateResultWindow, timeoutMs); // FF < 4.0 seems to need a timeout even for the first invocation
+		populateResultWindow();
 	},
 	showOptionsDialog = function()
 	{
