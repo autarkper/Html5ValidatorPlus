@@ -10,16 +10,18 @@
 		</menupopup>
 	</popupset>
 
-	<statusbar id="status-bar">
-		<statusbarpanel 
+	<toolbarpalette id="status-bar">
+		<toolbarbutton class="statusbarpanel-iconic-text chromeclass-toolbar-additional"
 			id="html5validator-status-bar"
-			class="statusbarpanel-iconic-text"
-			contextmenu="html5validator-menupopup"
 			src="chrome://html5validator/skin/html5-dimmed.png"
 			tooltiptext="HTML5 Validator Plus"
-			label="" />
-	</statusbar>
-	<keyset>
+			label=""
+			context="html5validator-menupopup"
+			oncommand="four56bereastreet.html5validator.onCommand()"
+			>
+		</toolbarbutton>
+	</toolbarpalette>
+<keyset>
 		<key id="test-key" modifiers="control alt shift" key="V" oncommand="four56bereastreet.html5validator.onHotKey()"/>
 	</keyset>
 

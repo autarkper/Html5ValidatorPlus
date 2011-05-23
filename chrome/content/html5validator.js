@@ -685,7 +685,7 @@ four56bereastreet.html5validator = (function()
 		xhr.send(html);
 	},
 
-	handleLeftClick = function()
+	statusBarPanelClick = function()
 	{
 		var doc = getActiveDocument();
 		if (!doc) {
@@ -702,15 +702,6 @@ four56bereastreet.html5validator = (function()
 		}
 		else {
 			showOptionsDialog();
-		}
-	},
-
-	statusBarPanelClick = function(event)
-	{
-		// event.button: 0 - left, 1 - middle, 2 - right
-		if (event.button === 0)
-		{
-			handleLeftClick();
 		}
 	},
 
@@ -898,9 +889,12 @@ four56bereastreet.html5validator = (function()
 			gBrowser.addProgressListener(html5validatorListener);
 
 			addonBar = document.getElementById('addon-bar');
+			if (!document.getElementById("html5validator-status-bar")) {
+				var addonBarCloseButton = document.getElementById("addonbar-closebutton")
+				addonBar.insertItem("html5validator-status-bar", addonBarCloseButton.nextSibling);
+				addonBar.collapsed = false;
+			}
 			statusBarPanel = document.getElementById('html5validator-status-bar');
-			statusBarPanel.addEventListener("click", statusBarPanelClick, false);
-
 			updateStatusBar(0, 0, 'reset');
 
 			preferencesObserver.register();
@@ -911,12 +905,17 @@ four56bereastreet.html5validator = (function()
 			showOptionsDialog();
 		},
 
+		onCommand: function()
+		{
+			statusBarPanelClick();
+		},
+
 		onHotKey: function()
 		{
 			if (addonBar) {
 				addonBar.collapsed = false;
 			}
-			handleLeftClick();
+			statusBarPanelClick();
 		}
 	};
 }());
