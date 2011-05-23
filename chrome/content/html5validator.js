@@ -74,7 +74,7 @@ four56bereastreet.html5validator = (function()
 		console = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService),
 		log = function(msg)
 		{
-			if (!console || !preferences.debug) {return;}
+			if (!console) {return;}
 			console.logStringMessage('Html5ValidatorPlus: ' + msg);
 		};
 
