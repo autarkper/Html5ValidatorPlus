@@ -18,6 +18,7 @@ CHANGELOG
 ** FIX: if the current location changes while a validation is in progress, make sure the results will still end up connected to the validated document
 ** FIX: strip empty or blank lines from domain whitelist
 ** FIX: better protection against bad regular expression (e.g., "*.[") in domain whitelist
+** NEW: native support for add-on bar, backward compatible with old-style status bar
 ** NEW: do not auto-validate if add-on bar is collapsed
 ** NEW: detect document-load failures
 ** NEW: validation results are shared between all tabs and windows displaying the same document
