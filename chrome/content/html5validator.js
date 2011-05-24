@@ -488,7 +488,7 @@ four56bereastreet.html5validator = (function()
 		if (g_usbTimeoutHandle) {window.clearTimeout(g_usbTimeoutHandle);}
 		g_usbTimeoutHandle = window.setTimeout( function() {
 			updateStatusBar__(errors, warnings, status);
-		}, 100); // prevent flickering in case of user flipping through tabs, etc.
+		}, 50); // prevent flickering in case of user flipping through tabs, etc.
 	},
 
 	g_clickEnabled = true,
