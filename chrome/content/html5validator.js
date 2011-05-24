@@ -887,8 +887,8 @@ four56bereastreet.html5validator = (function()
 		return html.replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 	};
 
-	return {
-		init: function ()
+	return four56bereastreet.html5validator || (four56bereastreet.html5validator = {
+		init: function()
 		{
 			loadPreferences();
 
@@ -927,7 +927,7 @@ four56bereastreet.html5validator = (function()
 			}
 			statusBarPanelClick();
 		}
-	};
+	});
 }());
 
 window.addEventListener("load", four56bereastreet.html5validator.init, false);
