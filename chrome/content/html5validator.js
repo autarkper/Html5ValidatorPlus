@@ -73,11 +73,15 @@ four56bereastreet.html5validator = (function()
 		},
 
 		console = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService),
-		log = function(msg)
+		log = (function()
 		{
-			if (!console) {return;}
-			console.logStringMessage('Html5ValidatorPlus: ' + msg);
-		};
+			if (!console) {return (function(msg){});} // dummy
+			var msgNo = 0;
+			return function(msg) {
+				++msgNo;
+				console.logStringMessage(myName + ': (' + msgNo + ") " + msg);
+			}
+		}());
 
 	var html5validatorListener = 
 	{
