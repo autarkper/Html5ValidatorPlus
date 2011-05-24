@@ -1,19 +1,8 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="chrome://html5validator/skin/skin.css" type="text/css"?>
+<?xml-stylesheet href="chrome://html5validator/skin/skin.css" type="text/css"?> 
 <overlay id="sample" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-
+	
 	<script src="html5validator.js" />
-
-	<popupset id="mainPopupSet">
-		<menupopup id="html5validator-menupopup">
-			<menuitem label="HTML5 Validator Plus Preferences" oncommand="four56bereastreet.html5validator.showOptions()"/>
-		</menupopup>
-	</popupset>
-
-	<keyset>
-		<key id="test-key" modifiers="control alt shift" key="V" oncommand="four56bereastreet.html5validator.onHotKey()"/>
-	</keyset>
-
 	<statusbar id="status-bar">
 		<statusbarpanel 
 			id="html5validator-status-bar"
