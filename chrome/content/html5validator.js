@@ -905,6 +905,7 @@ four56bereastreet.html5validator = (function()
 			}
 			statusBarPanel = document.getElementById('html5validator-status-bar');
 			statusBar = document.getElementById('status-bar');
+			setTimeout(function(){validateDocHTML(false);}, 250);
 			updateStatusBar(0, 0, 'reset');
 
 			preferencesObserver.register();
