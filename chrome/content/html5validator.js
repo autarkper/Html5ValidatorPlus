@@ -103,7 +103,7 @@ four56bereastreet.html5validator = (function()
 
 		onLocationChange: function(aProgress, aRequest, aURI)
 		{
-			activeDocument = window.content.document;
+			var activeDocument = window.content.document;
 			updateStatusBar(0, 0, "reset");
 			if (activeDocument && activeDocument.URL)
 			{
@@ -163,7 +163,7 @@ four56bereastreet.html5validator = (function()
 		onSecurityChange: function(aWebProgress, aRequest, aState){}
 	};
 
-	var statusBarPanel, activeDocument,
+	var statusBarPanel,
 	g_invalidUrlRe = /^(about|chrome):/,
 
 	parserString = function(prefs)
@@ -305,7 +305,7 @@ four56bereastreet.html5validator = (function()
 			return;
 		}
 
-		var doc = activeDocument;
+		var doc = getActiveDocument();
 		if (!doc) {return;}
 
 		if (vCache.isBusy(doc))
@@ -415,7 +415,7 @@ four56bereastreet.html5validator = (function()
 	
 	getActiveDocument = function()
 	{
-		return activeDocument;
+		return window.content.document;
 	},
 
 	isLoading = function()
@@ -664,7 +664,7 @@ four56bereastreet.html5validator = (function()
 					"errors": errors,
 					"warnings": warnings
 				});
-				if (doc === activeDocument) // asynchronous, may have changed
+				if (doc === getActiveDocument()) // asynchronous, may have changed
 				{
 					updateStatusBar(errors, warnings, "results");
 				}
