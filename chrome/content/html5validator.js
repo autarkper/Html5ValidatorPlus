@@ -3,6 +3,10 @@ if (!window.four56bereastreet) {var four56bereastreet = {};}
 
 four56bereastreet.html5validator = (function()
 {
+	if (four56bereastreet.html5validator)
+	{
+		return four56bereastreet.html5validator;
+	}
 	var myName = "HTML5 Validator Plus";
 	var addonBar = null;
 	var statusBar = null;
@@ -890,7 +894,7 @@ four56bereastreet.html5validator = (function()
 		return html.replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 	};
 
-	return four56bereastreet.html5validator || (four56bereastreet.html5validator = {
+	return {
 		init: function()
 		{
 			loadPreferences();
@@ -931,7 +935,7 @@ four56bereastreet.html5validator = (function()
 			}
 			statusBarPanelClick();
 		}
-	});
+	};
 }());
 
 window.addEventListener("load", four56bereastreet.html5validator.init, false);
