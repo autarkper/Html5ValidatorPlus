@@ -76,11 +76,17 @@ four56bereastreet.html5validator = (function()
 		log = (function()
 		{
 			if (!console) {return (function(msg){});} // dummy
-			var msgNo = 0;
-			return function(msg) {
-				++msgNo;
-				console.logStringMessage(myName + ': (' + msgNo + ") " + msg);
+			// use central storage to achieve consistent numbering across window instances:
+			var logFn = Application.storage.get("logFn", null);
+			if (!logFn) {
+				var msgNo = 0;
+				logFn = function(msg) {
+					++msgNo;
+					console.logStringMessage(myName + ': (' + msgNo + ") " + msg);
+				}
+				Application.storage.set("logFn", logFn);
 			}
+			return logFn;
 		}());
 
 	var html5validatorListener = 
