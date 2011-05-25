@@ -68,7 +68,7 @@ four56bereastreet.html5validator = (function()
 				}
 
 				loadPreferences();
-				validateDocHTML(window.content, false);
+				validateDocHTML(false);
 			}
 		},
 
@@ -108,7 +108,7 @@ four56bereastreet.html5validator = (function()
 			if (activeDocument && activeDocument.URL)
 			{
 				log("LocChange: " + activeDocument.URL);
-				validateDocHTML(window.content, false);
+				validateDocHTML(false);
 			}
 		},
 
@@ -153,7 +153,7 @@ four56bereastreet.html5validator = (function()
 							updateStatusBar(0,0, 'reload-document');
 						}
 						// attempt validation anyway, in case the main document was downloaded OK
-						validateDocHTML(window.content, false);
+						validateDocHTML(false);
 					}
 				}
 			}
@@ -277,7 +277,7 @@ four56bereastreet.html5validator = (function()
 
 	g_cleanup = null,
 	g_validationTimerHandle = null,
-	validateDocHTML = function(frame, triggered, optTimeoutMs)
+	validateDocHTML = function(triggered, optTimeoutMs)
 	{
 		var timeoutMs = optTimeoutMs || 100;
 		if (g_cleanup) {g_cleanup();}
@@ -286,7 +286,7 @@ four56bereastreet.html5validator = (function()
 		}
 		g_validationTimerHandle = window.setTimeout(function() {
 			try {
-				validateDocHTML__(frame, triggered, timeoutMs);
+				validateDocHTML__(triggered, timeoutMs);
 			}
 			catch (err)
 			{
@@ -296,17 +296,18 @@ four56bereastreet.html5validator = (function()
 	},
 
 	// Adapted from the "HTML Validator" extension by Marc Gueury (http://users.skynet.be/mgueury/mozilla/)
-	validateDocHTML__ = function(frame, triggered, optTimeoutMs)
+	validateDocHTML__ = function(triggered, optTimeoutMs)
 	{
-		if (isLoading())
-		{
-			updateStatusBar(0, 0, 'document-loading');
-			validateDocHTML(frame, triggered, optTimeoutMs * 2); // come back later
+		var doc = getActiveDocument();
+		if (!doc) {
 			return;
 		}
-
-		var doc = getActiveDocument();
-		if (!doc) {return;}
+		if (isLoading(doc))
+		{
+			updateStatusBar(0, 0, 'document-loading');
+			validateDocHTML(triggered, optTimeoutMs * 2); // come back later
+			return;
+		}
 
 		if (vCache.isBusy(doc))
 		{
@@ -418,15 +419,15 @@ four56bereastreet.html5validator = (function()
 		return window.content.document;
 	},
 
-	isLoading = function()
+	isLoading = function(doc)
 	{
-		return document.readyState === "loading";
+		return doc.readyState === "loading";
 	},
 
 	// Adapted from the "HTML Validator" extension by Marc Gueury (http://users.skynet.be/mgueury/mozilla/)
 	getHTMLFromCache = function(doc)
 	{	 
-		if (isLoading()) {
+		if (isLoading(doc)) {
 			log("getHTMLFromCache: is loading");
 			return null;
 		}
@@ -706,7 +707,7 @@ four56bereastreet.html5validator = (function()
 			showValidationResults();
 		}
 		else if (g_clickEnabled) {
-			validateDocHTML(window.content, true);
+			validateDocHTML(true);
 		}
 		else {
 			showOptionsDialog();
