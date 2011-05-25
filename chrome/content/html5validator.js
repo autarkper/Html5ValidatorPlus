@@ -215,67 +215,63 @@ four56bereastreet.html5validator = (function()
 
 	vCache = (function()
 	{
-		function cache(key)
-		{
-			var cached = Application.storage.get(key, null);
-			if (!cached) {
-				cached = {};
-				Application.storage.set(key, cached);
-			}
-			return cached;
-		}
-		function resCache() {return cache("resCache");}
-		function navCache() {return cache("navCache");}
-		function busyCache() {return cache("busyCache");}
+		var resCache = {};
+		var navCache = {};
+		var busyCache = {};
 
-		var pub = {
-			lookupResults: function(doc)
-			{
-				var url = normalizeUrl(doc.URL);
-				var results = resCache()[url];
-				if (!results) {
-					return null;
+		var pub = Application.storage.get("vCache", null);
+		if (!pub)
+		{
+			pub = {
+				lookupResults: function(doc)
+				{
+					var url = normalizeUrl(doc.URL);
+					var results = resCache[url];
+					if (!results) {
+						return null;
+					}
+					return results[preferenceToken] || null;
+				},
+				storeResults: function(doc, result)
+				{
+					var url = normalizeUrl(doc.URL);
+					delete busyCache[url];
+					var results = resCache[url] || (resCache[url] = {});
+					results[preferenceToken] = result;
+				},
+				invalidate: function(doc)
+				{
+					var url = normalizeUrl(doc.URL);
+					delete resCache[url];
+				},
+				setBusyState: function(doc, busy)
+				{
+					var url = normalizeUrl(doc.URL);
+					if (busy) {
+						busyCache[url] = true;
+					}
+					else {
+						delete busyCache[url];
+					}
+				},
+				isBusy: function(doc)
+				{
+					var url = normalizeUrl(doc.URL);
+					return busyCache[url] || false;
+				},
+				lookupNoAutoValidation: function(doc)
+				{
+					var url = normalizeUrl(doc.URL);
+					return navCache[url] || false;
+				},
+				storeNoAutoValidation: function(doc)
+				{
+					var url = normalizeUrl(doc.URL);
+					navCache[url] = true;
 				}
-				return results[preferenceToken] || null;
-			},
-			storeResults: function(doc, result)
-			{
-				var url = normalizeUrl(doc.URL);
-				delete busyCache()[url];
-				var results = resCache()[url] || (resCache()[url] = {});
-				results[preferenceToken] = result;
-			},
-			invalidate: function(doc)
-			{
-				var url = normalizeUrl(doc.URL);
-				delete resCache()[url];
-			},
-			setBusyState: function(doc, busy)
-			{
-				var url = normalizeUrl(doc.URL);
-				if (busy) {
-					busyCache()[url] = true;
-				}
-				else {
-					delete busyCache()[url];
-				}
-			},
-			isBusy: function(doc)
-			{
-				var url = normalizeUrl(doc.URL);
-				return busyCache()[url] || false;
-			},
-			lookupNoAutoValidation: function(doc)
-			{
-				var url = normalizeUrl(doc.URL);
-				return navCache()[url] || false;
-			},
-			storeNoAutoValidation: function(doc)
-			{
-				var url = normalizeUrl(doc.URL);
-				navCache()[url] = true;
-			}
-		};
+			};
+			Application.storage.set("vCache", pub);
+		}
 		return pub;
 	}()),
 
