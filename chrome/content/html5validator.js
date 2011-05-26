@@ -11,11 +11,11 @@ four56bereastreet.html5validator = (function()
 	var addonBar = null;
 	var statusBar = null;
 	var Application = Components.classes["@mozilla.org/fuel/application;1"].getService(Components.interfaces.fuelIApplication);
+	var pbs = Components.classes["@mozilla.org/privatebrowsing;1"].getService(Components.interfaces.nsIPrivateBrowsingService);
 	function normalizeUrl(url)
 	{
 		return url.replace(/#.*/, '');
-	}
-
+	};
 	var preferences = {},
 		preferenceToken, // a concatenated string of all result-affecting preference values
 		loadPreferences = function()
@@ -350,6 +350,11 @@ four56bereastreet.html5validator = (function()
 			updateStatusBar(0, 0, 'use-trigger'); // display a sensible message later when made visible
 			return;
 		}
+		if (pbs && pbs.privateBrowsingEnabled)
+		{
+			updateStatusBar(0, 0, 'restricted');
+			return;
+		}
 		var isAutoDomain = isWhitelistDomain(url);
 		if (isAutoDomain) 
 		{
@@ -570,7 +575,11 @@ four56bereastreet.html5validator = (function()
 					break;
 				case "restricted":
 					statusBarPanel.label = "Restricted";
-					statusBarPanel.tooltipText = myName + ": Domain not in whitelist, validation restricted";
+					statusBarPanel.tooltipText = myName +
+						(pbs && pbs.privateBrowsingEnabled ?
+							": Private browsing mode active" :
+							": Domain not in whitelist") +
+						", validation restricted";
 					g_clickEnabled = false;
 					break;
 				case "errorValidator":
