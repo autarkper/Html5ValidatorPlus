@@ -894,27 +894,26 @@ four56bereastreet.html5validator = (function()
 		return html.replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 	};
 
+	window.addEventListener("load", function(){
+		loadPreferences();
+
+		gBrowser.addProgressListener(html5validatorListener);
+
+		addonBar = document.getElementById('addon-bar');
+		if (!document.getElementById("html5validator-status-bar")) {
+			var addonBarCloseButton = document.getElementById("addonbar-closebutton")
+			addonBar.insertItem("html5validator-status-bar", addonBarCloseButton.nextSibling);
+			addonBar.collapsed = false;
+		}
+		statusBarPanel = document.getElementById('html5validator-status-bar');
+		statusBar = document.getElementById('status-bar');
+		setTimeout(function(){validateDocHTML(false);}, 250);
+		updateStatusBar(0, 0, 'reset');
+
+		preferencesObserver.register();
+	}, false);
+
 	return {
-		init: function()
-		{
-			loadPreferences();
-
-			gBrowser.addProgressListener(html5validatorListener);
-
-			addonBar = document.getElementById('addon-bar');
-			if (!document.getElementById("html5validator-status-bar")) {
-				var addonBarCloseButton = document.getElementById("addonbar-closebutton")
-				addonBar.insertItem("html5validator-status-bar", addonBarCloseButton.nextSibling);
-				addonBar.collapsed = false;
-			}
-			statusBarPanel = document.getElementById('html5validator-status-bar');
-			statusBar = document.getElementById('status-bar');
-			setTimeout(function(){validateDocHTML(false);}, 250);
-			updateStatusBar(0, 0, 'reset');
-
-			preferencesObserver.register();
-		},
-		
 		showOptions: function()
 		{
 			showOptionsDialog();
@@ -937,5 +936,3 @@ four56bereastreet.html5validator = (function()
 		}
 	};
 }());
-
-window.addEventListener("load", four56bereastreet.html5validator.init, false);
