@@ -41,4 +41,5 @@ CHANGELOG
 ** NEW: clicking the validator icon in "non-clickable" state brings up the preferences dialog
 ** NEW: keyboard shortcut SHIFT+CONTROL+ALT+v equivalent to clicking the validator icon
 ** NEW: press Escape in the results window or tab to easily close it
+** NEW: don't auto-validate if in private browsing mode
 
