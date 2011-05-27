@@ -350,17 +350,17 @@ four56bereastreet.html5validator = (function()
 			updateStatusBar(0, 0, 'use-trigger'); // display a sensible message later when made visible
 			return;
 		}
-		if (pbs && pbs.privateBrowsingEnabled)
-		{
-			updateStatusBar(0, 0, 'restricted');
-			return;
-		}
 		var isAutoDomain = isWhitelistDomain(url);
 		if (isAutoDomain) 
 		{
 			if (preferences.useTrigger)
 			{
 				updateStatusBar(0, 0, 'use-trigger');
+				return;
+			}
+			if (pbs && pbs.privateBrowsingEnabled)
+			{
+				updateStatusBar(0, 0, 'private-browsing-use-trigger');
 				return;
 			}
 			if (vCache.lookupNoAutoValidation(doc))
@@ -560,6 +560,9 @@ four56bereastreet.html5validator = (function()
 				case "use-trigger":
 					statusBarPanel.tooltipText = myName + ": Auto-validation off, click to validate";
 					break;
+				case "private-browsing-use-trigger":
+					statusBarPanel.tooltipText = myName + ": Private browsing mode active, click to validate";
+					break;
 				case "large-doc":
 					statusBarPanel.tooltipText = myName + ": Document too large for auto-validation, click to validate";
 					break;
@@ -575,11 +578,7 @@ four56bereastreet.html5validator = (function()
 					break;
 				case "restricted":
 					statusBarPanel.label = "Restricted";
-					statusBarPanel.tooltipText = myName +
-						(pbs && pbs.privateBrowsingEnabled ?
-							": Private browsing mode active" :
-							": Domain not in whitelist") +
-						", validation restricted";
+					statusBarPanel.tooltipText = myName + ": Domain not in whitelist, validation restricted";
 					g_clickEnabled = false;
 					break;
 				case "errorValidator":
