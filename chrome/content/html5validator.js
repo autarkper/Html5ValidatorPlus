@@ -742,6 +742,7 @@ four56bereastreet.html5validator = (function()
 
 		var openInTab = preferences.displayResultsInTab;
 		var resultWindow = null;
+		var isNewWindow = true;
 		if (openInTab || !getResultWindow() || getResultWindow().closed)
 		{
 			function openNewTab()
@@ -761,6 +762,7 @@ four56bereastreet.html5validator = (function()
 		}
 		else
 		{
+			isNewWindow = false;
 			resultWindow = getResultWindow();
 		}
 		var timeoutMs = 25;
@@ -889,7 +891,10 @@ four56bereastreet.html5validator = (function()
 			resultsLookup[resultId] = container.id;
 			resultWindow.focus();
 			resultWindow.scroll(0, 0);
-			resultWindow.location = RESULTWINDOW + "#" + container.id;
+			if (!isNewWindow)
+			{
+				resultWindow.location = RESULTWINDOW + "#" + container.id;
+			}
 		};
 		populateResultWindow();
 	},
