@@ -188,7 +188,7 @@ four56bereastreet.html5validator = (function()
 	
 	isWhitelistDomain = function(url)
 	{
-		if (!isValidUrl(url) || url == preferences.validatorURL) {
+		if (!isValidUrl(url)) {
 			return false;
 		}
 
