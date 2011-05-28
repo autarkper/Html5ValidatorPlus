@@ -42,4 +42,5 @@ CHANGELOG
 ** NEW: keyboard shortcut SHIFT+CONTROL+ALT+v equivalent to clicking the validator icon
 ** NEW: press Escape in the results window or tab to easily close it
 ** NEW: don't auto-validate if in private browsing mode
+** NEW: optionally display the validator icon in the browser's location bar
 
