@@ -351,7 +351,12 @@ four56bereastreet.html5validator = (function()
 		}
 		// do not attempt auto-validation unless we have a visible UI
 		var addonBar = document.getElementById('addon-bar');
-		if ((addonBar && addonBar.collapsed) || (!addonBar && statusBar.hidden)) {
+		function isInvisibleUI()
+		{
+			// locationBarIcon doesn't count here, as it doesn't have a label
+			return ((addonBar && addonBar.collapsed) || (!addonBar && statusBar.hidden));
+		}
+		if (isInvisibleUI()) {
 			log("ui collapsed or hidden");
 			updateStatusBar(0, 0, 'cancelled'); // display a sensible message later when made visible
 			return;
@@ -407,7 +412,7 @@ four56bereastreet.html5validator = (function()
 				timeoutHandle = window.setTimeout(function() // do not flood server, use a cancellable timeout
 				{
 					removeEscapeListener();
-					if (addonBar && addonBar.collapsed) {
+					if (isInvisibleUI()) {
 						updateStatusBar(0, 0, 'cancelled');
 						return;
 					}
@@ -954,11 +959,14 @@ four56bereastreet.html5validator = (function()
 
 		onHotKey: function()
 		{
-			if (addonBar && addonBar.collapsed) {
-				addonBar.collapsed = false;
-			}
-			else if (!addonBar && statusBar.hidden) {
-				statusBar.hidden = false;
+			if (locationBarIcon.hidden)
+			{
+				if (addonBar && addonBar.collapsed) {
+					addonBar.collapsed = false;
+				}
+				else if (!addonBar && statusBar.hidden) {
+					statusBar.hidden = false;
+				}
 			}
 			statusBarPanelClick();
 		}
