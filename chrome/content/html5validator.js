@@ -438,7 +438,7 @@ four56bereastreet.html5validator = (function()
 	},
 
 	// Adapted from the "HTML Validator" extension by Marc Gueury (http://users.skynet.be/mgueury/mozilla/)
-	getHTMLFromCache = function(doc)
+	getHTMLFromCache = function(doc, force)
 	{	 
 		if (isLoading(doc)) {
 			log("getHTMLFromCache: is loading");
@@ -471,7 +471,10 @@ four56bereastreet.html5validator = (function()
 		var channel = ios.newChannel(url, urlCharset, null);
 		channel.loadFlags |= Components.interfaces.nsIRequest.VALIDATE_NEVER;
 		channel.loadFlags |= Components.interfaces.nsIRequest.LOAD_FROM_CACHE;
-		channel.loadFlags |= Components.interfaces.nsICachingChannel.LOAD_ONLY_FROM_CACHE;
+		if (!force)
+		{
+			channel.loadFlags |= Components.interfaces.nsICachingChannel.LOAD_ONLY_FROM_CACHE;
+		}
 
 		// Use the cache key to distinguish POST entries in the cache (see nsDocShell.cpp)
 		var cacheChannel = channel.QueryInterface(Components.interfaces.nsICachingChannel);
