@@ -51,7 +51,7 @@
 			<checkbox label="Restrict validation to whitelisted domains" id="restrictToWhitelist" preference="pref-restrictToWhitelist"/>
 		<groupbox id="autoValidation">
 			<caption label="Automatic validation"/>
-			<checkbox label="Validate only on request (on toolbar click), disable automatic validation" id="useTrigger" preference="pref-useTrigger"/>
+			<checkbox label="Disable automatic validation; validate only on request (on toolbar click)" id="useTrigger" preference="pref-useTrigger"/>
 			<grid>
 				<columns>
 					<column flex="1"/>
