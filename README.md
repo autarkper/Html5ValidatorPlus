@@ -10,6 +10,10 @@ Furthermore, HTML5 Validator Plus keeps a cache of validation results that is sh
 
 Another enhancement is the ability to choose which parser the validator should use. The filtering of validator error and warning messages is also enhanced to filter out the validator's rather pointless error message in case your pages use some other encoding than UTF-8. Just to make sure you don't miss out on any important message, all other messages, including info messages and suppressed error or warning messages, are displayed on the results page, even if they don't affect the error and warning count.
 
+HTML5 Validator Plus has native support for the new add-on bar in Firefox 4. It can optionally show its icon in the location bar so the add-on bar doesn't have to be visible all the time. At all times, CTRL+SHIFT+RETURN is the keyboard equivalent to clicking the validator icon.
+
+HTML5 Validator Plus has been developed and tested in Firefox 4 and alpha/beta versions of Firefox 5, 6 and 7; the minimum required Firefox version is 3.6.
+
 Known bugs and problems: Currently none.
 
 Acknowledgements: Thanks to Roger Johansson and contributors to the original HTML5 Validator, who did all the hard work while I had all the fun.
