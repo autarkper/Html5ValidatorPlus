@@ -129,7 +129,7 @@ four56bereastreet.html5validator = (function()
 				*/
 					return;
 				}
-				if (aWebProgress.DOMWindow === aWebProgress.DOMWindow.top) {
+				if (window === window.top) {
 				/* It seems that on reload (F5) we get a STATE_START and a STATE_STOP on
 					* the same location. If it is a case of going back and forth in the page history,
 					* we get a STATE_START on the old location, and then STATE_STOP on the
@@ -138,7 +138,7 @@ four56bereastreet.html5validator = (function()
 					* a genuine reload.
 					* Tested in FF 5.02a.
 				*/
-					if (!aWebProgress.DOMWindow.content.document.URL || !isValidUrl(aWebProgress.DOMWindow.content.document.URL)) {
+					if (!window.content.document.URL || !isValidUrl(window.content.document.URL)) {
 						return;
 					}
 					if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_START) {
@@ -294,6 +294,7 @@ four56bereastreet.html5validator = (function()
 			}
 			catch (err)
 			{
+				log(err);
 				updateStatusBar(0, 0, 'internalError');
 			}
 		}, timeoutMs); // avoid calling validateDocHTML__ repeatedly in case of rapid state changes
@@ -303,7 +304,7 @@ four56bereastreet.html5validator = (function()
 	validateDocHTML__ = function(triggered, optTimeoutMs)
 	{
 		var doc = getActiveDocument();
-		if (!doc) {
+		if (!doc || !doc.URL) {
 			return;
 		}
 		if (isLoading(doc))
