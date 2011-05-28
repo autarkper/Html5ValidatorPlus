@@ -107,11 +107,12 @@ four56bereastreet.html5validator = (function()
 
 		onLocationChange: function(aProgress, aRequest, aURI)
 		{
-			var activeDocument = window.content.document;
+			var doc = window.content.document;
 			updateStatusBar(0, 0, "reset");
-			if (activeDocument && activeDocument.URL)
+			if (doc && doc.URL)
 			{
-				log("LocChange: " + activeDocument.URL);
+				doc.html5ValidatorNormalizedURL = normalizeUrl(doc.URL);
+				log("LocChange: " + doc.html5ValidatorNormalizedURL);
 				validateDocHTML(false);
 			}
 		},
@@ -138,19 +139,21 @@ four56bereastreet.html5validator = (function()
 					* a genuine reload.
 					* Tested in FF 5.02a.
 				*/
-					if (!window.content.document.URL || !isValidUrl(window.content.document.URL)) {
+					var doc = window.content.document;
+					if (!doc.URL || !isValidUrl(doc.URL)) {
 						return;
 					}
+					doc.html5ValidatorNormalizedURL = normalizeUrl(doc.URL);
 					if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_START) {
-						log("State START: " + window.content.document.URL);
-						this.lastStartURL = normalizeUrl(window.content.document.URL);
+						log("State START: " + doc.URL);
+						this.lastStartURL = doc.html5ValidatorNormalizedURL;
 					}
 					if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_STOP) {
-						log("State STOP: " + window.content.document.URL + ", aStatus: " + aStatus);
-						if (normalizeUrl(window.content.document.URL) == this.lastStartURL)
+						log("State STOP: " + doc.URL + ", aStatus: " + aStatus);
+						if (doc.html5ValidatorNormalizedURL == this.lastStartURL)
 						{
-							log("Invalidate results cache: " + window.content.document.URL);
-							vCache.invalidate(window.content.document);
+							log("Invalidate results cache: " + doc.URL);
+							vCache.invalidate(doc);
 						}
 						this.lastStartURL = null;
 						if (aStatus) { // error
@@ -229,7 +232,7 @@ four56bereastreet.html5validator = (function()
 			pub = {
 				lookupResults: function(doc)
 				{
-					var url = normalizeUrl(doc.URL);
+					var url = doc.html5ValidatorNormalizedURL;
 					var results = resCache[url];
 					if (!results) {
 						return null;
@@ -238,19 +241,19 @@ four56bereastreet.html5validator = (function()
 				},
 				storeResults: function(doc, result)
 				{
-					var url = normalizeUrl(doc.URL);
+					var url = doc.html5ValidatorNormalizedURL;
 					delete busyCache[url];
 					var results = resCache[url] || (resCache[url] = {});
 					results[preferenceToken] = result;
 				},
 				invalidate: function(doc)
 				{
-					var url = normalizeUrl(doc.URL);
+					var url = doc.html5ValidatorNormalizedURL;
 					delete resCache[url];
 				},
 				setBusyState: function(doc, busy)
 				{
-					var url = normalizeUrl(doc.URL);
+					var url = doc.html5ValidatorNormalizedURL;
 					if (busy) {
 						busyCache[url] = true;
 					}
@@ -260,17 +263,17 @@ four56bereastreet.html5validator = (function()
 				},
 				isBusy: function(doc)
 				{
-					var url = normalizeUrl(doc.URL);
+					var url = doc.html5ValidatorNormalizedURL;
 					return busyCache[url] || false;
 				},
 				lookupNoAutoValidation: function(doc)
 				{
-					var url = normalizeUrl(doc.URL);
+					var url = doc.html5ValidatorNormalizedURL;
 					return navCache[url] || false;
 				},
 				storeNoAutoValidation: function(doc)
 				{
-					var url = normalizeUrl(doc.URL);
+					var url = doc.html5ValidatorNormalizedURL;
 					navCache[url] = true;
 				}
 			};
@@ -304,7 +307,7 @@ four56bereastreet.html5validator = (function()
 	validateDocHTML__ = function(triggered, optTimeoutMs)
 	{
 		var doc = getActiveDocument();
-		if (!doc || !doc.URL) {
+		if (!doc || !doc.html5ValidatorNormalizedURL) {
 			return;
 		}
 		if (isLoading(doc))
@@ -320,7 +323,7 @@ four56bereastreet.html5validator = (function()
 			return;
 		}
 
-		var url = doc.URL || '';
+		var url = doc.html5ValidatorNormalizedURL;
 		if (!url.length || url.match(g_invalidUrlRe))
 		{
 			updateStatusBar(0, 0, 'reset');
@@ -461,7 +464,7 @@ four56bereastreet.html5validator = (function()
 			shEntry = PageCookie.QueryInterface(Components.interfaces.nsISHEntry);
 
 		// Part 2 : open a nsIChannel to get the HTML of the doc
-		var url = doc.URL;
+		var url = doc.html5ValidatorNormalizedURL;
 		var urlCharset = doc.characterSet;
 
 		var ios = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
@@ -793,15 +796,16 @@ four56bereastreet.html5validator = (function()
 				return;
 			}
 
+			var url = doc.html5ValidatorNormalizedURL;
 			if (openInTab)
 			{
 				var titleElement = generatedDocument.getElementsByTagName('title')[0];
 				if (titleElement)
 				{
-					titleElement.textContent = "[" + doc.URL + "] - Validation results";
+					titleElement.textContent = "[" + url + "] - Validation results";
 				}
 			}
-			var sectionHeading = doc.URL + parserString(result.preferences);
+			var sectionHeading = url + parserString(result.preferences);
 			var errorsAndWarnings = result.errors + ' errors and ' + result.warnings + ' warnings';
 			/* Create the HTML content of the body – a heading and the list of messages with some elements and class names to enable styling */
 
