@@ -2,6 +2,7 @@ pref("extensions.html5validator.validatorURL", "http://localhost:8888/");
 pref("extensions.html5validator.domainsWhitelist", "");
 pref("extensions.html5validator.restrictToWhitelist", false);
 pref("extensions.html5validator.displayResultsInTab", true);
+pref("extensions.html5validator.displayIconInLocationBar", true);
 pref("extensions.html5validator.useTrigger", true);
 pref("extensions.html5validator.debug", false);
 pref("extensions.html5validator.ignoreXHTMLErrors", false);

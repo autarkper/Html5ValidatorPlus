@@ -14,6 +14,7 @@
 			<preference id="pref-domainsWhitelist" name="extensions.html5validator.domainsWhitelist" type="string"/>
 			<preference id="pref-restrictToWhitelist" name="extensions.html5validator.restrictToWhitelist" type="bool"/>
 			<preference id="pref-displayResultsInTab" name="extensions.html5validator.displayResultsInTab" type="bool"/>
+			<preference id="pref-displayIconInLocationBar" name="extensions.html5validator.displayIconInLocationBar" type="bool"/>
 			<preference id="pref-useTrigger" name="extensions.html5validator.useTrigger" type="bool"/>
 			<preference id="pref-ignoreXHTMLErrors" name="extensions.html5validator.ignoreXHTMLErrors" type="bool"/>
 			<preference id="pref-allowAccessibilityFeatures" name="extensions.html5validator.allowAccessibilityFeatures" type="bool"/>
@@ -91,6 +92,7 @@
 		<groupbox>
 			<caption label="Display"/>
 			<checkbox label="Display validation results in tabs (instead of a separate window)" id="displayResultsInTab" preference="pref-displayResultsInTab"/>
+			<checkbox label="Show icon in Location bar" id="displayIconInLocationBar" preference="pref-displayIconInLocationBar"/>
 		</groupbox>
 		
 	</prefpane>

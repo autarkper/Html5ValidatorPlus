@@ -40,6 +40,7 @@ four56bereastreet.html5validator = (function()
 				domainsWhitelist: filtered_domains,
 				restrictToWhitelist: prefBranch.getBoolPref("restrictToWhitelist"),
 				displayResultsInTab: prefBranch.getBoolPref("displayResultsInTab"),
+				displayIconInLocationBar: prefBranch.getBoolPref("displayIconInLocationBar"),
 				maxAutoSize: prefBranch.getIntPref("maxAutoSize"),
 				autoValidateWaitSeconds: prefBranch.getIntPref("autoValidateWaitSeconds"),
 				useTrigger: prefBranch.getBoolPref("useTrigger"),
@@ -54,6 +55,7 @@ four56bereastreet.html5validator = (function()
 				preferences.allowAccessibilityFeatures
 			].join(";");
 			log("Preference Token: " + preferenceToken);
+			locationBarIcon.hidden = !preferences.displayIconInLocationBar;
 		},
 		// observe preferences changes
 		preferencesObserver =
@@ -351,7 +353,7 @@ four56bereastreet.html5validator = (function()
 		var addonBar = document.getElementById('addon-bar');
 		if ((addonBar && addonBar.collapsed) || (!addonBar && statusBar.hidden)) {
 			log("ui collapsed or hidden");
-			updateStatusBar(0, 0, 'use-trigger'); // display a sensible message later when made visible
+			updateStatusBar(0, 0, 'cancelled'); // display a sensible message later when made visible
 			return;
 		}
 		var isAutoDomain = isWhitelistDomain(url);
@@ -921,8 +923,6 @@ four56bereastreet.html5validator = (function()
 	};
 
 	window.addEventListener("load", function(){
-		loadPreferences();
-
 		gBrowser.addProgressListener(html5validatorListener);
 
 		addonBar = document.getElementById('addon-bar');
@@ -938,6 +938,7 @@ four56bereastreet.html5validator = (function()
 		updateStatusBar(0, 0, 'reset');
 
 		preferencesObserver.register();
+		loadPreferences();
 	}, false);
 
 	return {
