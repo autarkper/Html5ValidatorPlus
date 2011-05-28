@@ -170,7 +170,7 @@ four56bereastreet.html5validator = (function()
 		onSecurityChange: function(aWebProgress, aRequest, aState){}
 	};
 
-	var statusBarPanel,
+	var statusBarPanel, locationBarIcon,
 	g_invalidUrlRe = /^(about|chrome):/,
 
 	parserString = function(prefs)
@@ -508,6 +508,11 @@ four56bereastreet.html5validator = (function()
 	},
 
 	g_clickEnabled = true,
+	updateIcon = function(data)
+	{
+		if (data.src) {locationBarIcon.src = statusBarPanel.src = data.src;}
+		if (data.tooltipText) {locationBarIcon.tooltipText = statusBarPanel.tooltipText = data.tooltipText;}
+	},
 	updateStatusBar__ = function(errors, warnings, status)
 	{
 		log("updateStatusBar: " + status);
@@ -529,78 +534,78 @@ four56bereastreet.html5validator = (function()
 				errorText += "s";
 			}
 			statusBarPanel.label = errorText;
-			statusBarPanel.src = "chrome://html5validator/skin/html5-error-red.png";
+			updateIcon({src: "chrome://html5validator/skin/html5-error-red.png"});
 			statusBarPanel.className = "statusbarpanel-iconic-text errors";
-			statusBarPanel.tooltipText = myName + parserString(preferences) + ": Click to view validation details";
+			updateIcon({tooltipText: myName + parserString(preferences) + ": Click to view validation details"});
 			g_clickEnabled = true;
 		}
 		else
 		{
 			g_clickEnabled = true;
-			statusBarPanel.src = "chrome://html5validator/skin/html5-dimmed.png";
+			updateIcon({src: "chrome://html5validator/skin/html5-dimmed.png"});
 			statusBarPanel.className = "statusbarpanel-iconic-text";
 			statusBarPanel.label = "Click to validate";
 			switch (status) {
 				case "reload-document":
 					statusBarPanel.label = "Refresh (F5) required";
-					statusBarPanel.tooltipText = myName + ": Document not in cache, refresh required";
+					updateIcon({tooltipText: myName + ": Document not in cache, refresh required"});
 					g_clickEnabled = false;
 					break;
 				case "document-loading":
 					statusBarPanel.label = "Document loading...";
-					statusBarPanel.tooltipText = myName + ": Document is loading, please wait";
+					updateIcon({tooltipText: myName + ": Document is loading, please wait"});
 					g_clickEnabled = false;
 					break;
 				case "running":
 					statusBarPanel.label = "Validating...";
-					statusBarPanel.tooltipText = myName + ": Document currently validating";
+					updateIcon({tooltipText: myName + ": Document currently validating"});
 					g_clickEnabled = false;
 					break;
 				case "reset":
 					statusBarPanel.label = "";
-					statusBarPanel.tooltipText = myName + ": Idle";
+					updateIcon({tooltipText: myName + ": Idle"});
 					g_clickEnabled = false;
 					break;
 				case "use-trigger":
-					statusBarPanel.tooltipText = myName + ": Auto-validation off, click to validate";
+					updateIcon({tooltipText: myName + ": Auto-validation off, click to validate"});
 					break;
 				case "private-browsing-use-trigger":
-					statusBarPanel.tooltipText = myName + ": Private browsing mode active, click to validate";
+					updateIcon({tooltipText: myName + ": Private browsing mode active, click to validate"});
 					break;
 				case "large-doc":
-					statusBarPanel.tooltipText = myName + ": Document too large for auto-validation, click to validate";
+					updateIcon({tooltipText: myName + ": Document too large for auto-validation, click to validate"});
 					break;
 				case "cancelled":
-					statusBarPanel.tooltipText = myName + ": Auto-validation cancelled, click to validate";
+					updateIcon({tooltipText: myName + ": Auto-validation cancelled, click to validate"});
 					break;
 				case "about-to-validate":
-					statusBarPanel.tooltipText = myName + ": Validation pending...";
+					updateIcon({tooltipText: myName + ": Validation pending..."});
 					statusBarPanel.label = "Validation pending, press Escape to cancel";
 					break;
 				case "manual":
-					statusBarPanel.tooltipText = myName + ": Domain not in whitelist, click to validate";
+					updateIcon({tooltipText: myName + ": Domain not in whitelist, click to validate"});
 					break;
 				case "restricted":
 					statusBarPanel.label = "Restricted";
-					statusBarPanel.tooltipText = myName + ": Domain not in whitelist, validation restricted";
+					updateIcon({tooltipText: myName + ": Domain not in whitelist, validation restricted"});
 					g_clickEnabled = false;
 					break;
 				case "errorValidator":
 					statusBarPanel.label = "Validator error";
-					statusBarPanel.tooltipText = myName + ": Could not contact the validator, at '" + preferences.validatorURL + "'";
+					updateIcon({tooltipText: myName + ": Could not contact the validator, at '" + preferences.validatorURL + "'"});
 					break;
 				case "badResponse":
 					statusBarPanel.label = "Validator problem";
-					statusBarPanel.tooltipText = myName + ": Bad response from validator, at '" + preferences.validatorURL + "'";
+					updateIcon({tooltipText: myName + ": Bad response from validator, at '" + preferences.validatorURL + "'"});
 					break;
 				case "internalError":
 					statusBarPanel.label = "Internal Error";
-					statusBarPanel.tooltipText = myName + ": Some internal error occurred";
+					updateIcon({tooltipText: myName + ": Some internal error occurred"});
 					break;
 				case "results":
-					statusBarPanel.src = "chrome://html5validator/skin/html5-ok.png";
+					updateIcon({src: "chrome://html5validator/skin/html5-ok.png"});
 					statusBarPanel.label = "";
-					statusBarPanel.tooltipText = myName + "" + parserString(preferences) + ": No errors. Click to view validation details";
+					updateIcon({tooltipText: myName + "" + parserString(preferences) + ": No errors. Click to view validation details"});
 					break;
 				default:
 					statusBarPanel.label = "internal error";
@@ -924,6 +929,7 @@ four56bereastreet.html5validator = (function()
 			addonBar.collapsed = false;
 		}
 		statusBarPanel = document.getElementById('html5validator-status-bar');
+		locationBarIcon = document.getElementById('html5validator-locationbar-icon');
 		statusBar = document.getElementById('status-bar');
 		setTimeout(function(){validateDocHTML(false);}, 250);
 		updateStatusBar(0, 0, 'reset');

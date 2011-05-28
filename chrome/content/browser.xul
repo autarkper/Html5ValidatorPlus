@@ -14,4 +14,8 @@
 			>
 		</toolbarbutton>
 	</toolbarpalette>
+	<hbox id="urlbar-icons">
+		<image id="html5validator-locationbar-icon" src="chrome://html5validator/skin/html5-dimmed.png"
+			onclick="if (event.button===0) {four56bereastreet.html5validator.onCommand();} else if (event.button===2) {four56bereastreet.html5validator.showOptions();}" />
+	</hbox>
 </overlay>
