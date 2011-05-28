@@ -39,7 +39,7 @@ CHANGELOG
 ** NEW: the results tab opens immediately to the right of the originating tab, automatically returning focus to the originating tab when closed
 ** NEW: on session restart, all results tabs and windows left over from the last session are automatically closed
 ** NEW: clicking the validator icon in "non-clickable" state brings up the preferences dialog
-** NEW: keyboard shortcut SHIFT+CONTROL+RETURN equivalent to clicking the validator icon
+** NEW: keyboard shortcut CONTROL+SHIFT+V equivalent to clicking the validator icon
 ** NEW: press Escape in the results window or tab to easily close it
 ** NEW: don't auto-validate if in private browsing mode
 ** NEW: optionally display the validator icon in the browser's location bar

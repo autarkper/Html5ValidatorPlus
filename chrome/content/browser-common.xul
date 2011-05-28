@@ -11,7 +11,7 @@
 	</popupset>
 
 	<keyset>
-		<key id="test-key" modifiers="control shift" keycode="VK_RETURN" oncommand="four56bereastreet.html5validator.onHotKey()"/>
+		<key id="test-key" modifiers="shift accel" key="V" oncommand="four56bereastreet.html5validator.onHotKey()"/>
 	</keyset>
 
 	<hbox id="urlbar-icons">
