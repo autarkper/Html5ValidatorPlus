@@ -109,7 +109,7 @@ four56bereastreet.html5validator = (function()
 		{
 			var doc = window.content.document;
 			updateStatusBar(0, 0, "reset");
-			if (doc && doc.URL)
+			if (doc && isValidUrl(doc.URL))
 			{
 				doc.html5ValidatorNormalizedURL = normalizeUrl(doc.URL);
 				log("LocChange: " + doc.html5ValidatorNormalizedURL);
@@ -171,7 +171,6 @@ four56bereastreet.html5validator = (function()
 	};
 
 	var toolbarButton, locationBarIcon,
-	g_invalidUrlRe = /^(about|chrome):/,
 
 	parserString = function(prefs)
 	{
@@ -181,7 +180,7 @@ four56bereastreet.html5validator = (function()
 
 	isValidUrl = function(url)
 	{
-		return url && !url.match(g_invalidUrlRe);
+		return url && url.match(/^https?:\/\//);
 	},
 	
 	isWhitelistDomain = function(url)
@@ -324,11 +323,6 @@ four56bereastreet.html5validator = (function()
 		}
 
 		var url = doc.html5ValidatorNormalizedURL;
-		if (!url.length || url.match(g_invalidUrlRe))
-		{
-			updateStatusBar(0, 0, 'reset');
-			return;
-		}
 		var html;
 		if (triggered)
 		{
