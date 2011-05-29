@@ -8,7 +8,6 @@ four56bereastreet.html5validator = (function()
 		return four56bereastreet.html5validator;
 	}
 	var myName = "HTML5 Validator Plus";
-	var addonBar = null;
 	var Application = Components.classes["@mozilla.org/fuel/application;1"].getService(Components.interfaces.fuelIApplication);
 	var pbs = Components.classes["@mozilla.org/privatebrowsing;1"].getService(Components.interfaces.nsIPrivateBrowsingService);
 	function normalizeUrl(url)
@@ -198,7 +197,7 @@ four56bereastreet.html5validator = (function()
 		for (var i = 0; i < preferences.domainsWhitelist.length; i++)
 		{
 			var d = preferences.domainsWhitelist[i];
-			if (d.indexOf('*') > 0) {
+			if (d.indexOf('*') >= 0) {
 				// d contains a wildcard, so change it to a regexp
 				d = new RegExp(d.replace(/[-[\]{}()+?.,\\^$|]/g, "\\$&"). // escape other reserved characters
 					replace(/\*+/g, '(.*?)')
@@ -210,7 +209,7 @@ four56bereastreet.html5validator = (function()
 					}
 				}
 				catch (err) {
-					return false;
+					log(err);
 				}
 			} else if (d == url.replace('://www.', '://').substr(0, d.length)) {
 				return true;
@@ -398,8 +397,7 @@ four56bereastreet.html5validator = (function()
 				{
 					if (event.keyCode === event.DOM_VK_ESCAPE)
 					{
-						stopTimeout();
-						removeEscapeListener();
+						if (g_cleanup) {g_cleanup();}
 						vCache.storeNoAutoValidation(doc);
 						updateStatusBar(0, 0, 'cancelled');
 					}
@@ -409,7 +407,7 @@ four56bereastreet.html5validator = (function()
 				doc.addEventListener('keydown', cancelOnEscape, false);
 				timeoutHandle = window.setTimeout(function() // do not flood server, use a cancellable timeout
 				{
-					removeEscapeListener();
+					if (g_cleanup) {g_cleanup();}
 					if (isInvisibleUI()) {
 						updateStatusBar(0, 0, 'cancelled');
 						return;
@@ -753,7 +751,8 @@ four56bereastreet.html5validator = (function()
 	showValidationResults = function()
 	{
 		var doc = getActiveDocument();
-		if (!doc || !vCache.lookupResults(doc)) {
+		var result = doc ? vCache.lookupResults(doc) : false;
+		if (!result) {
 			return;
 		}
 
@@ -800,7 +799,6 @@ four56bereastreet.html5validator = (function()
 			var resultsLookup = generatedDocument.resultsLookup || (generatedDocument.resultsLookup = {});
 			var lastId = generatedDocument.lastId || 0;
 			var lastSectionHeading = generatedDocument.lastSectionHeading || '';
-			var result = vCache.lookupResults(doc);
 			var resultId = result.timestamp.getTime();
 			if (resultsLookup[resultId])
 			{
@@ -928,9 +926,9 @@ four56bereastreet.html5validator = (function()
 	window.addEventListener("load", function(){
 		gBrowser.addProgressListener(html5validatorListener);
 
-		addonBar = document.getElementById('addon-bar');
 		toolbarButton = document.getElementById('html5validator-status-bar');
 		if (!toolbarButton) {
+			var addonBar = document.getElementById('addon-bar');
 			toolbarButton = addonBar.insertItem("html5validator-status-bar", null);
 			addonBar.collapsed = false;
 		}
