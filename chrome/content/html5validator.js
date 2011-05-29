@@ -931,8 +931,7 @@ four56bereastreet.html5validator = (function()
 
 		addonBar = document.getElementById('addon-bar');
 		if (!document.getElementById("html5validator-status-bar")) {
-			var addonBarCloseButton = document.getElementById("addonbar-closebutton")
-			addonBar.insertItem("html5validator-status-bar", addonBarCloseButton.nextSibling);
+			addonBar.insertItem("html5validator-status-bar", null);
 			addonBar.collapsed = false;
 		}
 		statusBarPanel = document.getElementById('html5validator-status-bar');
