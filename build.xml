@@ -6,10 +6,13 @@
     <property name="src" location="."/>
     <property name="build" location="build"/>
     <property name="dist" location="xpi"/>
+    <buildnumber/>
 
-    <!-- determine version number based on install.rdf -->
+    <!-- determine version number, etc, based on install.rdf -->
     <target name="read-install.rdf">
         <xmlproperty file="${src}/install.rdf"/>
+        <property name="plain-version" location="${RDF.Description.em:version}"/>
+        <property name="release-version" location="${RDF.Description.em:version}-${build.number}"/>
     </target>
 
     <target name="copy-build" depends="read-install.rdf">
@@ -23,6 +26,7 @@
                 <exclude name=".gitignore"/>
                 <exclude name="build.xml"/>
                 <exclude name="README.md"/>
+                <exclude name="build.number"/>
             </fileset>
         </copy>
     </target>
@@ -36,15 +40,17 @@
                 <include name="**/*.js"/>
             </fileset>
         </replaceregexp>
+
+        <echo>Generating release version number</echo>
+        <replace file="${build}/install.rdf" token="${RDF.Description.em:version}" value="${RDF.Description.em:version}-${build.number}"/>
     </target>
 
     <!-- archive sources into .xpi file -->
     <target name="archive" depends="copy-build" description="archive the add-on">
         <mkdir dir="${dist}"/>
-
-        <delete file="${dist}/${RDF.Description.em:name}-${RDF.Description.em:version}.xpi" quiet="true"/>
-
-        <zip destfile="${dist}/${RDF.Description.em:name}-${RDF.Description.em:version}.xpi" level="9">
+        <property name="xpi-release" location="${dist}/${RDF.Description.em:name}-${release-version}.xpi"/>
+        <property name="xpi-plain" location="${dist}/${RDF.Description.em:name}-${plain-version}.xpi"/>
+        <zip destfile="${xpi-plain}" level="9">
             <fileset dir="${build}"/>
         </zip>
     </target>
@@ -55,11 +61,17 @@
     </target>
 
 <!-- build without stripping log() invocations -->
-    <target name="build-debug" depends="archive, cleanup">
-    </target>
+    <target name="build-debug" depends="archive, cleanup"/>
 
 <!-- main build action -->
     <target name="build" depends="clean-build, archive, cleanup">
+        <move file="${xpi-plain}" tofile="${xpi-release}" verbose="true"/>
+    </target>
+
+   <target name="reset-build-number">
+       <propertyfile file="build.number">
+          <entry  key="build.number" type="int" value="0"/>
+       </propertyfile>
     </target>
 
 </project>
