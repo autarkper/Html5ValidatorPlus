@@ -349,18 +349,6 @@ four56bereastreet.html5validator = (function()
 			updateStatusBar(cache['errors'], cache['warnings'], 'results');
 			return;
 		}
-		// do not attempt auto-validation unless we have a visible UI
-		var addonBar = document.getElementById('addon-bar');
-		function isInvisibleUI()
-		{
-			// locationBarIcon doesn't count here, as it doesn't have a label
-			return ((addonBar && addonBar.collapsed) || (!addonBar && statusBar.hidden));
-		}
-		if (isInvisibleUI()) {
-			log("ui collapsed or hidden");
-			updateStatusBar(0, 0, 'cancelled'); // display a sensible message later when made visible
-			return;
-		}
 		var isAutoDomain = isWhitelistDomain(url);
 		if (isAutoDomain) 
 		{
@@ -377,6 +365,17 @@ four56bereastreet.html5validator = (function()
 			if (vCache.lookupNoAutoValidation(doc))
 			{
 				updateStatusBar(0, 0, 'cancelled');
+				return;
+			}
+			// do not attempt auto-validation unless we have a visible UI
+			function isInvisibleUI()
+			{
+				// locationBarIcon doesn't count here, as it doesn't have a label
+				return ((statusBarPanel.parentNode.collapsed) || (statusBarPanel.parentNode.hidden));
+			}
+			if (isInvisibleUI()) {
+				log("ui collapsed or hidden");
+				updateStatusBar(0, 0, 'cancelled'); // display a sensible message later when made visible
 				return;
 			}
 			html = html || getHTMLFromCache(doc);
