@@ -171,7 +171,7 @@ four56bereastreet.html5validator = (function()
 		onSecurityChange: function(aWebProgress, aRequest, aState){}
 	};
 
-	var statusBarPanel, locationBarIcon,
+	var toolbarButton, locationBarIcon,
 	g_invalidUrlRe = /^(about|chrome):/,
 
 	parserString = function(prefs)
@@ -370,7 +370,7 @@ four56bereastreet.html5validator = (function()
 			function isInvisibleUI()
 			{
 				// locationBarIcon doesn't count here, as it doesn't have a label
-				return ((statusBarPanel.parentNode.collapsed) || (statusBarPanel.parentNode.hidden));
+				return ((toolbarButton.parentNode.collapsed) || (toolbarButton.parentNode.hidden));
 			}
 			if (isInvisibleUI()) {
 				log("ui collapsed or hidden");
@@ -518,8 +518,8 @@ four56bereastreet.html5validator = (function()
 	g_clickEnabled = true,
 	updateIcon = function(data)
 	{
-		if (data.src) {locationBarIcon.src = statusBarPanel.src = data.src;}
-		if (data.tooltipText) {locationBarIcon.tooltipText = statusBarPanel.tooltipText = data.tooltipText;}
+		if (data.src) {locationBarIcon.src = toolbarButton.src = data.src;}
+		if (data.tooltipText) {locationBarIcon.tooltipText = toolbarButton.tooltipText = data.tooltipText;}
 	},
 	updateStatusBar__ = function(errors, warnings, status)
 	{
@@ -541,9 +541,9 @@ four56bereastreet.html5validator = (function()
 			if (warnings > 1) {
 				errorText += "s";
 			}
-			statusBarPanel.label = errorText;
+			toolbarButton.label = errorText;
 			updateIcon({src: "chrome://html5validator/skin/html5-error-red.png"});
-			statusBarPanel.className = "statusbarpanel-iconic-text errors";
+			toolbarButton.className = "statusbarpanel-iconic-text errors";
 			updateIcon({tooltipText: myName + parserString(preferences) + ": Click to view validation details"});
 			g_clickEnabled = true;
 		}
@@ -551,26 +551,26 @@ four56bereastreet.html5validator = (function()
 		{
 			g_clickEnabled = true;
 			updateIcon({src: "chrome://html5validator/skin/html5-dimmed.png"});
-			statusBarPanel.className = "statusbarpanel-iconic-text";
-			statusBarPanel.label = "Click to validate";
+			toolbarButton.className = "statusbarpanel-iconic-text";
+			toolbarButton.label = "Click to validate";
 			switch (status) {
 				case "reload-document":
-					statusBarPanel.label = "Refresh (F5) required";
+					toolbarButton.label = "Refresh (F5) required";
 					updateIcon({tooltipText: myName + ": Document not in cache, refresh required"});
 					g_clickEnabled = false;
 					break;
 				case "document-loading":
-					statusBarPanel.label = "Document loading...";
+					toolbarButton.label = "Document loading...";
 					updateIcon({tooltipText: myName + ": Document is loading, please wait"});
 					g_clickEnabled = false;
 					break;
 				case "running":
-					statusBarPanel.label = "Validating...";
+					toolbarButton.label = "Validating...";
 					updateIcon({tooltipText: myName + ": Document currently validating"});
 					g_clickEnabled = false;
 					break;
 				case "reset":
-					statusBarPanel.label = "";
+					toolbarButton.label = "";
 					updateIcon({tooltipText: myName + ": Idle"});
 					g_clickEnabled = false;
 					break;
@@ -588,35 +588,35 @@ four56bereastreet.html5validator = (function()
 					break;
 				case "about-to-validate":
 					updateIcon({tooltipText: myName + ": Validation pending..."});
-					statusBarPanel.label = "Validation pending, press Escape to cancel";
+					toolbarButton.label = "Validation pending, press Escape to cancel";
 					break;
 				case "manual":
 					updateIcon({tooltipText: myName + ": Domain not in whitelist, click to validate"});
 					break;
 				case "restricted":
-					statusBarPanel.label = "Restricted";
+					toolbarButton.label = "Restricted";
 					updateIcon({tooltipText: myName + ": Domain not in whitelist, validation restricted"});
 					g_clickEnabled = false;
 					break;
 				case "errorValidator":
-					statusBarPanel.label = "Validator error";
+					toolbarButton.label = "Validator error";
 					updateIcon({tooltipText: myName + ": Could not contact the validator, at '" + preferences.validatorURL + "'"});
 					break;
 				case "badResponse":
-					statusBarPanel.label = "Validator problem";
+					toolbarButton.label = "Validator problem";
 					updateIcon({tooltipText: myName + ": Bad response from validator, at '" + preferences.validatorURL + "'"});
 					break;
 				case "internalError":
-					statusBarPanel.label = "Internal Error";
+					toolbarButton.label = "Internal Error";
 					updateIcon({tooltipText: myName + ": Some internal error occurred"});
 					break;
 				case "results":
 					updateIcon({src: "chrome://html5validator/skin/html5-ok.png"});
-					statusBarPanel.label = "";
+					toolbarButton.label = "";
 					updateIcon({tooltipText: myName + "" + parserString(preferences) + ": No errors. Click to view validation details"});
 					break;
 				default:
-					statusBarPanel.label = "internal error";
+					toolbarButton.label = "internal error";
 					break;
 			}
 		}
@@ -929,9 +929,9 @@ four56bereastreet.html5validator = (function()
 		gBrowser.addProgressListener(html5validatorListener);
 
 		addonBar = document.getElementById('addon-bar');
-		statusBarPanel = document.getElementById('html5validator-status-bar');
-		if (!statusBarPanel) {
-			statusBarPanel = addonBar.insertItem("html5validator-status-bar", null);
+		toolbarButton = document.getElementById('html5validator-status-bar');
+		if (!toolbarButton) {
+			toolbarButton = addonBar.insertItem("html5validator-status-bar", null);
 			addonBar.collapsed = false;
 		}
 		locationBarIcon = document.getElementById('html5validator-locationbar-icon');
@@ -957,11 +957,11 @@ four56bereastreet.html5validator = (function()
 		{
 			if (locationBarIcon.hidden)
 			{
-				if (statusBarPanel.parentNode.collapsed) {
-					statusBarPanel.parentNode.collapsed = false;
+				if (toolbarButton.parentNode.collapsed) {
+					toolbarButton.parentNode.collapsed = false;
 				}
-				else if (statusBarPanel.parentNode.hidden) {
-					statusBarPanel.parentNode.hidden = false;
+				else if (toolbarButton.parentNode.hidden) {
+					toolbarButton.parentNode.hidden = false; // status bar
 				}
 			}
 			statusBarPanelClick();
