@@ -11,8 +11,8 @@
     <!-- determine version number, etc, based on install.rdf -->
     <target name="read-install.rdf">
         <xmlproperty file="${src}/install.rdf"/>
-        <property name="plain-version" location="${RDF.Description.em:version}"/>
-        <property name="release-version" location="${RDF.Description.em:version}-${build.number}"/>
+        <property name="plain-version" value="${RDF.Description.em:version}"/>
+        <property name="release-version" value="${RDF.Description.em:version}-${build.number}"/>
     </target>
 
     <target name="copy-build" depends="read-install.rdf">
@@ -42,7 +42,7 @@
         </replaceregexp>
 
         <echo>Generating release version number</echo>
-        <replace file="${build}/install.rdf" token="${RDF.Description.em:version}" value="${RDF.Description.em:version}-${build.number}"/>
+        <replace file="${build}/install.rdf" token="${RDF.Description.em:version}" value="${release-version}"/>
     </target>
 
     <!-- archive sources into .xpi file -->
