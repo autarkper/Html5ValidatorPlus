@@ -3,7 +3,7 @@
 <overlay id="sample" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	
 	<script src="html5validator.js" />
-	<toolbarpalette id="status-bar">
+	<toolbarpalette id="BrowserToolbarPalette">
 		<toolbarbutton class="statusbarpanel-iconic-text chromeclass-toolbar-additional"
 			id="html5validator-status-bar"
 			src="chrome://html5validator/skin/html5-dimmed.png"
