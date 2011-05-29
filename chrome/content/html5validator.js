@@ -9,7 +9,6 @@ four56bereastreet.html5validator = (function()
 	}
 	var myName = "HTML5 Validator Plus";
 	var addonBar = null;
-	var statusBar = null;
 	var Application = Components.classes["@mozilla.org/fuel/application;1"].getService(Components.interfaces.fuelIApplication);
 	var pbs = Components.classes["@mozilla.org/privatebrowsing;1"].getService(Components.interfaces.nsIPrivateBrowsingService);
 	function normalizeUrl(url)
@@ -930,13 +929,12 @@ four56bereastreet.html5validator = (function()
 		gBrowser.addProgressListener(html5validatorListener);
 
 		addonBar = document.getElementById('addon-bar');
-		if (!document.getElementById("html5validator-status-bar")) {
-			addonBar.insertItem("html5validator-status-bar", null);
+		statusBarPanel = document.getElementById('html5validator-status-bar');
+		if (!statusBarPanel) {
+			statusBarPanel = addonBar.insertItem("html5validator-status-bar", null);
 			addonBar.collapsed = false;
 		}
-		statusBarPanel = document.getElementById('html5validator-status-bar');
 		locationBarIcon = document.getElementById('html5validator-locationbar-icon');
-		statusBar = document.getElementById('status-bar');
 		setTimeout(function(){validateDocHTML(false);}, 250);
 		updateStatusBar(0, 0, 'reset');
 
@@ -959,11 +957,11 @@ four56bereastreet.html5validator = (function()
 		{
 			if (locationBarIcon.hidden)
 			{
-				if (addonBar && addonBar.collapsed) {
-					addonBar.collapsed = false;
+				if (statusBarPanel.parentNode.collapsed) {
+					statusBarPanel.parentNode.collapsed = false;
 				}
-				else if (!addonBar && statusBar.hidden) {
-					statusBar.hidden = false;
+				else if (statusBarPanel.parentNode.hidden) {
+					statusBarPanel.parentNode.hidden = false;
 				}
 			}
 			statusBarPanelClick();
