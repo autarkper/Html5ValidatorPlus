@@ -447,7 +447,8 @@ four56bereastreet.html5validator = (function()
 
 		var win = doc.defaultView;
 		if (win == window) {
-			win = _content;
+			log("win == window");
+			win = window.content;
 		}
 
 		var ifRequestor = win.QueryInterface(Components.interfaces.nsIInterfaceRequestor);
