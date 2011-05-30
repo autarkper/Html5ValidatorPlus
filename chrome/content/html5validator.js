@@ -326,7 +326,7 @@ four56bereastreet.html5validator = (function()
 		var html;
 		if (triggered)
 		{
-			html = getHTMLFromCache(doc);
+			html = getHTMLFromCache(doc, triggered);
 			if (html && html.length) {
 				validateDoc(doc, html);
 			}
@@ -370,7 +370,7 @@ four56bereastreet.html5validator = (function()
 				updateStatusBar(0, 0, 'cancelled'); // display a sensible message later when made visible
 				return;
 			}
-			html = html || getHTMLFromCache(doc);
+			html = html || getHTMLFromCache(doc, triggered);
 			if (!html || !html.length) {
 				updateStatusBar(0, 0, 'reload-document');
 				return;
@@ -435,7 +435,7 @@ four56bereastreet.html5validator = (function()
 	},
 
 	// Adapted from the "HTML Validator" extension by Marc Gueury (http://users.skynet.be/mgueury/mozilla/)
-	getHTMLFromCache = function(doc, force)
+	getHTMLFromCache = function(doc, triggered, force)
 	{	 
 		if (isLoading(doc)) {
 			log("getHTMLFromCache: is loading");
@@ -490,6 +490,15 @@ four56bereastreet.html5validator = (function()
 		}
 		scriptableStream.close();
 		stream.close();
+		if (s.length === 0)
+		{
+			log("html length 0");
+			if (triggered && !force)
+			{
+				return getHTMLFromCache(doc, triggered, true);
+			}
+			return s;
+		}
 
 		// Part 3 : convert the HTML in unicode
 		var ucConverter =  Components.classes["@mozilla.org/intl/scriptableunicodeconverter"].getService(Components.interfaces.nsIScriptableUnicodeConverter);
