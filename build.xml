@@ -34,7 +34,7 @@
     <target name="clean-build" depends="copy-build">
         <echo>Stripping log() invocations</echo>
         <replaceregexp byline="true">
-            <regexp pattern="\blog\(.+\);"/>
+            <regexp pattern="\blog\(.+\)"/>
             <substitution expression=""/>
             <fileset dir="${build}">
                 <include name="**/*.js"/>
