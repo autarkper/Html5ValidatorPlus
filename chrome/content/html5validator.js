@@ -523,26 +523,31 @@ four56bereastreet.html5validator = (function()
 		if (data.src) {locationBarIcon.src = toolbarButton.src = data.src;}
 		if (data.tooltipText) {locationBarIcon.tooltipText = toolbarButton.tooltipText = data.tooltipText;}
 	},
+	formatErrorAndWarningString = function(errors, warnings, forceOutput)
+	{
+		var errorText = "";
+		if (errors || forceOutput) {
+			errorText += errors + " error";
+			if (errors !== 1) {
+				errorText += "s";
+			}
+		}
+		if ((errors && warnings) || forceOutput) {
+			errorText += " and ";
+		}
+		if (warnings || forceOutput) {
+			errorText += warnings + " warning";
+			if (warnings !== 1) {
+				errorText += "s";
+			}
+		}
+		return errorText;
+	},
 	updateStatusBar__ = function(errors, warnings, status)
 	{
 		log("updateStatusBar: " + status);
 		if (errors || warnings) {
-			var errorText = "";
-			if (errors) {
-				errorText += errors + " error";
-			}
-			if (errors > 1) {
-				errorText += "s";
-			}
-			if (errors && warnings) {
-				errorText += " and ";
-			}
-			if (warnings) {
-				errorText += warnings + " warning";
-			}
-			if (warnings > 1) {
-				errorText += "s";
-			}
+			var errorText = formatErrorAndWarningString(errors, warnings);
 			toolbarButton.label = errorText;
 			updateIcon({src: "chrome://html5validator/skin/html5-error-red.png"});
 			toolbarButton.className = "statusbarpanel-iconic-text errors";
@@ -821,7 +826,7 @@ four56bereastreet.html5validator = (function()
 				}
 			}
 			var sectionHeading = url + parserString(result.preferences);
-			var errorsAndWarnings = result.errors + ' errors and ' + result.warnings + ' warnings';
+			var errorsAndWarnings = formatErrorAndWarningString(result.errors, result.warnings, true);
 			/* Create the HTML content of the body – a heading and the list of messages with some elements and class names to enable styling */
 
 			var container = generatedDocument.createElement("DIV");
