@@ -1,5 +1,6 @@
 CHANGELOG
 
+--------------- HTML5 Validator ------------------------------------------------------
 * 1.0 - 2011-02-16 - first release
 * 1.1 - 2011-02-17 - NEW: gets HTML source from cache, caches validation results per tab
 * 1.2 - 2011-02-18 - NEW: validate only whitelisted domains
@@ -14,12 +15,14 @@ CHANGELOG
 * 1.5.4 - 2011-02-25 - NEW: Allow wildcards in domain whitelist
 * 1.5.5 - 2011-02-25 - FIX: Improved status info, issue #3
 * 1.5.6 - 2011-04-24 - FIX: Changed from evil eval to JSON.parse for parsing of validator response
-* 1.9.* - 2011-05-20 - Various changes and fixes:
+--------------- HTML5 Validator Plus ------------------------------------------------------
+* 2.0   - 2011-06-01 - First release of HTML5 Validator Plus. Various changes and fixes:
 ** FIX: if the current location changes while a validation is in progress, make sure the results will still end up connected to the validated document
 ** FIX: strip empty or blank lines from domain whitelist
 ** FIX: better protection against bad regular expression (e.g., "*.[") in domain whitelist
 ** NEW: native support for add-on bar, backward compatible with old-style status bar
 ** NEW: do not auto-validate if add-on bar is collapsed
+** NEW: optionally display the validator icon in the browser's location bar
 ** NEW: detect document-load failures
 ** NEW: validation results are shared between all tabs and windows displaying the same document
 ** NEW: the validation-results cache is independent of the browser's page cache
@@ -30,17 +33,17 @@ CHANGELOG
 ** NEW: preference to allow manual validation of non-whitelisted domains
 ** NEW: preference to control the maximum size of a document to auto-validate (use -1 to override)
 ** NEW: preference to control the timeout before auto-validation kicks in
-** NEW: preference to control the parser to be used by the validator
+** NEW: preference to select the parser to be used by the validator
 ** NEW: the results cache is indexed on the validation settings in effect at the time of the validation
 ** NEW: suppress spurious validator error message if the document encoding is not UTF-8
 ** NEW: keep track of error and warning messages that were suppressed due to preference settings
 ** NEW: more detailed status information in the add-on bar
 ** NEW: information about validation settings on the results page
 ** NEW: the results tab opens immediately to the right of the originating tab, automatically returning focus to the originating tab when closed
+** NEW: press Escape in the results window or tab to easily close it
 ** NEW: on session restart, all results tabs and windows left over from the last session are automatically closed
 ** NEW: clicking the validator icon in "non-clickable" state brings up the preferences dialog
 ** NEW: keyboard shortcut CONTROL+SHIFT+V equivalent to clicking the validator icon
-** NEW: press Escape in the results window or tab to easily close it
-** NEW: don't auto-validate if in private browsing mode
-** NEW: optionally display the validator icon in the browser's location bar
+** NEW: don't auto-validate in private-browsing mode
+** NEW: disable validation for unsupported protocols (about:, chrome:, etc.), only handle http: and https:
 

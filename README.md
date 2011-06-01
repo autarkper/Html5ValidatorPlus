@@ -12,7 +12,7 @@ Another enhancement is the ability to choose which parser the validator should u
 
 HTML5 Validator Plus has native support for the new add-on bar in Firefox 4. It can optionally show its icon in the location bar so the add-on bar doesn't have to be visible all the time. At all times, CTRL+SHIFT+V is the keyboard equivalent to clicking the validator icon.
 
-HTML5 Validator Plus has been developed and tested in Firefox 4 and alpha/beta versions of Firefox 5, 6 and 7; the minimum required Firefox version is 3.6.
+HTML5 Validator Plus has been developed and tested in Firefox 4 and alpha/beta versions of Firefox 5, 6 and 7; the minimum supported Firefox version is 3.6.
 
 Known bugs and problems: Currently none.
 
