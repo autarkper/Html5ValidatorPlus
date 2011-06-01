@@ -72,6 +72,6 @@
        <propertyfile file="build.number">
           <entry  key="build.number" type="int" value="0"/>
        </propertyfile>
-    </target>
+   </target>
 
 </project>
