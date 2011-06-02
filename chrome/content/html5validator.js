@@ -478,18 +478,27 @@ four56bereastreet.html5validator = (function()
 		var cacheChannel = channel.QueryInterface(Components.interfaces.nsICachingChannel);
 		cacheChannel.cacheKey = shEntry.cacheKey;
 
+		var s = '';
 		var stream = channel.open();
-
-		const scriptableStream = Components.classes["@mozilla.org/scriptableinputstream;1"].createInstance(Components.interfaces.nsIScriptableInputStream);
-		scriptableStream.init(stream);
-		var s = '', s2 = '';
-
-		while (scriptableStream.available() > 0)
-		{
-			s += scriptableStream.read(scriptableStream.available());
+		try {
+			const replacementChar = Components.interfaces.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER;
+			var is = Components.classes["@mozilla.org/intl/converter-input-stream;1"].
+							createInstance(Components.interfaces.nsIConverterInputStream);
+			is.init(stream, urlCharset, 1024, replacementChar);
+			try {
+				var str = {};
+				while (is.readString(4096, str)) {
+					s += str.value;
+				}
+			}
+			finally {
+				is.close();
+			}
 		}
-		scriptableStream.close();
-		stream.close();
+		finally {
+			stream.close();
+		}
+		
 		if (s.length === 0)
 		{
 			log("html length 0");
@@ -497,15 +506,9 @@ four56bereastreet.html5validator = (function()
 			{
 				return getHTMLFromCache(doc, triggered, true);
 			}
-			return s;
 		}
 
-		// Part 3 : convert the HTML in unicode
-		var ucConverter =  Components.classes["@mozilla.org/intl/scriptableunicodeconverter"].getService(Components.interfaces.nsIScriptableUnicodeConverter);
-		ucConverter.charset = urlCharset;
-		s2 = ucConverter.ConvertToUnicode(s);
-
-		return s2;
+		return s;
 	},
 
 	g_usbTimeoutHandle = null,
