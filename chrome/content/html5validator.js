@@ -158,6 +158,7 @@ four56bereastreet.html5validator = (function()
 						this.lastStartURL = null;
 						if (aStatus) { // error
 							updateStatusBar(0,0, 'reload-document');
+							doc.html5ValidatorLastStatus = aStatus;
 						}
 						// attempt validation anyway, in case the main document was downloaded OK
 						validateDocHTML(false);
@@ -431,7 +432,7 @@ four56bereastreet.html5validator = (function()
 
 	isLoading = function(doc)
 	{
-		return doc.readyState === "loading";
+		return !doc.html5ValidatorLastStatus && doc.readyState === "loading";
 	},
 
 	// Adapted from the "HTML Validator" extension by Marc Gueury (http://users.skynet.be/mgueury/mozilla/)
@@ -565,9 +566,8 @@ four56bereastreet.html5validator = (function()
 			toolbarButton.label = "Click to validate";
 			switch (status) {
 				case "reload-document":
-					toolbarButton.label = "Refresh (F5) required";
-					updateIcon({tooltipText: myName + ": Document not in cache, refresh required"});
-					g_clickEnabled = false;
+					toolbarButton.label = "Not in cache";
+					updateIcon({tooltipText: myName + ": Document not in cache, click to fetch and validate"});
 					break;
 				case "document-loading":
 					toolbarButton.label = "Document loading...";
