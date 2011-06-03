@@ -505,6 +505,7 @@ four56bereastreet.html5validator = (function()
 			log("html length 0");
 			if (triggered && !force)
 			{
+				updateStatusBar(0, 0, "fetching");
 				return getHTMLFromCache(doc, triggered, true);
 			}
 		}
@@ -577,6 +578,11 @@ four56bereastreet.html5validator = (function()
 				case "running":
 					toolbarButton.label = "Validating...";
 					updateIcon({tooltipText: myName + ": Document currently validating"});
+					g_clickEnabled = false;
+					break;
+				case "fetching":
+					toolbarButton.label = "Fetching...";
+					updateIcon({tooltipText: myName + ": Fetching document to validate"});
 					g_clickEnabled = false;
 					break;
 				case "reset":
