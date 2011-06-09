@@ -107,7 +107,7 @@ four56bereastreet.html5validator = (function()
 
 		onLocationChange: function(aProgress, aRequest, aURI)
 		{
-			var doc = window.content.document;
+			var doc = getActiveDocument();
 			updateStatusBar(0, 0, "reset");
 			if (doc && isValidUrl(doc.URL))
 			{
@@ -139,7 +139,7 @@ four56bereastreet.html5validator = (function()
 					* a genuine reload.
 					* Tested in FF 5.02a.
 				*/
-					var doc = window.content.document;
+					var doc = getActiveDocument();
 					if (!doc.URL || !isValidUrl(doc.URL)) {
 						return;
 					}
@@ -427,7 +427,7 @@ four56bereastreet.html5validator = (function()
 	
 	getActiveDocument = function()
 	{
-		return window.content.document;
+		return window.content ? window.content.document : null;
 	},
 
 	isLoading = function(doc)
@@ -744,6 +744,7 @@ four56bereastreet.html5validator = (function()
 		var doc = getActiveDocument();
 		if (!doc) {
 			log("statusBarPanelClick: no document");
+			showOptionsDialog();
 			return;
 		}
 
