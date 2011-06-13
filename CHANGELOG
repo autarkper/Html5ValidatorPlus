@@ -46,4 +46,4 @@ CHANGELOG
 ** NEW: keyboard shortcut CONTROL+SHIFT+V equivalent to clicking the validator icon
 ** NEW: don't auto-validate in private-browsing mode
 ** NEW: disable validation for unsupported protocols (about:, chrome:, etc.), only handle http: and https:
-
+* 2.0.1   - 2011-06-13 - don't validate anything but documents having a text/html document type

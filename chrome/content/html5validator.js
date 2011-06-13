@@ -316,6 +316,11 @@ four56bereastreet.html5validator = (function()
 			validateDocHTML(triggered, optTimeoutMs * 2); // come back later
 			return;
 		}
+        if (doc.contentType !== "text/html")
+        {
+            updateStatusBar(0, 0, 'not-html');
+            return;
+        }
 
 		if (vCache.isBusy(doc))
 		{
@@ -590,6 +595,11 @@ four56bereastreet.html5validator = (function()
 					updateIcon({tooltipText: myName + ": Idle"});
 					g_clickEnabled = false;
 					break;
+                case "not-html":
+                    toolbarButton.label = getActiveDocument().contentType || "not HTML";
+                    updateIcon({tooltipText: myName + ": Idle"});
+                    g_clickEnabled = false;
+                    break;
 				case "use-trigger":
 					updateIcon({tooltipText: myName + ": Auto-validation off, click to validate"});
 					break;
