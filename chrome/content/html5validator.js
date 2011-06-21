@@ -13,7 +13,7 @@ four56bereastreet.html5validator = (function()
 	function normalizeUrl(url)
 	{
 		return url.replace(/#.*/, '');
-	};
+	}
 	var preferences = {},
 		preferenceToken, // a concatenated string of all result-affecting preference values
 		loadPreferences = function()
@@ -24,12 +24,15 @@ four56bereastreet.html5validator = (function()
 				filtered_domains = [];
 
 			// fix domains, accepts: domain OR http://domain OR https://domain
+            function fixDomain(domain)
+            {
+                return domain.replace(/(https?:\/\/)?(www\.)?([^\s\/]+)\/?/i, function(r, r1, r2, r3){
+                    return (r1.length ? r1.toLowerCase() : 'http://') + r3.toLowerCase() + '/';
+                }).replace(/\s+/g, '');
+            }
 			for (var i = 0; i < domains.length; i++)
 			{
-				domains[i] = domains[i].replace(/(https?:\/\/)?(www\.)?([^\s\/]+)\/?/i, function(r, r1, r2, r3){
-					return (r1.length ? r1.toLowerCase() : 'http://') + r3.toLowerCase() + '/';
-				});
-				domains[i] = domains[i].replace(/\s+/g, '');
+				domains[i] = fixDomain(domains[i]);
 				if (domains[i].length) {filtered_domains.push(domains[i]);}
 			}
 
@@ -87,7 +90,7 @@ four56bereastreet.html5validator = (function()
 				logFn = function(msg) {
 					++msgNo;
 					console.logStringMessage(myName + ': (' + msgNo + ") " + msg);
-				}
+				};
 				Application.storage.set("logFn", logFn);
 			}
 			return logFn;
@@ -366,11 +369,11 @@ four56bereastreet.html5validator = (function()
 				return;
 			}
 			// do not attempt auto-validation unless we have a visible UI
-			function isInvisibleUI()
+			var isInvisibleUI = function()
 			{
 				// locationBarIcon doesn't count here, as it doesn't have a label
 				return ((toolbarButton.parentNode.collapsed) || (toolbarButton.parentNode.hidden));
-			}
+			};
 			if (isInvisibleUI()) {
 				log("ui collapsed or hidden");
 				updateStatusBar(0, 0, 'cancelled'); // display a sensible message later when made visible
@@ -383,17 +386,17 @@ four56bereastreet.html5validator = (function()
 			} // the cache seems to have been cleared
 
 			var isSmallish =
-                preferences.maxAutoSize < 0 // unlimited
-                ||(html.length < (preferences.maxAutoSize) * 1024);
+                preferences.maxAutoSize < 0 /* unlimited */ ||
+                    (html.length < (preferences.maxAutoSize) * 1024);
 			if (isSmallish)
 			{
 				updateStatusBar(0, 0, 'about-to-validate');
 				var timeoutHandle = null, removeEscapeListener;
-				function stopTimeout()
+				var stopTimeout = function()
 				{
 					if (timeoutHandle) {window.clearTimeout(timeoutHandle); timeoutHandle = null;} // cancel pending validation
-				}
-				function cancelOnEscape(event)
+				};
+				var cancelOnEscape = function(event)
 				{
 					if (event.keyCode === event.DOM_VK_ESCAPE)
 					{
@@ -401,7 +404,7 @@ four56bereastreet.html5validator = (function()
 						vCache.storeNoAutoValidation(doc);
 						updateStatusBar(0, 0, 'cancelled');
 					}
-				}
+				};
 				removeEscapeListener = function(){doc.removeEventListener('keydown', cancelOnEscape, false);};
 
 				doc.addEventListener('keydown', cancelOnEscape, false);
@@ -487,7 +490,7 @@ four56bereastreet.html5validator = (function()
 		var s = '';
 		var stream = channel.open();
 		try {
-			const replacementChar = Components.interfaces.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER;
+			var replacementChar = Components.interfaces.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER;
 			var is = Components.classes["@mozilla.org/intl/converter-input-stream;1"].
 							createInstance(Components.interfaces.nsIConverterInputStream);
 			is.init(stream, urlCharset, 1024, replacementChar);
@@ -725,7 +728,7 @@ four56bereastreet.html5validator = (function()
 					updateStatusBar(errors, warnings, "results");
 				}
 			}
-		};
+		}
 		xhr.onload = function () {
 			try {
 				onload();
@@ -790,19 +793,19 @@ four56bereastreet.html5validator = (function()
 		var isNewWindow = true;
 		if (openInTab || !getResultWindow() || getResultWindow().closed)
 		{
-			function openNewTab()
+			var openNewTab = function()
 			{
 				var newTab = getBrowser().loadOneTab(RESULTWINDOW, {relatedToCurrent:true, inBackground:false});
 				var newbrowser = getBrowser().getBrowserForTab(newTab);
 				return newbrowser.contentWindow;
-			}
-			function findOrOpenWindow() {
+			};
+			var findOrOpenWindow = function() {
 				setResultWindow(
 					window.open(RESULTWINDOW, 'html5validator',
 						"menubar=no,location=no,resizable=yes,minimizable=yes,scrollbars=yes,status=yes")
 					);
 				return getResultWindow();
-			}
+			};
 			resultWindow = openInTab ? openNewTab() : findOrOpenWindow();
 		}
 		else
