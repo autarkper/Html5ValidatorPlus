@@ -679,7 +679,7 @@ four56bereastreet.html5validator = (function()
 						if (preferences.ignoreXHTMLErrors) {
 							// Do not count errors caused by an XHTML Doctype.
 							// Not foolproof but matches XHTML 1.0 Strict/Transitional and 1.1 as long as no XML declaration is used.
-							if ((message.message.match(/^Legacy doctype./i) && message.extract.match(/<!DOCTYPE html PUBLIC \"-\/\/W3C\/\/DTD XHTML 1.(1|0 Strict|0 Transitional)\/\/EN/i)) || message.message.match(/^Attribute “xml:lang” not allowed/i)) {
+							if ((message.message.match(/^(Almost standards mode|Legacy) doctype./i) && message.extract.match(/<!DOCTYPE html PUBLIC \"-\/\/W3C\/\/DTD XHTML 1.(1|0 Strict|0 Transitional)\/\/EN/i)) || message.message.match(/^Attribute “xml:lang” not allowed/i)) {
 								suppressedMessages.push(message);
 								continue;
 							}
