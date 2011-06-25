@@ -47,3 +47,4 @@ CHANGELOG
 ** NEW: don't auto-validate in private-browsing mode
 ** NEW: disable validation for unsupported protocols (about:, chrome:, etc.), only handle http: and https:
 * 2.0.1   - 2011-06-13 - don't validate anything but documents having a text/html document type
+* 2.0.2   - 2011-06-25 - suppress "Almost standards mode doctype" error (concerning XHTML 1.0 Transitional doctype) if "Ignore XHTML errors" is in effect
