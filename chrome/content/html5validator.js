@@ -381,7 +381,7 @@ four56bereastreet.html5validator = (function()
 				updateStatusBar(0, 0, 'cancelled'); // display a sensible message later when made visible
 				return;
 			}
-			if (validatorOK === false) {
+			if (validatorOK !== true) {
 				log("validator not OK");
 				updateStatusBar(0, 0, 'back-off');
 				return;
