@@ -176,6 +176,8 @@ four56bereastreet.html5validator = (function()
 
 	var toolbarButton, locationBarIcon,
 
+    validatorOK = true, // assume the validator is OK to begin with
+
 	parserString = function(prefs)
 	{
 		// only write out the parser string if not inferred
@@ -377,6 +379,11 @@ four56bereastreet.html5validator = (function()
 			if (isInvisibleUI()) {
 				log("ui collapsed or hidden");
 				updateStatusBar(0, 0, 'cancelled'); // display a sensible message later when made visible
+				return;
+			}
+			if (validatorOK === false) {
+				log("validator not OK");
+				updateStatusBar(0, 0, 'back-off');
 				return;
 			}
 			html = html || getHTMLFromCache(doc, triggered);
@@ -615,6 +622,9 @@ four56bereastreet.html5validator = (function()
 				case "cancelled":
 					updateIcon({tooltipText: myName + ": Auto-validation cancelled, click to validate"});
 					break;
+				case "back-off":
+					updateIcon({tooltipText: myName + ": Auto-validation disabled due to possible validator overload, click to validate"});
+					break;
 				case "about-to-validate":
 					updateIcon({tooltipText: myName + ": Validation pending..."});
 					toolbarButton.label = "Validation pending, press Escape to cancel";
@@ -727,6 +737,7 @@ four56bereastreet.html5validator = (function()
 				{
 					updateStatusBar(errors, warnings, "results");
 				}
+				validatorOK = xhr.status === 200;
 			}
 		}
 		xhr.onload = function () {
@@ -734,6 +745,7 @@ four56bereastreet.html5validator = (function()
 				onload();
 			}
 			catch (err) {
+				validatorOK = false;
 				log(err);
 				vCache.setBusyState(doc, false);
 				updateStatusBar(0, 0, "badResponse");
@@ -741,6 +753,7 @@ four56bereastreet.html5validator = (function()
 		};
 		// If we couldn't validate the document (validator not running, network down, etc.)
 		xhr.onerror = function(){
+		    validatorOK = false;
 			vCache.setBusyState(doc, false);
 			updateStatusBar(0, 0, "errorValidator");
 		};
@@ -749,6 +762,7 @@ four56bereastreet.html5validator = (function()
 		var parserOpt = preferences.parser.length ? "&parser=" + preferences.parser : '';
 		xhr.open("POST", preferences.validatorURL + "?out=json" + parserOpt, true);
 		xhr.setRequestHeader("Content-Type", "text/html;charset=UTF-8");
+	    validatorOK = null; // set to unknown state until we find out
 		xhr.send(html);
 	},
 

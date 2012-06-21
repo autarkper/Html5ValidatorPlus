@@ -48,3 +48,4 @@ CHANGELOG
 ** NEW: disable validation for unsupported protocols (about:, chrome:, etc.), only handle http: and https:
 * 2.0.1   - 2011-06-13 - don't validate anything but documents having a text/html document type
 * 2.0.2   - 2011-06-25 - suppress "Almost standards mode doctype" error (concerning XHTML 1.0 Transitional doctype) if "Ignore XHTML errors" is in effect
+* 2.0.3   - 2012-06-21 - Disable auto-validation unless most recent validator response code is exactly 200. This is done in order not to overload a potentially busy validator.
