@@ -28,7 +28,7 @@ four56bereastreet.html5validator = (function()
             {
                 return domain.replace(/(https?:\/\/)?(www\.)?([^\s\/]+)\/?/i, function(r, r1, r2, r3){
                     return (r1.length ? r1.toLowerCase() : 'http://') + r3.toLowerCase() + '/';
-                }).replace(/\s+/g, '');
+                }).trim();
             }
 			for (var i = 0; i < domains.length; i++)
 			{
@@ -37,7 +37,7 @@ four56bereastreet.html5validator = (function()
 			}
 
 			preferences = {
-				validatorURL: prefBranch.getCharPref("validatorURL"),
+				validatorURL: prefBranch.getCharPref("validatorURL").trim(),
 				domainsWhitelist: filtered_domains,
 				restrictToWhitelist: prefBranch.getBoolPref("restrictToWhitelist"),
 				displayResultsInTab: prefBranch.getBoolPref("displayResultsInTab"),
@@ -51,6 +51,7 @@ four56bereastreet.html5validator = (function()
 				parser: prefBranch.getCharPref("parser")
 			};
 			preferenceToken = [ // remember to update this as new result-affecting preferences are added!
+				preferences.validatorURL,
 				preferences.parser,
 				preferences.ignoreXHTMLErrors,
 				preferences.allowAccessibilityFeatures
@@ -898,6 +899,8 @@ four56bereastreet.html5validator = (function()
 			var h2 = fragment.appendChild(generatedDocument.createElement('h2'));
 			h2.innerHTML = sectionHeading;
 			generatedDocument.lastSectionHeading = sectionHeading;
+			var validatorP = fragment.appendChild(generatedDocument.createElement('p'));
+			validatorP.textContent = "Validator: " + result.preferences.validatorURL;
 			var dateP = fragment.appendChild(generatedDocument.createElement('p'));
 			dateP.textContent = "Display timestamp: " + (new Date()).toLocaleString();
 			dateP = fragment.appendChild(generatedDocument.createElement('p'));
