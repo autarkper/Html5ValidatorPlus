@@ -762,7 +762,7 @@ four56bereastreet.html5validator = (function()
 		// Send document to validator and tell it to return results in JSON format
 		var parserOpt = preferences.parser.length ? "&parser=" + preferences.parser : '';
 		xhr.open("POST", preferences.validatorURL + "?out=json" + parserOpt, true);
-		xhr.setRequestHeader("Content-Type", "text/html;charset=UTF-8");
+		xhr.setRequestHeader("Content-Type", "text/html; charset=UTF-8");
 	    validatorOK = null; // set to unknown state until we find out
 		xhr.send(html);
 	},
