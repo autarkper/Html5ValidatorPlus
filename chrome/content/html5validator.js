@@ -47,6 +47,7 @@ four56bereastreet.html5validator = (function()
 				useTrigger: prefBranch.getBoolPref("useTrigger"),
 				debug: prefBranch.getBoolPref("debug"),
 				ignoreXHTMLErrors: prefBranch.getBoolPref("ignoreXHTMLErrors"),
+				ignoreWindows1252Iso88591: prefBranch.getBoolPref("ignoreWindows1252Iso88591"),
 				allowAccessibilityFeatures: prefBranch.getBoolPref("allowAccessibilityFeatures"),
 				parser: prefBranch.getCharPref("parser")
 			};
@@ -54,7 +55,8 @@ four56bereastreet.html5validator = (function()
 				preferences.validatorURL,
 				preferences.parser,
 				preferences.ignoreXHTMLErrors,
-				preferences.allowAccessibilityFeatures
+				preferences.allowAccessibilityFeatures,
+				preferences.ignoreWindows1252Iso88591
 			].join(";");
 			log("Preference Token: " + preferenceToken);
 			locationBarIcon.hidden = !preferences.displayIconInLocationBar;
@@ -703,7 +705,13 @@ four56bereastreet.html5validator = (function()
 						filteredMessages.push(message);
 					}
 					else if (message.type == "info") {
-						if (message.subType == "warning") {
+						if (message.subType && message.subType === "warning") {
+							if (preferences.ignoreWindows1252Iso88591) {
+						        if (message.message.match(/Using “windows-1252” instead of the declared encoding “iso-8859-1”/i)) {
+							        suppressedMessages.push(message);
+							        continue;
+						        }
+						    }
 							if (preferences.allowAccessibilityFeatures) {
 								// Do not count errors caused by removed accessibility features.
 								// Currently allows the abbr, longdesc and scope attributes.

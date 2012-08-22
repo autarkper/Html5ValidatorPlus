@@ -6,6 +6,7 @@ pref("extensions.html5validator.displayIconInLocationBar", true);
 pref("extensions.html5validator.useTrigger", true);
 pref("extensions.html5validator.debug", false);
 pref("extensions.html5validator.ignoreXHTMLErrors", false);
+pref("extensions.html5validator.ignoreWindows1252Iso88591", false);
 pref("extensions.html5validator.allowAccessibilityFeatures", false);
 pref("extensions.html5validator.maxAutoSize", 50);
 pref("extensions.html5validator.autoValidateWaitSeconds", 5);
