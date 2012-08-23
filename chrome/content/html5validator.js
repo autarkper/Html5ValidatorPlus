@@ -10,10 +10,9 @@ four56bereastreet.html5validator = (function()
 	var myName = "HTML5 Validator Plus";
 	var Application = Components.classes["@mozilla.org/fuel/application;1"].getService(Components.interfaces.fuelIApplication);
 	var pbs = Components.classes["@mozilla.org/privatebrowsing;1"].getService(Components.interfaces.nsIPrivateBrowsingService);
-	function normalizeUrl(url)
-	{
+	var normalizeUrl = function(url) {
 		return url.replace(/#.*/, '');
-	}
+	};
 	var preferences = {},
 		preferenceToken, // a concatenated string of all result-affecting preference values
 		loadPreferences = function()
@@ -24,12 +23,11 @@ four56bereastreet.html5validator = (function()
 				filtered_domains = [];
 
 			// fix domains, accepts: domain OR http://domain OR https://domain
-            function fixDomain(domain)
-            {
+            var fixDomain = function(domain) {
                 return domain.replace(/(https?:\/\/)?(www\.)?([^\s\/]+)\/?/i, function(r, r1, r2, r3){
                     return (r1.length ? r1.toLowerCase() : 'http://') + r3.toLowerCase() + '/';
                 }).trim();
-            }
+            };
 			for (var i = 0; i < domains.length; i++)
 			{
 				domains[i] = fixDomain(domains[i]);
@@ -681,7 +679,7 @@ four56bereastreet.html5validator = (function()
 		vCache.setBusyState(doc, true);
 
 		var xhr = new XMLHttpRequest();
-		function onload() {
+		var onload = function() {
 			// Turn the returned string into a JSON object
 			var response = (xhr.responseText.length ? JSON.parse(xhr.responseText) : false);
 			if (!response) {
@@ -758,8 +756,8 @@ four56bereastreet.html5validator = (function()
 				}
 				validatorOK = xhr.status === 200;
 			}
-		}
-		xhr.onload = function () {
+		};
+		xhr.onload = function() {
 			try {
 				onload();
 			}
@@ -923,15 +921,15 @@ four56bereastreet.html5validator = (function()
 			dateP.textContent = "Display timestamp: " + (new Date()).toLocaleString();
 			dateP = fragment.appendChild(generatedDocument.createElement('p'));
 			dateP.textContent = "Validation timestamp: " + result.timestamp.toLocaleString();
-			function displayPreference(key, value)
+			var displayPreference = function(key, value)
 			{
 				var p = fragment.appendChild(generatedDocument.createElement('p'));
 				p.textContent = key + ": " + value;
-			}
+			};
 			displayPreference("Ignore XHTML Errors", result.preferences.ignoreXHTMLErrors);
 			displayPreference("Allow Accessibility Features", result.preferences.allowAccessibilityFeatures);
 
-			function generateErrorList(messages)
+			var generateErrorList = function(messages)
 			{
 				var errorList = generatedDocument.createElement('ol');
 				var message, li, ext, st, len;
@@ -960,7 +958,7 @@ four56bereastreet.html5validator = (function()
 					}
 				}
 				fragment.appendChild(errorList);
-			} // function
+			}; // function
 			var h3 = fragment.appendChild(generatedDocument.createElement('h3'));
 			h3.innerHTML = errorsAndWarnings;
 			generateErrorList(result.messages);
