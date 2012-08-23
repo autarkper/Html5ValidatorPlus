@@ -363,6 +363,10 @@ four56bereastreet.html5validator = (function()
 				updateStatusBar('use-trigger');
 				return;
 			}
+            if (preferences.validatorURL.search(/validator.nu(\/|$)/) !== -1) {
+				updateStatusBar('validator.nu-auto-disallowed');
+                return;
+            }
 			if (pbs && pbs.privateBrowsingEnabled)
 			{
 				updateStatusBar('private-browsing-use-trigger');
@@ -627,6 +631,9 @@ four56bereastreet.html5validator = (function()
 					break;
 				case "cancelled":
 					updateIcon({tooltipText: myName + ": Auto-validation cancelled, click to validate"});
+					break;
+				case "validator.nu-auto-disallowed":
+					updateIcon({tooltipText: myName + ": Auto-validation with validator.nu not allowed, click to validate"});
 					break;
 				case "back-off":
 					updateIcon({tooltipText: myName + ": Auto-validation disabled due to possible validator overload, click to validate"});
