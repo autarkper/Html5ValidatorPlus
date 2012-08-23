@@ -114,7 +114,7 @@ four56bereastreet.html5validator = (function()
 		onLocationChange: function(aProgress, aRequest, aURI)
 		{
 			var doc = getActiveDocument();
-			updateStatusBar(0, 0, "reset");
+			updateStatusBar("reset");
 			if (doc && isValidUrl(doc.URL))
 			{
 				doc.html5ValidatorNormalizedURL = normalizeUrl(doc.URL);
@@ -163,7 +163,7 @@ four56bereastreet.html5validator = (function()
 						}
 						this.lastStartURL = null;
 						if (aStatus) { // error
-							updateStatusBar(0,0, 'reload-document');
+							updateStatusBar('reload-document');
 							doc.html5ValidatorLastStatus = aStatus;
 						}
 						// attempt validation anyway, in case the main document was downloaded OK
@@ -306,7 +306,7 @@ four56bereastreet.html5validator = (function()
 			catch (err)
 			{
 				log(err);
-				updateStatusBar(0, 0, 'internalError');
+				updateStatusBar('internalError');
 			}
 		}, timeoutMs); // avoid calling validateDocHTML__ repeatedly in case of rapid state changes
 	},
@@ -320,19 +320,19 @@ four56bereastreet.html5validator = (function()
 		}
 		if (isLoading(doc))
 		{
-			updateStatusBar(0, 0, 'document-loading');
+			updateStatusBar('document-loading');
 			validateDocHTML(triggered, optTimeoutMs * 2); // come back later
 			return;
 		}
         if (doc.contentType !== "text/html")
         {
-            updateStatusBar(0, 0, 'not-html');
+            updateStatusBar('not-html');
             return;
         }
 
 		if (vCache.isBusy(doc))
 		{
-			updateStatusBar(0, 0, "running");
+			updateStatusBar("running");
 			return;
 		}
 
@@ -345,14 +345,14 @@ four56bereastreet.html5validator = (function()
 				validateDoc(doc, html);
 			}
 			else {
-				updateStatusBar(0, 0, 'reload-document');
+				updateStatusBar('reload-document');
 			}
 			return;
 		}
 		var cache = vCache.lookupResults(doc);
 		if (cache)
 		{
-			updateStatusBar(cache['errors'], cache['warnings'], 'results');
+			updateStatusBar('results', cache['errors'], cache['warnings']);
 			return;
 		}
 		var isAutoDomain = isWhitelistDomain(url);
@@ -360,17 +360,17 @@ four56bereastreet.html5validator = (function()
 		{
 			if (preferences.useTrigger)
 			{
-				updateStatusBar(0, 0, 'use-trigger');
+				updateStatusBar('use-trigger');
 				return;
 			}
 			if (pbs && pbs.privateBrowsingEnabled)
 			{
-				updateStatusBar(0, 0, 'private-browsing-use-trigger');
+				updateStatusBar('private-browsing-use-trigger');
 				return;
 			}
 			if (vCache.lookupNoAutoValidation(doc))
 			{
-				updateStatusBar(0, 0, 'cancelled');
+				updateStatusBar('cancelled');
 				return;
 			}
 			// do not attempt auto-validation unless we have a visible UI
@@ -381,17 +381,17 @@ four56bereastreet.html5validator = (function()
 			};
 			if (isInvisibleUI()) {
 				log("ui collapsed or hidden");
-				updateStatusBar(0, 0, 'cancelled'); // display a sensible message later when made visible
+				updateStatusBar('cancelled'); // display a sensible message later when made visible
 				return;
 			}
 			if (validatorOK !== true) {
 				log("validator not OK");
-				updateStatusBar(0, 0, 'back-off');
+				updateStatusBar('back-off');
 				return;
 			}
 			html = html || getHTMLFromCache(doc, triggered);
 			if (!html || !html.length) {
-				updateStatusBar(0, 0, 'reload-document');
+				updateStatusBar('reload-document');
 				return;
 			} // the cache seems to have been cleared
 
@@ -400,7 +400,7 @@ four56bereastreet.html5validator = (function()
                     (html.length < (preferences.maxAutoSize) * 1024);
 			if (isSmallish)
 			{
-				updateStatusBar(0, 0, 'about-to-validate');
+				updateStatusBar('about-to-validate');
 				var timeoutHandle = null, removeEscapeListener;
 				var stopTimeout = function()
 				{
@@ -412,7 +412,7 @@ four56bereastreet.html5validator = (function()
 					{
 						if (g_cleanup) {g_cleanup();}
 						vCache.storeNoAutoValidation(doc);
-						updateStatusBar(0, 0, 'cancelled');
+						updateStatusBar('cancelled');
 					}
 				};
 				removeEscapeListener = function(){doc.removeEventListener('keydown', cancelOnEscape, false);};
@@ -422,7 +422,7 @@ four56bereastreet.html5validator = (function()
 				{
 					if (g_cleanup) {g_cleanup();}
 					if (isInvisibleUI()) {
-						updateStatusBar(0, 0, 'cancelled');
+						updateStatusBar('cancelled');
 						return;
 					}
 					validateDoc(doc, html);
@@ -432,13 +432,13 @@ four56bereastreet.html5validator = (function()
 			}
 			else
 			{
-				updateStatusBar(0, 0, 'large-doc');
+				updateStatusBar('large-doc');
 				return;
 			}
 		}
 		else
 		{
-			updateStatusBar(0, 0, preferences.restrictToWhitelist ? 'restricted' : 'manual');
+			updateStatusBar(preferences.restrictToWhitelist ? 'restricted' : 'manual');
 			return;
 		}
 	},
@@ -523,7 +523,7 @@ four56bereastreet.html5validator = (function()
 			log("html length 0");
 			if (triggered && !force)
 			{
-				updateStatusBar(0, 0, "fetching");
+				updateStatusBar("fetching");
 				return getHTMLFromCache(doc, triggered, true);
 			}
 		}
@@ -532,11 +532,11 @@ four56bereastreet.html5validator = (function()
 	},
 
 	g_usbTimeoutHandle = null,
-	updateStatusBar = function(errors, warnings, status)
+	updateStatusBar = function(status, errors, warnings)
 	{
 		if (g_usbTimeoutHandle) {window.clearTimeout(g_usbTimeoutHandle);}
 		g_usbTimeoutHandle = window.setTimeout( function() {
-			updateStatusBar__(errors, warnings, status);
+			updateStatusBar__(status, errors, warnings);
 		}, 50); // prevent flickering in case of user flipping through tabs, etc.
 	},
 
@@ -546,9 +546,11 @@ four56bereastreet.html5validator = (function()
 		if (data.src) {locationBarIcon.src = toolbarButton.src = data.src;}
 		if (data.tooltipText) {locationBarIcon.tooltipText = toolbarButton.tooltipText = data.tooltipText;}
 	},
-	formatErrorAndWarningString = function(errors, warnings, forceOutput)
+	formatErrorAndWarningString = function(errs, warns, forceOutput)
 	{
 		var errorText = "";
+		var errors = errs || 0;
+		var warnings = warns || 0;
 		if (errors || forceOutput) {
 			errorText += errors + " error";
 			if (errors !== 1) {
@@ -566,7 +568,7 @@ four56bereastreet.html5validator = (function()
 		}
 		return errorText;
 	},
-	updateStatusBar__ = function(errors, warnings, status)
+	updateStatusBar__ = function(status, errors, warnings)
 	{
 		log("updateStatusBar: " + status);
 		if (errors || warnings) {
@@ -667,7 +669,7 @@ four56bereastreet.html5validator = (function()
 	validateDoc = function(doc, html)
 	{
 		if (html.length === 0) {return;}
-		updateStatusBar(0, 0, "running");
+		updateStatusBar("running");
 		vCache.setBusyState(doc, true);
 
 		var xhr = new XMLHttpRequest();
@@ -744,7 +746,7 @@ four56bereastreet.html5validator = (function()
 				});
 				if (doc === getActiveDocument()) // asynchronous, may have changed
 				{
-					updateStatusBar(errors, warnings, "results");
+					updateStatusBar("results", errors, warnings);
 				}
 				validatorOK = xhr.status === 200;
 			}
@@ -757,14 +759,14 @@ four56bereastreet.html5validator = (function()
 				validatorOK = false;
 				log(err);
 				vCache.setBusyState(doc, false);
-				updateStatusBar(0, 0, "badResponse");
+				updateStatusBar("badResponse");
 			}
 		};
 		// If we couldn't validate the document (validator not running, network down, etc.)
 		xhr.onerror = function(){
 		    validatorOK = false;
 			vCache.setBusyState(doc, false);
-			updateStatusBar(0, 0, "errorValidator");
+			updateStatusBar("errorValidator");
 		};
 
 		// Send document to validator and tell it to return results in JSON format
@@ -991,7 +993,7 @@ four56bereastreet.html5validator = (function()
 		}
 		locationBarIcon = document.getElementById('html5validator-locationbar-icon');
 		setTimeout(function(){validateDocHTML(false);}, 250);
-		updateStatusBar(0, 0, 'reset');
+		updateStatusBar('reset');
 
 		preferencesObserver.register();
 		loadPreferences();
