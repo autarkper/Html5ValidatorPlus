@@ -50,4 +50,4 @@ CHANGELOG
 * 2.0.2   - 2011-06-25 - suppress "Almost standards mode doctype" error (concerning XHTML 1.0 Transitional doctype) if "Ignore XHTML errors" is in effect
 * 2.0.3   - 2012-06-21 - Disable auto-validation unless most recent validator response code is exactly 200. This is done in order not to overload a potentially busy validator.
 * 2.0.4   - 2012-08-22 - Fix 'error: Unsupported character encoding name: “charset=utf-8”'. See https://github.com/rogerjohansson/html5validator/issues/7 for details.
-* 2.0.5   - 2012-08-23 - Show an "active" icon while a validation is in progress. Optionally suppress 'Using “windows-1252” instead of the declared encoding “iso-8859-1”' warning.
+* 2.0.5   - 2012-08-23 - Show an "active" icon while a validation is in progress. Optionally suppress 'Using “windows-1252” instead of the declared encoding “iso-8859-1”' warning. Re-enable validation of application/xhtml+xml documents.

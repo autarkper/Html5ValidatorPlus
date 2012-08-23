@@ -324,7 +324,7 @@ four56bereastreet.html5validator = (function()
 			validateDocHTML(triggered, optTimeoutMs * 2); // come back later
 			return;
 		}
-        if (doc.contentType !== "text/html")
+        if (doc.contentType !== "text/html" && doc.contentType !== "application/xhtml+xml")
         {
             updateStatusBar('not-html');
             return;
