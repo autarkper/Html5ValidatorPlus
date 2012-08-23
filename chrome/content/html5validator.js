@@ -538,7 +538,12 @@ four56bereastreet.html5validator = (function()
 	{
 		if (g_usbTimeoutHandle) {window.clearTimeout(g_usbTimeoutHandle);}
 		g_usbTimeoutHandle = window.setTimeout( function() {
-			updateStatusBar__(status, errors, warnings);
+		    try {
+    			updateStatusBar__(status, errors, warnings);
+    	    }
+    	    finally {
+    	        lastStatus = status;
+    	    }
 		}, 50); // prevent flickering in case of user flipping through tabs, etc.
 	},
 
@@ -570,6 +575,7 @@ four56bereastreet.html5validator = (function()
 		}
 		return errorText;
 	},
+	lastStatus = "",
 	updateStatusBar__ = function(status, errors, warnings)
 	{
 		log("updateStatusBar: " + status);
@@ -648,8 +654,8 @@ four56bereastreet.html5validator = (function()
 					updateIcon({tooltipText: myName + ": Domain not in whitelist, validation restricted"});
 					g_clickEnabled = false;
 					break;
-				case "errorValidator":
-					toolbarButton.label = "Validator error";
+				case "xhr-error":
+					toolbarButton.label = "Connection failed";
 					updateIcon({tooltipText: myName + ": Could not contact the validator, at '" + preferences.validatorURL + "'"});
 					break;
 				case "badResponse":
@@ -772,7 +778,7 @@ four56bereastreet.html5validator = (function()
 		xhr.onerror = function(){
 		    validatorOK = false;
 			vCache.setBusyState(doc, false);
-			updateStatusBar("errorValidator");
+			updateStatusBar("xhr-error");
 		};
 
 		// Send document to validator and tell it to return results in JSON format
@@ -780,6 +786,10 @@ four56bereastreet.html5validator = (function()
 		xhr.open("POST", preferences.validatorURL + "?out=json" + parserOpt, true);
 		xhr.setRequestHeader("Content-Type", "text/html; charset=UTF-8");
 	    validatorOK = null; // set to unknown state until we find out
+	    if (lastStatus === "xhr-error") {
+	        setTimeout(function() {xhr.send(html);}, 500);
+	        return;    
+	    }
 		xhr.send(html);
 	},
 
