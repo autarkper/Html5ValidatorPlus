@@ -574,14 +574,15 @@ four56bereastreet.html5validator = (function()
 		if (errors || warnings) {
 			var errorText = formatErrorAndWarningString(errors, warnings);
 			toolbarButton.label = errorText;
-			updateIcon({src: "chrome://html5validator/skin/html5-error-red.png"});
 			toolbarButton.className = "statusbarpanel-iconic-text errors";
-			updateIcon({tooltipText: myName + parserString(preferences) + ": Click to view validation details"});
+			updateIcon({src: "chrome://html5validator/skin/html5-error-red.png",
+			    tooltipText: myName + parserString(preferences) + ": Click to view validation details"});
 			g_clickEnabled = true;
 		}
 		else
 		{
 			g_clickEnabled = true;
+			var activeIcon = "chrome://html5validator/skin/html5-16x16.png";
 			updateIcon({src: "chrome://html5validator/skin/html5-dimmed.png"});
 			toolbarButton.className = "statusbarpanel-iconic-text";
 			toolbarButton.label = "Click to validate";
@@ -597,7 +598,7 @@ four56bereastreet.html5validator = (function()
 					break;
 				case "running":
 					toolbarButton.label = "Validating...";
-					updateIcon({tooltipText: myName + ": Document currently validating"});
+					updateIcon({src: activeIcon, tooltipText: myName + ": Document currently validating"});
 					g_clickEnabled = false;
 					break;
 				case "fetching":
@@ -631,7 +632,7 @@ four56bereastreet.html5validator = (function()
 					updateIcon({tooltipText: myName + ": Auto-validation disabled due to possible validator overload, click to validate"});
 					break;
 				case "about-to-validate":
-					updateIcon({tooltipText: myName + ": Validation pending..."});
+					updateIcon({src: activeIcon, tooltipText: myName + ": Validation pending..."});
 					toolbarButton.label = "Validation pending, press Escape to cancel";
 					break;
 				case "manual":
@@ -655,9 +656,9 @@ four56bereastreet.html5validator = (function()
 					updateIcon({tooltipText: myName + ": Some internal error occurred"});
 					break;
 				case "results":
-					updateIcon({src: "chrome://html5validator/skin/html5-ok.png"});
 					toolbarButton.label = "";
-					updateIcon({tooltipText: myName + "" + parserString(preferences) + ": No errors. Click to view validation details"});
+					updateIcon({src: "chrome://html5validator/skin/html5-ok.png",
+					    tooltipText: myName + "" + parserString(preferences) + ": No errors. Click to view validation details"});
 					break;
 				default:
 					toolbarButton.label = "internal error";
