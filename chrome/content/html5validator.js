@@ -152,11 +152,11 @@ four56bereastreet.html5validator = (function()
 						log("State START: " + doc.URL);
 						this.lastStartURL = doc.html5ValidatorNormalizedURL;
 					}
-					if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_STOP) {
+					else if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_STOP) {
 						log("State STOP: " + doc.URL + ", aStatus: " + aStatus);
 						if (doc.html5ValidatorNormalizedURL == this.lastStartURL)
 						{
-							log("Invalidate results cache: " + doc.URL);
+							vCache.setBusyState(doc, false);
 							vCache.invalidate(doc);
 						}
 						this.lastStartURL = null;
@@ -255,6 +255,7 @@ four56bereastreet.html5validator = (function()
 				invalidate: function(doc)
 				{
 					var url = doc.html5ValidatorNormalizedURL;
+				    log("Invalidate results cache: " + url);
 					delete resCache[url];
 				},
 				setBusyState: function(doc, busy)
