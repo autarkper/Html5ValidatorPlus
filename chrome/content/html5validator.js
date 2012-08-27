@@ -1,11 +1,11 @@
 /* namespacing technique adapted from http://blogger.ziesemer.com/2007/10/respecting-javascript-global-namespace.html */
 if (!window.four56bereastreet) {var four56bereastreet = {};}
 
-four56bereastreet.html5validator = (function()
+four56bereastreet.html5validatorplus = (function()
 {
-	if (four56bereastreet.html5validator)
+	if (four56bereastreet.html5validatorplus)
 	{
-		return four56bereastreet.html5validator;
+		return four56bereastreet.html5validatorplus;
 	}
 	var myName = "HTML5 Validator Plus";
 	var Application = Components.classes["@mozilla.org/fuel/application;1"].getService(Components.interfaces.fuelIApplication);
@@ -97,7 +97,7 @@ four56bereastreet.html5validator = (function()
 			return logFn;
 		}());
 
-	var html5validatorListener = 
+	var html5validatorplusListener = 
 	{
 		QueryInterface: function(aIID)
 		{
@@ -584,15 +584,15 @@ four56bereastreet.html5validator = (function()
 			var errorText = formatErrorAndWarningString(errors, warnings);
 			toolbarButton.label = errorText;
 			toolbarButton.className = "statusbarpanel-iconic-text errors";
-			updateIcon({src: "chrome://html5validator/skin/html5-error-red.png",
+			updateIcon({src: "chrome://html5validatorplus/skin/html5-error-red.png",
 			    tooltipText: myName + parserString(preferences) + ": Click to view validation details"});
 			g_clickEnabled = true;
 		}
 		else
 		{
 			g_clickEnabled = true;
-			var activeIcon = "chrome://html5validator/skin/html5-16x16.png";
-			updateIcon({src: "chrome://html5validator/skin/html5-dimmed.png"});
+			var activeIcon = "chrome://html5validatorplus/skin/html5-16x16.png";
+			updateIcon({src: "chrome://html5validatorplus/skin/html5-dimmed.png"});
 			toolbarButton.className = "statusbarpanel-iconic-text";
 			toolbarButton.label = "Click to validate";
 			switch (status) {
@@ -669,7 +669,7 @@ four56bereastreet.html5validator = (function()
 					break;
 				case "results":
 					toolbarButton.label = "";
-					updateIcon({src: "chrome://html5validator/skin/html5-ok.png",
+					updateIcon({src: "chrome://html5validatorplus/skin/html5-ok.png",
 					    tooltipText: myName + "" + parserString(preferences) + ": No errors. Click to view validation details"});
 					break;
 				default:
@@ -821,7 +821,7 @@ four56bereastreet.html5validator = (function()
 	setResultWindow = function(win) {
 		Application.storage.set("resultWindow", win);
 	},
-	RESULTWINDOW = 'chrome://html5validator/content/resultswindow.html',
+	RESULTWINDOW = 'chrome://html5validatorplus/content/resultswindow.html',
 	showValidationResults = function()
 	{
 		var doc = getActiveDocument();
@@ -843,7 +843,7 @@ four56bereastreet.html5validator = (function()
 			};
 			var findOrOpenWindow = function() {
 				setResultWindow(
-					window.open(RESULTWINDOW, 'html5validator',
+					window.open(RESULTWINDOW, 'html5validatorplus',
 						"menubar=no,location=no,resizable=yes,minimizable=yes,scrollbars=yes,status=yes")
 					);
 				return getResultWindow();
@@ -992,7 +992,7 @@ four56bereastreet.html5validator = (function()
 	},
 	showOptionsDialog = function()
 	{
-		var win = window.openDialog("chrome://html5validator/content/options.xul", "html5validator-prefs", null);
+		var win = window.openDialog("chrome://html5validatorplus/content/options.xul", "html5validatorplus-prefs", null);
 		win.focus();
 	},
 	encodeHTML = function(html) {
@@ -1000,15 +1000,15 @@ four56bereastreet.html5validator = (function()
 	};
 
 	window.addEventListener("load", function(){
-		gBrowser.addProgressListener(html5validatorListener);
+		gBrowser.addProgressListener(html5validatorplusListener);
 
-		toolbarButton = document.getElementById('html5validator-status-bar');
+		toolbarButton = document.getElementById('html5validatorplus-status-bar');
 		if (!toolbarButton) {
 			var addonBar = document.getElementById('addon-bar');
-			toolbarButton = addonBar.insertItem("html5validator-status-bar", null);
+			toolbarButton = addonBar.insertItem("html5validatorplus-status-bar", null);
 			addonBar.collapsed = false;
 		}
-		locationBarIcon = document.getElementById('html5validator-locationbar-icon');
+		locationBarIcon = document.getElementById('html5validatorplus-locationbar-icon');
 		setTimeout(function(){validateDocHTML(false);}, 250);
 		updateStatusBar('reset');
 

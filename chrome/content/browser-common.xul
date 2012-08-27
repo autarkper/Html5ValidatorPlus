@@ -1,21 +1,21 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="chrome://html5validator/skin/skin.css" type="text/css"?> 
+<?xml-stylesheet href="chrome://html5validatorplus/skin/skin.css" type="text/css"?> 
 <overlay id="sample" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	
 	<script src="html5validator.js" />
 
 	<popupset id="mainPopupSet">
-		<menupopup id="html5validator-menupopup">
-			<menuitem label="HTML5 Validator Plus Preferences" oncommand="four56bereastreet.html5validator.showOptions()"/>
+		<menupopup id="html5validatorplus-menupopup">
+			<menuitem label="HTML5 Validator Plus Preferences" oncommand="four56bereastreet.html5validatorplus.showOptions()"/>
 		</menupopup>
 	</popupset>
 
 	<keyset>
-		<key id="test-key" modifiers="shift accel" key="V" oncommand="four56bereastreet.html5validator.onHotKey()"/>
+		<key id="test-key" modifiers="shift accel" key="V" oncommand="four56bereastreet.html5validatorplus.onHotKey()"/>
 	</keyset>
 
 	<hbox id="urlbar-icons">
-		<image id="html5validator-locationbar-icon" src="chrome://html5validator/skin/html5-dimmed.png"
-			onclick="if (event.button===0) {four56bereastreet.html5validator.onCommand();} else if (event.button===2) {four56bereastreet.html5validator.showOptions();}" />
+		<image id="html5validatorplus-locationbar-icon" src="chrome://html5validatorplus/skin/html5-dimmed.png"
+			onclick="if (event.button===0) {four56bereastreet.html5validatorplus.onCommand();} else if (event.button===2) {four56bereastreet.html5validatorplus.showOptions();}" />
 	</hbox>
 </overlay>

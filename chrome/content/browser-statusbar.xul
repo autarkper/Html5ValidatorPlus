@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="chrome://html5validator/skin/skin.css" type="text/css"?> 
+<?xml-stylesheet href="chrome://html5validatorplus/skin/skin.css" type="text/css"?> 
 <overlay id="sample" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	
 	<script src="html5validator.js" />
 	<statusbar id="status-bar">
 		<statusbarpanel 
-			id="html5validator-status-bar"
+			id="html5validatorplus-status-bar"
 			class="statusbarpanel-iconic-text"
-			contextmenu="html5validator-menupopup"
-			src="chrome://html5validator/skin/html5-dimmed.png"
+			contextmenu="html5validatorplus-menupopup"
+			src="chrome://html5validatorplus/skin/html5-dimmed.png"
 			tooltiptext="HTML5 Validator Plus"
-			onclick="if (event.button===0) four56bereastreet.html5validator.onCommand()"
+			onclick="if (event.button===0) four56bereastreet.html5validatorplus.onCommand()"
 			label="" />
 	</statusbar>
 </overlay>
