@@ -6,12 +6,18 @@
     <property name="src" location="."/>
     <property name="build" location="build"/>
     <property name="dist" location="xpi"/>
-    <buildnumber/>
+    <mkdir dir="${dist}"/>
+    <delete dir="${build}"/>
 
     <!-- determine version number, etc, based on install.rdf -->
     <target name="read-install.rdf">
         <xmlproperty file="${src}/install.rdf"/>
+        <property name="file-base-name" value="${RDF.Description.em:id}"/>
         <property name="plain-version" value="${RDF.Description.em:version}"/>
+    </target>
+
+    <target name="gen-release-version" depends="read-install.rdf">
+        <buildnumber/>
         <property name="release-version" value="${RDF.Description.em:version}-${build.number}"/>
     </target>
 
@@ -23,12 +29,35 @@
                 <exclude name=".git/**"/>
                 <exclude name="xpi/**"/>
                 <exclude name="build/**"/>
-                <exclude name=".gitignore"/>
+                <exclude name=".*"/>
                 <exclude name="build.xml"/>
                 <exclude name="README.md"/>
                 <exclude name="build.number"/>
+                <exclude name="update.rdf"/>
+                <exclude name="upload.*"/>
+                <exclude name="updateKey"/>
             </fileset>
         </copy>
+    </target>
+
+    <target name="prepare-update" depends="gen-release-version, copy-build">
+        <property name="update-url-base" value="${RDF.Description.em:updateURL}"/>
+        <property name="update-file-name" value="${file-base-name}-update.rdf"/>
+        <property name="update-path" value="${dist}/${update-file-name}"/>
+        <copy file="${src}/update.rdf" tofile="${update-path}" overwrite="true"/>
+        <replace file="${update-path}" token="___EXTENSION_ID___" value="${RDF.Description.em:id}"/>
+        <replace file="${update-path}" token="___VERSION___" value="${plain-version}"/>
+        <replace file="${update-path}" token="___APPID___" value="${RDF.Description.em:targetApplication.Description.em:id}"/>
+        <replace file="${update-path}" token="___MINVERSION___" value="${RDF.Description.em:targetApplication.Description.em:minVersion}"/>
+        <replace file="${update-path}" token="___MAXVERSION___" value="${RDF.Description.em:targetApplication.Description.em:maxVersion}"/>
+        <replace file="${build}/install.rdf" token="${RDF.Description.em:updateURL}" value="${update-url-base}/${update-file-name}"/>
+        <loadfile property="updateKeyString" srcFile="updateKey">
+          <filterchain>
+            <striplinebreaks/>
+          </filterchain>
+        </loadfile>
+        <echo>"${updateKeyString}"</echo>
+        <replace file="${build}/install.rdf" token="${RDF.Description.em:updateKey}" value="${updateKeyString}"/>
     </target>
 
     <target name="clean-build" depends="copy-build">
@@ -41,30 +70,25 @@
             </fileset>
         </replaceregexp>
 
-        <echo>Generating release version number</echo>
         <replace file="${build}/install.rdf" token="${RDF.Description.em:version}" value="${release-version}"/>
     </target>
 
     <!-- archive sources into .xpi file -->
     <target name="archive" depends="copy-build" description="archive the add-on">
-        <mkdir dir="${dist}"/>
-        <property name="xpi-release" location="${dist}/${RDF.Description.em:name}-${release-version}.xpi"/>
-        <property name="xpi-plain" location="${dist}/${RDF.Description.em:name}-${plain-version}.xpi"/>
+        <property name="xpi-release-name" value="${file-base-name}-${release-version}.xpi"/>
+        <property name="xpi-release" location="${dist}/${xpi-release-name}"/>
+        <property name="xpi-plain" location="${dist}/${file-base-name}-${plain-version}.xpi"/>
         <zip destfile="${xpi-plain}" level="9">
             <fileset dir="${build}"/>
         </zip>
-    </target>
-
-    <!-- post-build cleanup -->
-    <target name="cleanup">
         <delete dir="${build}"/>
     </target>
 
 <!-- build without stripping log() invocations -->
-    <target name="build-debug" depends="archive, cleanup"/>
+    <target name="build-debug" depends="archive"/>
 
 <!-- main build action -->
-    <target name="build" depends="clean-build, archive, cleanup">
+    <target name="build" depends="gen-release-version, clean-build, archive">
         <move file="${xpi-plain}" tofile="${xpi-release}" verbose="true"/>
     </target>
 
@@ -77,4 +101,27 @@
        </propertyfile>
    </target>
 
+    <target name="release-update" depends="prepare-update, build">
+        <tempfile property="hash-file"/>
+        <exec executable="sha256sum" output="${hash-file}">
+            <arg value="${xpi-release}"/>
+        </exec>
+        <replaceregexp file="${hash-file}">
+            <regexp pattern="\s+.*\n"/>
+            <substitution expression=""/>
+        </replaceregexp>
+        <loadfile property="hash" srcFile="${hash-file}"/>
+        <delete file="${hash-file}"/>
+        <property name="hash-field" value="sha256:${hash}"/>
+        <echo>${hash-field}</echo>
+        <replace file="${update-path}" token="___XPI___" value="${update-url-base}/${xpi-release-name}"/>
+        <replace file="${update-path}" token="___HASH___" value="${hash-field}"/>
+    </target>
+
+    <target name="release-upload" depends="release-update">
+        <copy file="upload.command-template" tofile="upload.command" overwrite="true"/>
+        <replace file="upload.command" token="___FILES___" value="${update-path} ${xpi-release}"/>
+        <echo>${line.separator}Generated upload command file: upload.command</echo>
+        <echo>Don't forget to sign the update manifest before uploading!</echo>
+    </target>
 </project>

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<r:RDF xmlns:r="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns="http://www.mozilla.org/2004/em-rdf#">
+
+<r:Description about="urn:mozilla:extension:___EXTENSION_ID___">
+    <updates>
+    <r:Seq>
+    <r:li>
+    <r:Description>
+        <version>___VERSION___</version>
+        <targetApplication>
+            <r:Description>
+            <id>___APPID___</id>
+            <minVersion>___MINVERSION___</minVersion>
+            <maxVersion>___MAXVERSION___</maxVersion>
+            <updateLink>___XPI___</updateLink>
+            <updateHash>___HASH___</updateHash>
+            </r:Description>
+        </targetApplication>
+    </r:Description>
+    </r:li>
+    </r:Seq>
+    </updates>
+</r:Description>
+
+</r:RDF>
+
