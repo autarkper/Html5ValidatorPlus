@@ -51,3 +51,4 @@ CHANGELOG
 * 2.0.3   - 2012-06-21 - Disable auto-validation unless most recent validator response code is exactly 200. This is done in order not to overload a potentially busy validator.
 * 2.0.4   - 2012-08-22 - Fix 'error: Unsupported character encoding name: “charset=utf-8”'. See https://github.com/rogerjohansson/html5validator/issues/7 for details.
 * 2.0.5   - 2012-08-23 - Show an "active" icon while a validation is in progress. Optionally suppress 'Using “windows-1252” instead of the declared encoding “iso-8859-1”' warning. Re-enable validation of application/xhtml+xml documents. Disallow auto-validation if the validator is validator.nu.
+* 3.0.0   - 2012-08-29 - A new, unique extension id will differentiate this extension from the original HTML5 Validator. Unfortunately, this requires that those who are upgrading from an old version manually remove the old version after upgrading.
