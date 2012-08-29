@@ -68,6 +68,9 @@
         <move file="${xpi-plain}" tofile="${xpi-release}" verbose="true"/>
     </target>
 
+<!-- alias of "build" -->
+    <target name="build-release" depends="build"/>
+
    <target name="reset-build-number">
        <propertyfile file="build.number">
           <entry  key="build.number" type="int" value="0"/>
