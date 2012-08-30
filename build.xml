@@ -14,11 +14,8 @@
         <xmlproperty file="${src}/install.rdf"/>
         <property name="file-base-name" value="${RDF.Description.em:id}"/>
         <property name="plain-version" value="${RDF.Description.em:version}"/>
-    </target>
-
-    <target name="gen-release-version" depends="read-install.rdf">
         <buildnumber/>
-        <property name="release-version" value="${RDF.Description.em:version}-${build.number}"/>
+        <property name="full-version" value="${RDF.Description.em:version}.${build.number}"/>
     </target>
 
     <target name="copy-build" depends="read-install.rdf">
@@ -40,13 +37,13 @@
         </copy>
     </target>
 
-    <target name="prepare-update" depends="gen-release-version, copy-build">
+    <target name="prepare-update" depends="copy-build">
         <property name="update-url-base" value="${RDF.Description.em:updateURL}"/>
-        <property name="update-file-name" value="${file-base-name}-update.rdf"/>
+        <property name="update-file-name" value="update-${file-base-name}.rdf"/>
         <property name="update-path" value="${dist}/${update-file-name}"/>
         <copy file="${src}/update.rdf" tofile="${update-path}" overwrite="true"/>
         <replace file="${update-path}" token="___EXTENSION_ID___" value="${RDF.Description.em:id}"/>
-        <replace file="${update-path}" token="___VERSION___" value="${plain-version}"/>
+        <replace file="${update-path}" token="___VERSION___" value="${full-version}"/>
         <replace file="${update-path}" token="___APPID___" value="${RDF.Description.em:targetApplication.Description.em:id}"/>
         <replace file="${update-path}" token="___MINVERSION___" value="${RDF.Description.em:targetApplication.Description.em:minVersion}"/>
         <replace file="${update-path}" token="___MAXVERSION___" value="${RDF.Description.em:targetApplication.Description.em:maxVersion}"/>
@@ -56,7 +53,7 @@
             <striplinebreaks/>
           </filterchain>
         </loadfile>
-        <echo>"${updateKeyString}"</echo>
+        <echo>updateKey: "${updateKeyString}"</echo>
         <replace file="${build}/install.rdf" token="${RDF.Description.em:updateKey}" value="${updateKeyString}"/>
     </target>
 
@@ -70,12 +67,12 @@
             </fileset>
         </replaceregexp>
 
-        <replace file="${build}/install.rdf" token="${RDF.Description.em:version}" value="${release-version}"/>
+        <replace file="${build}/install.rdf" token="${RDF.Description.em:version}" value="${full-version}"/>
     </target>
 
     <!-- archive sources into .xpi file -->
     <target name="archive" depends="copy-build" description="archive the add-on">
-        <property name="xpi-release-name" value="${file-base-name}-${release-version}.xpi"/>
+        <property name="xpi-release-name" value="${file-base-name}-${full-version}.xpi"/>
         <property name="xpi-release" location="${dist}/${xpi-release-name}"/>
         <property name="xpi-plain" location="${dist}/${file-base-name}-${plain-version}.xpi"/>
         <zip destfile="${xpi-plain}" level="9">
@@ -88,7 +85,7 @@
     <target name="build-debug" depends="archive"/>
 
 <!-- main build action -->
-    <target name="build" depends="gen-release-version, clean-build, archive">
+    <target name="build" depends="clean-build, archive">
         <move file="${xpi-plain}" tofile="${xpi-release}" verbose="true"/>
     </target>
 
