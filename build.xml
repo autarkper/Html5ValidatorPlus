@@ -117,7 +117,7 @@
 
     <target name="release-upload" depends="release-update">
         <copy file="upload.command-template" tofile="upload.command" overwrite="true"/>
-        <replace file="upload.command" token="___FILES___" value="${update-path} ${xpi-release}"/>
+        <replace file="upload.command" token="___FILES___" value="${xpi-release} ${update-path}"/>
         <echo>${line.separator}Generated upload command file: upload.command</echo>
         <echo>Don't forget to sign the update manifest before uploading!</echo>
     </target>
