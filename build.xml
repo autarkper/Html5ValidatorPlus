@@ -22,17 +22,8 @@
         <mkdir dir="${build}"/>
 
         <copy todir="${build}">
-            <fileset dir="${src}">
-                <exclude name=".git/**"/>
-                <exclude name="xpi/**"/>
-                <exclude name="build/**"/>
-                <exclude name=".*"/>
-                <exclude name="build.xml"/>
-                <exclude name="README.md"/>
-                <exclude name="build.number"/>
-                <exclude name="update.rdf"/>
-                <exclude name="upload.*"/>
-                <exclude name="updateKey"/>
+            <fileset dir=".">
+                <includesfile name="files-to-copy.txt"/>
             </fileset>
         </copy>
     </target>
