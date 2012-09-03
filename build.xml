@@ -16,19 +16,22 @@
         <property name="plain-version" value="${RDF.Description.em:version}"/>
         <buildnumber/>
         <property name="full-version" value="${RDF.Description.em:version}.${build.number}"/>
+        <property name="xpi-release-name" value="${file-base-name}-${full-version}.xpi"/>
+        <property name="xpi-release" location="${dist}/${xpi-release-name}"/>
+        <property name="xpi-plain" location="${dist}/${file-base-name}-${plain-version}.xpi"/>
     </target>
 
     <target name="copy-build" depends="read-install.rdf">
         <mkdir dir="${build}"/>
-
         <copy todir="${build}">
             <fileset dir=".">
                 <includesfile name="files-to-copy.txt"/>
             </fileset>
         </copy>
+        <replace file="${build}/install.rdf" token="${RDF.Description.em:version}" value="${full-version}"/>
     </target>
 
-    <target name="prepare-update" depends="copy-build">
+    <target name="prepare-update" depends="clean-build">
         <property name="update-url-base" value="${RDF.Description.em:updateURL}"/>
         <property name="update-file-name" value="update-${file-base-name}.rdf"/>
         <property name="update-path" value="${dist}/${update-file-name}"/>
@@ -40,15 +43,31 @@
         <replace file="${update-path}" token="___MAXVERSION___" value="${RDF.Description.em:targetApplication.Description.em:maxVersion}"/>
         <replace file="${build}/install.rdf" token="${RDF.Description.em:updateURL}" value="${update-url-base}/${update-file-name}"/>
         <loadfile property="updateKeyString" srcFile="updateKey">
-          <filterchain>
-            <striplinebreaks/>
-          </filterchain>
+          <filterchain><striplinebreaks/></filterchain>
         </loadfile>
         <echo>updateKey: "${updateKeyString}"</echo>
         <replace file="${build}/install.rdf" token="${RDF.Description.em:updateKey}" value="${updateKeyString}"/>
+        <xmlproperty file="${src}/update.rdf"/>
+        <property name="updateInfoURL" value="${r:RDF.r:Description.updates.r:Seq.r:li.r:Description.targetApplication.r:Description.updateInfoURL}"/>
+        <condition property="updateInfo">
+            <resourceexists>
+                <file file="${src}/${updateInfoURL}"/>
+            </resourceexists>
+        </condition>
+    </target>
+    
+    <target name="prepare-changelog-yes" depends="prepare-update" if="updateInfo">
+        <property name="changelog.xml" value="${file-base-name}-${updateInfoURL}"></property>
+        <property name="changelog-path" value="${dist}/${changelog.xml}"></property>
+        <copy file="${src}/${updateInfoURL}" tofile="${changelog-path}" overwrite="true"/>
+        <replace file="${update-path}" token="${updateInfoURL}" value="${update-url-base}/${changelog.xml}"/>
     </target>
 
-    <target name="clean-build" depends="copy-build">
+    <target name="prepare-changelog-no" depends="prepare-update" unless="updateInfo">
+        <property name="changelog-path" value=""></property>
+    </target>
+
+    <target name="clean-build" depends="copy-build" unless="nostrip">
         <echo>Stripping log() invocations</echo>
         <replaceregexp byline="true">
             <regexp pattern="\blog\(.+\)"/>
@@ -57,31 +76,30 @@
                 <include name="**/*.js"/>
             </fileset>
         </replaceregexp>
-
-        <replace file="${build}/install.rdf" token="${RDF.Description.em:version}" value="${full-version}"/>
     </target>
 
     <!-- archive sources into .xpi file -->
-    <target name="archive" depends="copy-build" description="archive the add-on">
-        <property name="xpi-release-name" value="${file-base-name}-${full-version}.xpi"/>
-        <property name="xpi-release" location="${dist}/${xpi-release-name}"/>
-        <property name="xpi-plain" location="${dist}/${file-base-name}-${plain-version}.xpi"/>
+    <target name="archive-base" depends="clean-build" description="archive the add-on">
         <zip destfile="${xpi-plain}" level="9">
             <fileset dir="${build}"/>
         </zip>
+    </target>
+
+    <target name="archive" depends="archive-base" unless="nocleanup">
         <delete dir="${build}"/>
     </target>
 
-<!-- build without stripping log() invocations -->
-    <target name="build-debug" depends="archive"/>
-
 <!-- main build action -->
-    <target name="build" depends="clean-build, archive">
+    <target name="build" depends="archive">
         <move file="${xpi-plain}" tofile="${xpi-release}" verbose="true"/>
     </target>
 
 <!-- alias of "build" -->
     <target name="build-release" depends="build"/>
+
+    <target name="nostrip">
+        <property name="nostrip" value="true"></property>
+    </target>
 
    <target name="reset-build-number">
        <propertyfile file="build.number">
@@ -89,7 +107,7 @@
        </propertyfile>
    </target>
 
-    <target name="release-update" depends="prepare-update, build">
+    <target name="release-update" depends="prepare-changelog-yes, prepare-changelog-no, build">
         <tempfile property="hash-file"/>
         <exec executable="sha256sum" output="${hash-file}">
             <arg value="${xpi-release}"/>
@@ -101,14 +119,14 @@
         <loadfile property="hash" srcFile="${hash-file}"/>
         <delete file="${hash-file}"/>
         <property name="hash-field" value="sha256:${hash}"/>
-        <echo>${hash-field}</echo>
+        <echo>hash: ${hash-field}</echo>
         <replace file="${update-path}" token="___XPI___" value="${update-url-base}/${xpi-release-name}"/>
         <replace file="${update-path}" token="___HASH___" value="${hash-field}"/>
     </target>
 
     <target name="release-upload" depends="release-update">
         <copy file="upload.command-template" tofile="upload.command" overwrite="true"/>
-        <replace file="upload.command" token="___FILES___" value="${xpi-release} ${update-path}"/>
+        <replace file="upload.command" token="___FILES___" value="${xpi-release} ${changelog-path} ${update-path}"/>
         <echo>${line.separator}Generated upload command file: upload.command</echo>
         <echo>Don't forget to sign the update manifest before uploading!</echo>
     </target>
