@@ -21,4 +21,3 @@ skin/html5-ok.png
 skin/icon-license.txt
 skin/results.css
 skin/skin.css
-update.rdf
