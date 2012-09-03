@@ -31,6 +31,17 @@
         <replace file="${build}/install.rdf" token="${RDF.Description.em:version}" value="${full-version}"/>
     </target>
 
+    <target name="clean-build" depends="copy-build" unless="nostrip">
+        <echo>Stripping log() invocations</echo>
+        <replaceregexp byline="true">
+            <regexp pattern="\blog\(.+\)"/>
+            <substitution expression=""/>
+            <fileset dir="${build}">
+                <include name="**/*.js"/>
+            </fileset>
+        </replaceregexp>
+    </target>
+
     <target name="prepare-update" depends="clean-build">
         <property name="update-url-base" value="${RDF.Description.em:updateURL}"/>
         <property name="update-file-name" value="update-${file-base-name}.rdf"/>
@@ -67,35 +78,17 @@
         <property name="changelog-path" value=""></property>
     </target>
 
-    <target name="clean-build" depends="copy-build" unless="nostrip">
-        <echo>Stripping log() invocations</echo>
-        <replaceregexp byline="true">
-            <regexp pattern="\blog\(.+\)"/>
-            <substitution expression=""/>
-            <fileset dir="${build}">
-                <include name="**/*.js"/>
-            </fileset>
-        </replaceregexp>
-    </target>
-
     <!-- archive sources into .xpi file -->
-    <target name="archive-base" depends="clean-build" description="archive the add-on">
-        <zip destfile="${xpi-plain}" level="9">
+    <target name="archive" depends="clean-build" description="archive the add-on">
+        <zip destfile="${xpi-release}" level="9">
             <fileset dir="${build}"/>
         </zip>
     </target>
 
-    <target name="archive" depends="archive-base" unless="nocleanup">
+<!-- main build action -->
+    <target name="build" depends="archive" unless="nocleanup">
         <delete dir="${build}"/>
     </target>
-
-<!-- main build action -->
-    <target name="build" depends="archive">
-        <move file="${xpi-plain}" tofile="${xpi-release}" verbose="true"/>
-    </target>
-
-<!-- alias of "build" -->
-    <target name="build-release" depends="build"/>
 
     <target name="nostrip">
         <property name="nostrip" value="true"></property>
