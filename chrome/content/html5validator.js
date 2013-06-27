@@ -9,7 +9,6 @@ four56bereastreet.html5validatorplus = (function()
 	}
 	var myName = "HTML5 Validator Plus";
 	var Application = Components.classes["@mozilla.org/fuel/application;1"].getService(Components.interfaces.fuelIApplication);
-	var pbs = Components.classes["@mozilla.org/privatebrowsing;1"].getService(Components.interfaces.nsIPrivateBrowsingService);
 	var normalizeUrl = function(url) {
 		return url.replace(/#.*/, '');
 	};
@@ -366,11 +365,27 @@ four56bereastreet.html5validatorplus = (function()
 				updateStatusBar('validator.nu-auto-disallowed');
                 return;
             }
-			if (pbs && pbs.privateBrowsingEnabled)
-			{
-				updateStatusBar('private-browsing-use-trigger');
-				return;
-			}
+            var inPrivateBrowsing = false;
+            try {
+              /* https://developer.mozilla.org/EN/docs/Supporting_per-window_private_browsing */
+              // Firefox 20+
+              Components.utils.import("resource://gre/modules/PrivateBrowsingUtils.jsm");
+              inPrivateBrowsing = PrivateBrowsingUtils.isWindowPrivate(window);
+            } catch(e) {
+              // pre Firefox 20 (if you do not have access to a doc. 
+              // might use doc.hasAttribute("privatebrowsingmode") then instead)
+              try {
+                inPrivateBrowsing = Components.classes["@mozilla.org/privatebrowsing;1"].getService(Components.interfaces.nsIPrivateBrowsingService).privateBrowsingEnabled;
+              } catch(e) {
+                Components.utils.reportError(e);
+                updateStatusBar('internalError');
+                return;
+              }
+            }
+            if (inPrivateBrowsing) {
+                updateStatusBar('private-browsing-use-trigger');
+                return;
+            }
 			if (vCache.lookupNoAutoValidation(doc))
 			{
 				updateStatusBar('cancelled');
