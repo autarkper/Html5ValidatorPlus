@@ -1,5 +1,6 @@
 CHANGELOG
 
+* 3.0.1   - 2013-06-27 - Make the extension work with the latest versions of Firefox, due to changes in the way to detect private browsing.
 * 3.0.0   - 2012-09-02 - A new, unique extension id will differentiate this extension from the original HTML5 Validator. Unfortunately, this requires that those who are upgrading from an old version manually remove the old version after upgrading.
 * 2.0.5   - 2012-08-23 - Show an "active" icon while a validation is in progress. Optionally suppress 'Using “windows-1252” instead of the declared encoding “iso-8859-1”' warning. Re-enable validation of application/xhtml+xml documents. Disallow auto-validation if the validator is validator.nu.
 * 2.0.4   - 2012-08-22 - Fix 'error: Unsupported character encoding name: “charset=utf-8”'. See https://github.com/rogerjohansson/html5validator/issues/7 for details.
