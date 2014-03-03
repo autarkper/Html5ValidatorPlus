@@ -14,6 +14,8 @@ HTML5 Validator Plus has native support for the new add-on bar in Firefox 4 and 
 
 HTML5 Validator Plus was developed and tested in Firefox 4 and alpha/beta versions of Firefox 5, 6 and 7; the minimum supported Firefox version is 3.6.
 
+Latest release: http://www.autark.se/Html5ValidatorPlus/html5validatorplus@autark.se-3.0.1.0.xpi
+
 Known bugs and problems: Currently none.
 
 Acknowledgements: Many thanks to Roger Johansson and contributors to the original HTML5 Validator, who did all the hard work while I had all the fun.
